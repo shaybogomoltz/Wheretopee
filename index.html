@@ -147,7 +147,7 @@
     .btn { padding: 9px 20px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 14px; cursor: pointer; background: var(--bg); color: var(--text); }
     .btn:hover { background: var(--bg2); }
     .btn-primary { background: var(--blue); color: #fff; border-color: transparent; font-weight: 500; }
-    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:hover { background: #2272c3; opacity: 1; }
 
     /* ── DEBUG TABLE ── */
     .debug-wrap { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
@@ -896,6 +896,11 @@ function drawRoom(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
       o+=drawDot(cx,by+UH*0.45,COL.personFill,11,NPC_HATS[i%NPC_HATS.length]);
     } else if(passMap!==null&&isPicked){
       o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?'#3B6D11':'#A32D2D'}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`;
+    } else if(s.warm){
+      // warm seat — subtle yellow dots
+      o+=`<circle cx="${cx-6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/>`;
+      o+=`<circle cx="${cx+6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/>`;
+      o+=`<circle cx="${cx}" cy="${by+UH*0.42}" r="2" fill="#E8C040" opacity="0.5"/>`;
     }
     o+=`</g>`;
     o+=`<text x="${cx}" y="${by+UH+13}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
@@ -955,14 +960,23 @@ function runCountdown(lv){
   countingDown=true; goTime=null;
   const n=lv.stalls.length, door=lv.doorIndex??0;
   const npcTarget=lv.npcArrival?.urinal??null;
+  const deptTarget=lv.npcDeparture?.urinal??null;
   const doorX=urinalCX(door,n), doorY=SVG_H-WALL-8;
   const waitX=doorX, waitY=SVG_H-WALL-30;
   let playerDot={cx:doorX,cy:doorY,color:COL.playerDot,r:11,hatFn:hatPlayer};
   let npcDot=null;
+  let deptDot=null;
   window._playerWaitPos={cx:waitX,cy:waitY};
-  const T={p0:200,p1:900,two:1000,one:2000,n0:2100,n1:2700,go:3000,done:3400};
-  // Door slides open from 0→200ms (on "3")
-  const DOOR_OPEN_START=0, DOOR_OPEN_END=300;
+  // Timeline
+  // 0ms: door opens, "3"
+  // 200-900ms: player walks in
+  // 1000ms: "2" — departing NPC starts walking out
+  // 1200-1800ms: departing NPC walks to door and vanishes
+  // 2000ms: "1" — arriving NPC bursts in
+  // 2100-2700ms: arriving NPC walks to stall
+  // 3000ms: GO
+  const T={p0:200,p1:900,two:1000,d0:1100,d1:1800,one:2000,n0:2100,n1:2700,go:3000,done:3400};
+  const DOOR_OPEN_END=300;
   setTimeout(()=>showCD('3'),0);
   setTimeout(()=>showCD('2'),T.two);
   setTimeout(()=>showCD('1'),T.one);
@@ -970,17 +984,31 @@ function runCountdown(lv){
   const t0=performance.now();
   function tick(now){
     const el=now-t0;
-    // Door open animation
-    const doorPct=Math.min(1,Math.max(0,(el-DOOR_OPEN_START)/(DOOR_OPEN_END-DOOR_OPEN_START)));
+    const doorPct=Math.min(1,el/DOOR_OPEN_END);
     const ease=doorPct<0.5?2*doorPct*doorPct:-1+(4-2*doorPct)*doorPct;
+    // Player walk in
     if(el>=T.p0&&el<T.p1){ const t=(el-T.p0)/(T.p1-T.p0),e=t<0.5?2*t*t:-1+(4-2*t)*t; playerDot.cx=lerp(doorX,waitX,e); playerDot.cy=lerp(doorY,waitY,e); }
     else if(el>=T.p1){ playerDot.cx=waitX; playerDot.cy=waitY; }
+    // Departing NPC walks out
+    if(deptTarget!==null){
+      const sx=urinalCX(deptTarget,n);
+      if(el>=T.d0&&el<T.d1){
+        if(!deptDot) deptDot={cx:sx,cy:URINAL_MID_Y,color:COL.npcDot,r:11,hatFn:NPC_HATS[deptTarget%NPC_HATS.length]};
+        const t=(el-T.d0)/(T.d1-T.d0),e=t<0.5?2*t*t:-1+(4-2*t)*t;
+        deptDot.cx=lerp(sx,doorX,e); deptDot.cy=lerp(URINAL_MID_Y,doorY,e);
+      } else if(el>=T.d1){
+        // NPC has left — mark stall as warm
+        if(deptDot){ deptDot=null; lv.stalls[deptTarget]={status:'empty',warm:true}; }
+      }
+    }
+    // Arriving NPC
     if(npcTarget!==null){
       const nx=urinalCX(npcTarget,n);
       if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11,hatFn:NPC_HATS[currentLevel%NPC_HATS.length]}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
       else if(el>=T.n1&&npcDot){ npcDot.cx=nx; npcDot.cy=URINAL_MID_Y; }
     }
-    drawRoom(lv.stalls,door,null,null,null,[playerDot,...(npcDot?[npcDot]:[])],ease);
+    const dots=[playerDot,...(deptDot?[deptDot]:[]),...(npcDot?[npcDot]:[])];
+    drawRoom(lv.stalls,door,null,null,null,dots,ease);
     if(el<T.done){ animFrame=requestAnimationFrame(tick); }
     else{
       countingDown=false;
@@ -1153,18 +1181,33 @@ const NPC_SCRIPTS=[
 let npcScriptIdx=0;
 
 function getLevelDef(idx){
-  // For levels beyond our base set, cycle through standard levels
   const base = idx < BASE_LEVELS.length ? BASE_LEVELS[idx] : BASE_LEVELS[5+(idx%10)];
-  // Inject NPC from L10 onwards, random 1-in-3 chance, not two in a row
+  const stalls = base.stalls.map(s=>({...s}));
   if(idx>=9 && !isDebugMode){
-    const chance=Math.random();
-    if(chance<0.333 && lastNpcLevel!==idx-1){
-      const script=NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length];
-      npcScriptIdx++;
-      return{...base, stalls:base.stalls.map(s=>({...s})), npcArrival:{urinal:Math.min(script.urinal,base.stalls.length-2)}};
+    const occupied = stalls.map((s,i)=>s.status==='occupied'?i:null).filter(x=>x!==null);
+    const canDepart = occupied.length > 0;
+    const canArrive = true;
+    const canBoth = idx>=19 && canDepart; // both events from L20
+    const chance = Math.random();
+    const notConsec = lastNpcLevel!==idx-1;
+
+    if(canBoth && chance<0.15 && notConsec){
+      // Both: someone departs on "2", someone arrives on "1"
+      const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
+      const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
+      const arrivalUrinal = Math.min(script.urinal, stalls.length-2);
+      return{...base, stalls, npcArrival:{urinal:arrivalUrinal}, npcDeparture:{urinal:departIdx}};
+    } else if(chance<0.25 && canDepart && notConsec){
+      // Departure only
+      const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
+      return{...base, stalls, npcDeparture:{urinal:departIdx}};
+    } else if(chance<0.5 && notConsec){
+      // Arrival only
+      const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
+      return{...base, stalls, npcArrival:{urinal:Math.min(script.urinal,stalls.length-2)}};
     }
   }
-  return{...base, stalls:base.stalls.map(s=>({...s}))};
+  return{...base, stalls};
 }
 
 // ── RENDER ────────────────────────────────────────────
@@ -1202,7 +1245,7 @@ function renderLevel(){
   countingDown=false; goTime=null; reactionTime=null;
   // Get level def (may inject NPC)
   const lv = getLevelDef(currentLevel);
-  if(lv.npcArrival) lastNpcLevel=currentLevel;
+  if(lv.npcArrival||lv.npcDeparture) lastNpcLevel=currentLevel;
   LEVELS[currentLevel]=lv;
   picked=null; revealed=false; hoveredIdx=null;
   document.getElementById('score-popup').classList.remove('show');
