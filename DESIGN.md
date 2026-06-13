@@ -105,7 +105,7 @@ Each tutorial level introduces one new rule. Before each tutorial level, a **rul
 
 ---
 
-### Level 4 — R4: Stay inconspicuous
+### Level 4 — R4: Blend in
 ```
 0 0 0 0 0 0 0 1
 0 0 0 0 E 0 0 0
@@ -357,6 +357,13 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 ---
 
 ## Changelog
+
+### v0.3.3
+- Renamed R4 "Stay inconspicuous" → **"Blend in"** everywhere (rules screen, score popup, debug table, tooltips)
+- R4 description rewritten to plain language
+- Rules screen: R1 tag now shows a hover tooltip "Get this wrong and your run is over" — only on the first screen (L1 introduction), not repeated after
+- Rules screen: R4 tag shows a hover tooltip "This isn't just pass/fail — it's how well you pass. Stars go toward your score" — only when R4 is first introduced (L4)
+- Score popup: R1, R4, R5 labels now have inline ⓘ tooltips explaining their type (hard rule vs scored rule)
 
 ### v0.3.2
 - **Timer bar** now shows full (green) during the 3-2-1 countdown and only starts depleting on GO
