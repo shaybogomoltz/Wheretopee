@@ -358,6 +358,15 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.2
+- **Timer bar** now shows full (green) during the 3-2-1 countdown and only starts depleting on GO
+- **Debug Levels rule break** — no longer sends you to game over; shows "Retry level" and "Next level" buttons instead
+- **Play mode rule break** — delay before game-over screen increased from 2.5s to 4s so you can read the result
+- **Game over screen** now auto-returns to landing after 3.5s (or immediately on "Back to start")
+- **NPC events** now fire from L6 onwards (was L10); arrival probability raised to ~75%, departure to ~40%
+- **Level designs overhauled** — all standard levels (L6–L15) now have at least one occupant; even stall counts (6, 8, 10) added throughout
+- **No empty-room levels** after tutorial — every standard level starts with at least one NPC in a stall
+
 ### v0.3.1
 - Fixed crash on page load caused by version script running before `corner-version` element existed in the DOM
 - Wrapped version DOM writes in `DOMContentLoaded` listener

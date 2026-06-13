@@ -540,7 +540,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.1';
+const GAME_VERSION = '0.3.2';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -690,6 +690,7 @@ function gameOver(reason) {
   document.getElementById('timeout-score-val').textContent = sessionScore.toLocaleString();
   document.getElementById('timeout-screen').classList.add('show');
   sessionScore = 0; currentLevel = 0;
+  setTimeout(()=>{ if(document.getElementById('timeout-screen').classList.contains('show')) goLanding(); }, 3500);
 }
 
 // ── HATS ─────────────────────────────────────────────
@@ -984,6 +985,7 @@ function hideCD(){ document.getElementById('countdown-text').style.opacity='0'; 
 
 function runCountdown(lv){
   countingDown=true; goTime=null;
+  if(!isDebugMode&&!isDebugRulesMode){ const _b=document.getElementById('timer-bar'); _b.style.width='100%'; _b.style.background='hsl(120,80%,42%)'; }
   const n=lv.stalls.length, door=lv.doorIndex??0;
   const npcTarget=lv.npcArrival?.urinal??null;
   const deptTarget=lv.npcDeparture?.urinal??null;
@@ -1061,8 +1063,14 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   if(isDebugMode) updateDebugStats();
   document.getElementById('next-btn').style.display='none';
   document.getElementById('retry-btn').style.display='none';
-  if(broke){ setTimeout(()=>gameOver('rule'), 2500); }
-  else {
+  if(broke){
+    if(isDebugMode){
+      const rb=document.getElementById('retry-btn'); rb.style.display='inline-block'; rb.textContent='Retry level'; rb.onclick=()=>{ document.getElementById('score-popup').classList.remove('show'); renderLevel(); };
+      const nb=document.getElementById('next-btn'); nb.style.display='inline-block'; nb.textContent='Next level →'; nb.onclick=()=>nextLevel();
+    } else {
+      setTimeout(()=>gameOver('rule'), 4000);
+    }
+  } else {
     const nb = document.getElementById('next-btn'); nb.style.display='inline-block';
     if(!isDebugMode && currentLevel<4){ nb.textContent=`See Rule ${currentLevel+2} →`; nb.onclick=()=>{ document.getElementById('score-popup').classList.remove('show'); showRulesScreen(currentLevel+1,false); }; }
     else { nb.textContent='Next level →'; nb.onclick=()=>nextLevel(); }
@@ -1177,21 +1185,23 @@ function brk(a,...ix){ix.forEach(i=>a[i]={status:'broken'});return a;}
 function rec(a,...ix){ix.forEach(i=>a[i]={status:'empty',recent:true});return a;}
 
 const BASE_LEVELS=[
-  {stalls:occ(e(3),0),    doorIndex:1},
-  {stalls:occ(e(6),1,4,5),doorIndex:2},
-  {stalls:occ(e(5),4),    doorIndex:2},
-  {stalls:occ(e(8),7),    doorIndex:4},
-  {stalls:e(8),           doorIndex:7},
-  {stalls:e(9),                          doorIndex:0},
-  {stalls:occ(e(7),2),                   doorIndex:0},
-  {stalls:occ(e(9),4),                   doorIndex:0},
-  {stalls:brk(occ(e(7),1),3),            doorIndex:0},
-  {stalls:e(7),                          doorIndex:3},
-  {stalls:occ(e(7),3),                   doorIndex:0},
-  {stalls:occ(e(7),1,3,5),               doorIndex:6},
-  {stalls:occ(e(9),2,6),                 doorIndex:4},
-  {stalls:brk(occ(e(9),2,6),8),          doorIndex:4},
-  {stalls:occ(e(7),0,6),                 doorIndex:3},
+  // ── TUTORIAL: one rule per level ──
+  {stalls:occ(e(3),0),     doorIndex:1},          // L1  R1: 3 stalls, #1 occ
+  {stalls:occ(e(6),1,4,5), doorIndex:2},          // L2  R2: 6 stalls, #2 #5 #6 occ
+  {stalls:occ(e(5),4),     doorIndex:2},          // L3  R3: 5 stalls, #5 occ
+  {stalls:occ(e(8),7),     doorIndex:4},          // L4  R4: 8 stalls (even), #8 occ
+  {stalls:e(8),            doorIndex:7},          // L5  R5: 8 stalls (even), empty, door right
+  // ── STANDARD: all rules, all have at least one occupant ──
+  {stalls:occ(e(6),0,5),         doorIndex:2},   // L6  6 stalls (even), #1 #6 occ
+  {stalls:occ(e(8),1,6),         doorIndex:0},   // L7  8 stalls (even), #2 #7 occ
+  {stalls:occ(e(10),2,7),        doorIndex:5},   // L8  10 stalls (even), #3 #8 occ, centre door
+  {stalls:brk(occ(e(7),1,5),3),  doorIndex:0},   // L9  7 stalls, #2 #6 occ + #4 broken
+  {stalls:occ(e(6),0,3),         doorIndex:5},   // L10 6 stalls (even), #1 #4 occ, door right
+  {stalls:occ(e(8),3,6),         doorIndex:0},   // L11 8 stalls (even), #4 #7 occ
+  {stalls:occ(e(9),1,4,7),       doorIndex:8},   // L12 9 stalls, #2 #5 #8 occ, door right
+  {stalls:occ(e(10),2,5,8),      doorIndex:0},   // L13 10 stalls (even), #3 #6 #9 occ
+  {stalls:brk(occ(e(10),1,8),4), doorIndex:5},   // L14 10 stalls (even), #2 #9 occ + #5 broken
+  {stalls:occ(e(8),0,4,7),       doorIndex:4},   // L15 8 stalls (even), #1 #5 #8 occ, centre door
 ];
 
 let LEVELS = BASE_LEVELS.map(lv=>({...lv}));
@@ -1203,13 +1213,13 @@ let npcScriptIdx=0;
 function getLevelDef(idx){
   const base = idx < BASE_LEVELS.length ? BASE_LEVELS[idx] : BASE_LEVELS[5+(idx%10)];
   const stalls = base.stalls.map(s=>({...s}));
-  if(idx>=9 && !isDebugMode && !isDebugRulesMode){
+  if(idx>=5 && !isDebugMode && !isDebugRulesMode){
     const occupied = stalls.map((s,i)=>s.status==='occupied'?i:null).filter(x=>x!==null);
     const canDepart = occupied.length > 0;
-    const canBoth = idx>=19 && canDepart;
+    const canBoth = idx>=10 && canDepart;
     const chance = Math.random();
     const notConsec = lastNpcLevel!==idx-1;
-    if(canBoth && chance<0.15 && notConsec){
+    if(canBoth && chance<0.20 && notConsec){
       const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
       const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
       const empties = stalls.map((s,i)=>s.status==='empty'&&i!==departIdx?i:null).filter(x=>x!==null);
@@ -1217,10 +1227,10 @@ function getLevelDef(idx){
       const preferred = Math.min(script.urinal, stalls.length-2);
       const arrivalUrinal = empties.reduce((a,b)=>Math.abs(b-preferred)<Math.abs(a-preferred)?b:a);
       return{...base, stalls, npcArrival:{urinal:arrivalUrinal}, npcDeparture:{urinal:departIdx}};
-    } else if(chance<0.25 && canDepart && notConsec){
+    } else if(chance<0.40 && canDepart && notConsec){
       const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
       return{...base, stalls, npcDeparture:{urinal:departIdx}};
-    } else if(chance<0.5 && notConsec){
+    } else if(chance<0.75 && notConsec){
       const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
       const preferred = Math.min(script.urinal, stalls.length-2);
       let arrivalUrinal = preferred;
