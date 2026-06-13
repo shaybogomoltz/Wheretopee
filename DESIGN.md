@@ -358,6 +358,10 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.1
+- Fixed crash on page load caused by version script running before `corner-version` element existed in the DOM
+- Wrapped version DOM writes in `DOMContentLoaded` listener
+
 ### v0.3.0
 - Added **Debug Chooser** screen — "Debug mode" now branches into two sub-modes
 - Added **Debug Rules** mode: custom scenario builder with stall count slider, per-stall state selectors, door picker, and optional timing mode
