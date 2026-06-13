@@ -379,7 +379,7 @@ function closeNpcIntro() {
   if(window._npcIntroCallback) window._npcIntroCallback();
 }
 
-
+function gameOver(reason) {
   if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
   document.getElementById('timer-wrap').classList.remove('active');
