@@ -28,112 +28,105 @@
     }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* ── AUTH ── */
-    #auth-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-    .auth-logo { font-size: 48px; margin-bottom: 1rem; }
-    .auth-title { font-size: 28px; font-weight: 500; margin-bottom: 6px; }
-    .auth-sub { font-size: 14px; color: var(--text2); margin-bottom: 2rem; }
-    .auth-card { background: var(--bg2); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; width: 100%; max-width: 340px; }
-    .auth-field { margin-bottom: 1rem; }
-    .auth-field label { display: block; font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
-    .auth-field input { width: 100%; padding: 10px 12px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); font-size: 15px; outline: none; }
-    .auth-field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(55,138,221,0.15); }
-    .auth-btn { width: 100%; padding: 11px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; }
-    .auth-btn:hover { opacity: 0.85; }
-    .auth-error { font-size: 13px; color: var(--red); margin-top: 0.75rem; text-align: center; min-height: 18px; }
+    /* ── LANDING ── */
+    #landing-screen {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2rem;
+    }
+    .landing-logo  { font-size: 64px; margin-bottom: 1rem; }
+    .landing-title { font-size: 32px; font-weight: 600; margin-bottom: 8px; }
+    .landing-sub   { font-size: 15px; color: var(--text2); margin-bottom: 2.5rem; }
+    .landing-btns  { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 280px; }
+    .landing-btn {
+      padding: 14px; border-radius: var(--radius); font-size: 16px; font-weight: 500;
+      cursor: pointer; border: none; text-align: center;
+    }
+    .landing-btn-play  { background: var(--text); color: var(--bg); }
+    .landing-btn-play:hover  { opacity: 0.85; }
+    .landing-btn-debug { background: var(--bg2); color: var(--text2); border: 0.5px solid var(--border2); }
+    .landing-btn-debug:hover { background: var(--bg3); }
+    .landing-btn-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-    /* ── RULES INTRO SCREEN ── */
-    #rules-screen { display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 2rem; flex-direction: column; }
+    /* ── RULES SCREEN ── */
+    #rules-screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     #rules-screen.show { display: flex; }
-    .rules-header { text-align: center; margin-bottom: 2rem; }
-    .rules-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
-    .rules-header p  { font-size: 14px; color: var(--text2); }
-    .rules-table { width: 100%; max-width: 540px; border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 2rem; }
-    .rule-row { display: flex; align-items: flex-start; gap: 16px; padding: 14px 18px; border-bottom: 0.5px solid var(--border); transition: background 0.2s; }
+    .rules-wrap { width: 100%; max-width: 500px; }
+    .rules-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+    .rules-heading { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+    .rules-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.5; }
+    .rules-list { display: flex; flex-direction: column; gap: 0; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border2); margin-bottom: 1.5rem; }
+    .rule-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
     .rule-row:last-child { border-bottom: none; }
-    .rule-row.active   { background: var(--bg2); }
-    .rule-row.inactive { background: var(--bg); opacity: 0.35; }
-    .rule-row.new      { background: var(--blue-bg); }
-    .rule-badge { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-    .rule-row.active .rule-badge, .rule-row.new .rule-badge { background: var(--text); color: var(--bg); }
-    .rule-row.inactive .rule-badge { background: var(--border2); color: var(--text3); }
-    .rule-content { flex: 1; }
-    .rule-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 3px; }
-    .rule-row.new .rule-label { color: var(--blue); }
-    .rule-text  { font-size: 14px; color: var(--text); line-height: 1.5; }
-    .rule-row.inactive .rule-text { color: var(--text3); }
-    .rule-type  { flex-shrink: 0; font-size: 11px; padding: 2px 7px; border-radius: 6px; font-weight: 600; margin-top: 4px; }
-    .rule-hard  { background: var(--red-bg); color: var(--red); }
-    .rule-scored { background: var(--amber-bg); color: var(--amber-text); }
-    .new-badge { display: inline-block; font-size: 10px; font-weight: 700; background: var(--blue); color: white; border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: middle; }
-    .rules-cta { max-width: 540px; width: 100%; }
-    .rules-cta-btn { width: 100%; padding: 13px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 15px; font-weight: 500; cursor: pointer; }
-    .rules-cta-btn:hover { opacity: 0.85; }
+    .rule-row.new-rule { background: var(--blue-bg); }
+    .rule-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--text); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
+    .rule-row.new-rule .rule-num { background: var(--blue); }
+    .rule-body { flex: 1; }
+    .rule-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; color: var(--text); }
+    .rule-row.new-rule .rule-name { color: var(--blue-text); }
+    .rule-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+    .rule-tag { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 3px; }
+    .tag-hard   { background: var(--red-bg);   color: var(--red); }
+    .tag-scored { background: var(--amber-bg); color: var(--amber-text); }
+    .new-pill { display: inline-block; background: var(--blue); color: #fff; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; vertical-align: middle; margin-left: 5px; letter-spacing: 0.05em; }
+    .rules-cta { width: 100%; padding: 13px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 15px; font-weight: 500; cursor: pointer; }
+    .rules-cta:hover { opacity: 0.85; }
 
     /* ── GAME ── */
     #game-screen { display: none; }
-    #app { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; }
-    .game-title-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    .game-brand { font-size: 18px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-    .game-brand-emoji { font-size: 22px; }
-    .logout-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--radius); }
-    .logout-btn:hover { background: var(--bg2); color: var(--text2); }
-    .progress-bar { display: flex; gap: 6px; margin-bottom: 1rem; }
-    .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
-    .progress-dot.done    { background: var(--green); }
-    .progress-dot.current { background: var(--blue); }
-    .nav-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
-    .nav-btn { padding: 4px 10px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 12px; cursor: pointer; background: var(--bg); color: var(--text2); }
+    #app { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+    /* debug bar — only in debug mode */
+    .debug-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .debug-nav { display: flex; gap: 5px; flex-wrap: wrap; }
+    .nav-btn { padding: 3px 9px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 11px; cursor: pointer; background: var(--bg); color: var(--text2); }
     .nav-btn:hover  { background: var(--bg2); }
     .nav-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
-    .level-tag   { font-size: 12px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 4px; }
-    .level-title { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
-    .level-desc  { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 1.25rem; }
-    .hint-box { background: var(--blue-bg); border-radius: var(--radius); padding: 8px 12px; margin-bottom: 1.25rem; font-size: 13px; color: var(--blue-text); line-height: 1.5; display: none; }
-    .hint-box.show { display: block; }
+    .debug-stats { display: flex; gap: 16px; align-items: center; }
+    .dstat { font-size: 12px; }
+    .dstat-label { color: var(--text3); }
+    .dstat-val { font-weight: 600; margin-left: 3px; }
+    .exit-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 3px 7px; border-radius: var(--radius); }
+    .exit-btn:hover { background: var(--bg2); }
+
     .room-wrap { position: relative; }
     #room-svg { width: 100%; display: block; }
     #countdown-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-    #countdown-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    #countdown-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
     #countdown-text.go { color: #3B6D11; font-size: 56px; }
 
     /* ── SCORE POPUP ── */
     .score-popup { border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none; }
     .score-popup.show { display: block; }
-    .score-popup-title { font-size: 17px; font-weight: 600; margin-bottom: 1rem; }
-    .score-rules { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-    .score-rule-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
-    .score-rule-label { flex: 1; color: var(--text2); }
-    .score-rule-label span { font-weight: 500; color: var(--text); }
-    .score-rule-val { font-size: 13px; font-weight: 600; min-width: 80px; text-align: right; }
-    .score-rule-na { color: var(--text3); font-style: italic; font-size: 12px; }
-    .tick  { color: #3B6D11; }
-    .cross { color: #A32D2D; }
-    .score-divider { height: 0.5px; background: var(--border); margin: 10px 0; }
-    .score-speed-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+    .score-title { font-size: 18px; font-weight: 600; margin-bottom: 1rem; }
+    .score-rules { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+    .score-rule-row { display: flex; align-items: center; gap: 10px; }
+    .score-rule-label { flex: 1; font-size: 13px; color: var(--text2); }
+    .score-rule-label b { color: var(--text); font-weight: 500; }
+    .score-rule-val { font-size: 13px; font-weight: 600; min-width: 90px; text-align: right; }
+    .tick  { color: var(--green); }
+    .cross { color: var(--red); }
+    .divider { height: 0.5px; background: var(--border); margin: 10px 0; }
+    .score-speed { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text2); margin-bottom: 10px; }
     .score-speed-val { font-weight: 600; color: var(--text); }
-    .score-total-row { display: flex; align-items: center; justify-content: space-between; }
+    .score-total { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
     .score-total-label { font-size: 14px; font-weight: 600; }
-    .score-total-stars { display: flex; gap: 2px; }
-    .score-star { font-size: 20px; color: var(--border2); }
-    .score-star.lit { color: var(--amber); }
-    .score-feedback { font-size: 13px; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+    .score-stars { display: flex; gap: 2px; }
+    .sstar { font-size: 20px; color: var(--border2); }
+    .sstar.lit { color: var(--amber); }
+    .score-feedback { font-size: 13px; color: var(--text2); line-height: 1.5; }
     .actions { display: flex; gap: 8px; margin-top: 1rem; }
     .btn { padding: 9px 20px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 14px; cursor: pointer; background: var(--bg); color: var(--text); }
     .btn:hover { background: var(--bg2); }
     .btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
     .btn-primary:hover { opacity: 0.85; }
 
-    /* ── DEBUG ── */
-    .debug-stats { display: flex; gap: 20px; align-items: center; padding: 8px 14px; background: var(--bg2); border-radius: var(--radius) var(--radius) 0 0; border: 0.5px solid var(--border); border-bottom: none; }
-    .debug-stat-label { color: var(--text3); font-size: 11px; margin-right: 4px; }
-    .debug-stat-value { font-weight: 600; font-size: 13px; }
-    .debug-wrap { border: 0.5px solid var(--border); border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
+    /* ── DEBUG TABLE ── */
+    .debug-wrap { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
     .debug-wrap.show { display: block; }
-    .weights-bar { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; align-items: center; background: var(--bg2); }
-    .weight-row   { display: flex; align-items: center; gap: 8px; }
+    .weights-bar { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; align-items: center; background: var(--bg2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .weight-row { display: flex; align-items: center; gap: 8px; }
     .weight-label { font-size: 11px; font-weight: 500; color: var(--text2); white-space: nowrap; min-width: 90px; }
-    .weight-val   { font-size: 12px; font-weight: 500; min-width: 16px; }
+    .weight-val { font-size: 12px; font-weight: 500; min-width: 16px; }
     input[type=range] { width: 80px; }
     .debug-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
     .debug-table th { padding: 6px 4px; text-align: center; font-weight: 500; font-size: 11px; color: var(--text2); border-bottom: 0.5px solid var(--border); background: var(--bg2); }
@@ -155,162 +148,154 @@
 </head>
 <body>
 
-<!-- AUTH -->
-<div id="auth-screen">
-  <div class="auth-logo">🚾</div>
-  <div class="auth-title">Where To Pee</div>
-  <div class="auth-sub">Sign in to play</div>
-  <div class="auth-card">
-    <div class="auth-field">
-      <label for="auth-user">Username</label>
-      <input type="text" id="auth-user" placeholder="username" autocomplete="username">
+<!-- LANDING -->
+<div id="landing-screen">
+  <div class="landing-logo">🚾</div>
+  <div class="landing-title">Where To Pee</div>
+  <div class="landing-sub">The unwritten rules of the urinal.</div>
+  <div class="landing-btns">
+    <div>
+      <button class="landing-btn landing-btn-play" onclick="startPlay()">Play</button>
     </div>
-    <div class="auth-field">
-      <label for="auth-pass">Password</label>
-      <input type="password" id="auth-pass" placeholder="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <div>
+      <button class="landing-btn landing-btn-debug" onclick="startDebug()">Debug mode</button>
     </div>
-    <button class="auth-btn" onclick="doLogin()">Sign in</button>
-    <div class="auth-error" id="auth-error"></div>
   </div>
 </div>
 
-<!-- RULES INTRO -->
+<!-- RULES SCREEN -->
 <div id="rules-screen">
-  <div class="rules-header">
-    <h2>🚾 The Golden Rules</h2>
-    <p id="rules-subtitle">Master these before you step inside.</p>
-  </div>
-  <div class="rules-table" id="rules-table"></div>
-  <div class="rules-cta">
-    <button class="rules-cta-btn" id="rules-cta-btn" onclick="startLevelFromRules()">Let's go →</button>
+  <div class="rules-wrap">
+    <div class="rules-eyebrow" id="rules-eyebrow">Before you go in</div>
+    <div class="rules-heading" id="rules-heading">The Golden Rules</div>
+    <div class="rules-sub" id="rules-sub">Know these before you step inside.</div>
+    <div class="rules-list" id="rules-list"></div>
+    <button class="rules-cta" id="rules-cta" onclick="startLevelFromRules()">Let's go →</button>
   </div>
 </div>
 
 <!-- GAME -->
 <div id="game-screen">
   <div id="app">
-    <div class="game-title-bar">
-      <div class="game-brand"><span class="game-brand-emoji">🚾</span><span>Where To Pee</span></div>
-      <button class="logout-btn" onclick="doLogout()">sign out</button>
+
+    <!-- Debug top bar (hidden in play mode) -->
+    <div id="debug-topbar" class="debug-topbar" style="display:none">
+      <div id="debug-nav" class="debug-nav"></div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="debug-stats">
+          <span class="dstat"><span class="dstat-label">⭐</span><span class="dstat-val" id="stat-stars">0</span></span>
+          <span class="dstat"><span class="dstat-label">⏱</span><span class="dstat-val" id="stat-time">—</span></span>
+          <span class="dstat"><span class="dstat-label">best</span><span class="dstat-val" id="stat-best">—</span></span>
+        </div>
+        <button class="exit-btn" onclick="goLanding()">← exit</button>
+      </div>
     </div>
-    <div id="progress-bar" class="progress-bar"></div>
-    <div id="nav-row" class="nav-row"></div>
-    <div class="level-tag"   id="level-tag"></div>
-    <div class="level-title" id="level-title"></div>
-    <div class="level-desc"  id="level-desc"></div>
-    <div class="hint-box"    id="hint-box"></div>
 
     <div class="room-wrap">
       <svg id="room-svg" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg"></svg>
       <div id="countdown-overlay"><span id="countdown-text"></span></div>
     </div>
 
-    <!-- debug stats -->
-    <div class="debug-stats" id="debug-stats" style="display:none">
-      <span class="debug-stat-label">⭐ total</span><span class="debug-stat-value" id="stat-stars">0</span>
-      <span class="debug-stat-label">⏱ last</span><span class="debug-stat-value" id="stat-time">—</span>
-      <span class="debug-stat-label">⏱ best</span><span class="debug-stat-value" id="stat-best">—</span>
+    <!-- Score popup -->
+    <div class="score-popup" id="score-popup">
+      <div class="score-title" id="score-title"></div>
+      <div class="score-rules" id="score-rules"></div>
+      <div class="divider"></div>
+      <div class="score-speed">
+        <span>⏱ Reaction time</span>
+        <span class="score-speed-val" id="score-speed">—</span>
+      </div>
+      <div class="divider"></div>
+      <div class="score-total">
+        <span class="score-total-label">Score</span>
+        <div class="score-stars" id="score-stars"></div>
+      </div>
+      <div class="score-feedback" id="score-feedback"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="next-btn" style="display:none" onclick="nextLevel()">Next level →</button>
+        <button class="btn" id="retry-btn" style="display:none" onclick="retryLevel()">Try again</button>
+      </div>
     </div>
+
+    <!-- Debug table (debug mode only) -->
     <div class="debug-wrap" id="debug-wrap">
       <div class="weights-bar">
-        <div class="weight-row"><span class="weight-label">R3 next spots</span><input type="range" min="1" max="4" step="1" value="2" id="w-r3" oninput="onWC()"><span class="weight-val" id="wv-r3">2</span></div>
-        <div class="weight-row"><span class="weight-label">R4 entrance</span><input type="range" min="1" max="4" step="1" value="2" id="w-r4" oninput="onWC()"><span class="weight-val" id="wv-r4">2</span></div>
-        <div class="weight-row"><span class="weight-label">R5 distance</span><input type="range" min="1" max="4" step="1" value="1" id="w-r5" oninput="onWC()"><span class="weight-val" id="wv-r5">1</span></div>
+        <div class="weight-row"><span class="weight-label">R3 next spots</span><input type="range" min="1" max="4" value="2" id="w-r3" oninput="onWC()"><span class="weight-val" id="wv-r3">2</span></div>
+        <div class="weight-row"><span class="weight-label">R4 entrance</span><input type="range" min="1" max="4" value="2" id="w-r4" oninput="onWC()"><span class="weight-val" id="wv-r4">2</span></div>
+        <div class="weight-row"><span class="weight-label">R5 distance</span><input type="range" min="1" max="4" value="1" id="w-r5" oninput="onWC()"><span class="weight-val" id="wv-r5">1</span></div>
       </div>
       <table class="debug-table" id="debug-table"></table>
     </div>
 
-    <!-- SCORE POPUP -->
-    <div class="score-popup" id="score-popup">
-      <div class="score-popup-title" id="score-popup-title"></div>
-      <div class="score-rules" id="score-rules"></div>
-      <div class="score-divider"></div>
-      <div class="score-speed-row">
-        <span>⏱ Reaction time</span>
-        <span class="score-speed-val" id="score-speed">—</span>
-      </div>
-      <div class="score-divider"></div>
-      <div class="score-total-row">
-        <span class="score-total-label">Score</span>
-        <div class="score-total-stars" id="score-total-stars"></div>
-      </div>
-      <div class="score-feedback" id="score-feedback"></div>
-      <div class="actions">
-        <button class="btn btn-primary" id="next-btn"  style="display:none" onclick="nextLevel()">Next level →</button>
-        <button class="btn"             id="retry-btn" style="display:none" onclick="retryLevel()">Try again</button>
-      </div>
-    </div>
   </div>
 </div>
 
 <script>
-const DEBUG = false;
-const CREDENTIALS = [{user:'user',pass:'pwd'},{user:'test',pass:'test'}];
+// ── CONFIG ────────────────────────────────────────────
+let isDebugMode = false;
+let currentLevel = 0;
+let completedLevels = [];
+let picked = null, revealed = false, hoveredIdx = null;
+let goTime = null, reactionTime = null, totalStars = 0, bestReaction = null;
+let countingDown = false, animFrame = null;
+let pendingLevel = 0;
 
-// ── RULES DEFINITIONS ─────────────────────────────────
+// ── RULES ─────────────────────────────────────────────
 const RULES = [
-  { id:'r1', label:'R1 — Leave a buffer',   text:'Whenever possible, leave an empty "buffer" between you and others.', type:'hard',   typeLabel:'✓ / ✗' },
-  { id:'r2', label:'R2 — Don\'t trap anyone', text:'Whenever possible, don\'t "trap" anyone between two occupied stalls.', type:'hard',   typeLabel:'✓ / ✗' },
-  { id:'r3', label:'R3 — Think ahead',       text:'Don\'t put an upcoming person into an unavoidable break of Rule #1.', type:'hard',   typeLabel:'✓ / ✗' },
-  { id:'r4', label:'R4 — Stay inconspicuous',text:'Don\'t be the creepy "hiding something shameful" guy — no lurking at the extremes.', type:'scored', typeLabel:'★★★★★' },
-  { id:'r5', label:'R5 — Don\'t over-walk',  text:'Minimise walking distance while staying aware of the entrance.', type:'scored', typeLabel:'★★★★★' },
+  { name:'R1 — Leave a buffer',       desc:'Whenever possible, leave an empty "buffer" between you and others.',                        type:'hard',   tag:'✓ / ✗' },
+  { name:'R2 — Don\'t trap anyone',   desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',                    type:'hard',   tag:'✓ / ✗' },
+  { name:'R3 — Think ahead',          desc:'Don\'t put an upcoming person into an unavoidable buffer violation.',                       type:'hard',   tag:'✓ / ✗' },
+  { name:'R4 — Stay inconspicuous',   desc:'Don\'t be the creepy "hiding something shameful" guy — avoid lurking at extremes.',        type:'scored', tag:'★★★★★' },
+  { name:'R5 — Don\'t over-walk',     desc:'Minimise walking distance while staying aware of the entrance.',                           type:'scored', tag:'★★★★★' },
 ];
 
-// How many rules are introduced per level (levels 1-5 intro one each)
-const RULES_UNLOCKED_AT = [1, 2, 3, 4, 5]; // after completing level index 0,1,2,3,4
-
-// ── AUTH ──────────────────────────────────────────────
-function doLogin() {
-  const u = document.getElementById('auth-user').value.trim().toLowerCase();
-  const p = document.getElementById('auth-pass').value;
-  if (CREDENTIALS.some(c => c.user === u && c.pass === p)) {
-    document.getElementById('auth-screen').style.display = 'none';
-    showRulesScreen(0, true); // first time: intro level 1 → show R1
-  } else {
-    document.getElementById('auth-error').textContent = 'Incorrect username or password.';
-    document.getElementById('auth-pass').value = '';
-  }
+// ── LANDING ───────────────────────────────────────────
+function startPlay() {
+  isDebugMode = false;
+  document.getElementById('landing-screen').style.display = 'none';
+  showRulesScreen(0, true);
 }
-function doLogout() {
+function startDebug() {
+  isDebugMode = true;
+  document.getElementById('landing-screen').style.display = 'none';
+  currentLevel = 0;
+  document.getElementById('game-screen').style.display = 'block';
+  document.getElementById('debug-topbar').style.display = 'flex';
+  document.getElementById('debug-wrap').classList.add('show');
+  renderLevel();
+}
+function goLanding() {
+  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
   document.getElementById('game-screen').style.display = 'none';
   document.getElementById('rules-screen').classList.remove('show');
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('auth-user').value = '';
-  document.getElementById('auth-pass').value = '';
-  document.getElementById('auth-error').textContent = '';
+  document.getElementById('landing-screen').style.display = 'flex';
 }
 
 // ── RULES SCREEN ──────────────────────────────────────
-let pendingLevel = 0; // which level to load after rules screen
-
+// rulesCount = how many rules to show (1–5)
+// newRuleIdx = which rule is highlighted as NEW (0-based), or null
 function showRulesScreen(levelIdx, isFirst) {
   pendingLevel = levelIdx;
-  // How many rules to show as active (levels 0-4 unlock rules 1-5)
-  const rulesActive = Math.min(levelIdx + 1, RULES.length); // levelIdx 0 → show 1 rule, etc.
-  const newRuleIdx = levelIdx < RULES.length ? levelIdx : null; // which rule is "new" this time
+  const rulesCount = Math.min(levelIdx + 1, RULES.length); // L0→1 rule, L1→2, etc.
+  const newRuleIdx = levelIdx < RULES.length ? levelIdx : null;
 
-  const subtitle = isFirst
-    ? 'Know the rules before you step inside.'
-    : `You've unlocked a new rule! Let's review before Level ${levelIdx + 1}.`;
-  document.getElementById('rules-subtitle').textContent = subtitle;
+  document.getElementById('rules-eyebrow').textContent = isFirst ? 'Before you go in' : `Level ${levelIdx + 1}`;
+  document.getElementById('rules-heading').textContent = isFirst ? 'The Golden Rules' : 'New rule unlocked!';
+  document.getElementById('rules-sub').textContent = isFirst
+    ? 'One rule at a time. Master each before moving on.'
+    : `You've learned ${rulesCount} rule${rulesCount > 1 ? 's' : ''} so far.`;
+  document.getElementById('rules-cta').textContent = `Play Level ${levelIdx + 1} →`;
 
-  const btn = document.getElementById('rules-cta-btn');
-  btn.textContent = `Play Level ${levelIdx + 1} →`;
-
-  const table = document.getElementById('rules-table');
-  table.innerHTML = RULES.map((r, i) => {
-    const isNew    = i === newRuleIdx;
-    const isActive = i < rulesActive;
-    const cls = isNew ? 'new' : isActive ? 'active' : 'inactive';
-    const typeCls  = r.type === 'hard' ? 'rule-hard' : 'rule-scored';
-    const newBadge = isNew ? `<span class="new-badge">NEW</span>` : '';
-    return `<div class="rule-row ${cls}">
-      <div class="rule-badge">R${i+1}</div>
-      <div class="rule-content">
-        <div class="rule-label">${r.label}${newBadge}</div>
-        <div class="rule-text">${isActive ? r.text : '???'}</div>
+  document.getElementById('rules-list').innerHTML = RULES.slice(0, rulesCount).map((r, i) => {
+    const isNew = i === newRuleIdx;
+    const tagCls = r.type === 'hard' ? 'tag-hard' : 'tag-scored';
+    return `<div class="rule-row${isNew ? ' new-rule' : ''}">
+      <div class="rule-num">R${i+1}</div>
+      <div class="rule-body">
+        <div class="rule-name">${r.name}${isNew ? '<span class="new-pill">NEW</span>' : ''}</div>
+        <div class="rule-desc">${r.desc}</div>
       </div>
-      <div class="rule-type ${typeCls}">${isActive ? r.typeLabel : '?'}</div>
+      <div class="rule-tag ${tagCls}">${r.tag}</div>
     </div>`;
   }).join('');
 
@@ -326,22 +311,27 @@ function startLevelFromRules() {
 }
 
 // ── COLOURS ───────────────────────────────────────────
-function isDark(){ return window.matchMedia('(prefers-color-scheme:dark)').matches; }
-function C(l,d){ return isDark()?d:l; }
-const COL={
-  wall:()=>C('#3a3630','#2a2520'), floor:()=>C('#f0ede6','#1e1c19'),
-  tile:()=>C('#e8e5de','#252320'), urinalBg:()=>C('#fff','#2a2927'),
-  urinalBorder:()=>C('#b0ada6','#5a5855'), occupied:()=>C('#e8e5de','#1e1c19'),
-  numberText:()=>C('#999','#666'), doorFill:()=>C('#f0ede6','#1e1c19'),
-  doorBorder:'#378ADD', doorText:'#378ADD', personFill:'#E8825A',
-  best:'#EAF3DE', bestBorder:'#3B6D11',
-  wrong:'#FCEBEB', wrongBorder:'#A32D2D',
-  selected:'#E6F1FB', selectedBorder:'#378ADD',
-  playerDot:'#378ADD', npcDot:'#E8534A',
+function isDark() { return window.matchMedia('(prefers-color-scheme:dark)').matches; }
+function C(l,d) { return isDark() ? d : l; }
+const COL = {
+  wall:        () => C('#3a3630','#2a2520'),
+  floor:       () => C('#f0ede6','#1e1c19'),
+  tile:        () => C('#e8e5de','#252320'),
+  urinalBg:    () => C('#ffffff','#2a2927'),
+  urinalBorder:() => C('#b0ada6','#5a5855'),
+  occupied:    () => C('#e8e5de','#1e1c19'),
+  numberText:  () => C('#999','#666'),
+  doorFill:    () => C('#f0ede6','#1e1c19'),
+  doorBorder: '#378ADD', doorText: '#378ADD',
+  personFill: '#E8825A',
+  passStall: '#EAF3DE', passStallBorder: '#3B6D11',
+  failStall: '#FCEBEB', failStallBorder: '#A32D2D',
+  selectedBorder: '#378ADD',
+  playerDot: '#378ADD', npcDot: '#E8534A',
 };
 
-// ── HELPERS ───────────────────────────────────────────
-function isAdjOcc(i,s){ return(i>0&&s[i-1].status==='occupied')||(i<s.length-1&&s[i+1].status==='occupied'); }
+// ── SCORING HELPERS ───────────────────────────────────
+function isAdjOcc(i,s){ return (i>0&&s[i-1].status==='occupied')||(i<s.length-1&&s[i+1].status==='occupied'); }
 function minDist(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
 function nextSpots(pick,s){ let c=0; for(let i=0;i<s.length;i++){ if(s[i].status!=='empty'||i===pick)continue; const lb=(i>0)&&(s[i-1].status==='occupied'||i-1===pick); const rb=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick); if(!lb&&!rb)c++; } return c; }
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
@@ -353,62 +343,94 @@ function bellLabel(v){ return['too close/far','ok','sweet spot'][v]; }
 function walkDist(i,door){ if(door===null||door===undefined)return 0; return Math.abs(i-door); }
 function gW(){ return{r3:+document.getElementById('w-r3').value,r4:+document.getElementById('w-r4').value,r5:+document.getElementById('w-r5').value}; }
 
-// ── SCORING ───────────────────────────────────────────
 function bd(i,s,door,w){
   const x=s[i];
-  if(x.status==='occupied')return{eligible:false,reason:'occupied'};
-  if(x.status==='broken')return{eligible:false,reason:'broken'};
-  const hasOcc=s.some(x=>x.status==='occupied');
+  if(x.status==='occupied')return{eligible:false};
+  if(x.status==='broken')return{eligible:false};
+  const hasOcc=s.some(v=>v.status==='occupied');
   const canAvoid=anyNonAdj(s); const adj=isAdjOcc(i,s);
   const r1app=hasOcc&&canAvoid; const r1pass=!r1app||!adj;
   const surr=maxSurround(i,s); const canAvoidSurr=anyAvoidSurround(s); const r2disq=surr>=2&&canAvoidSurr;
   const myDist=minDist(i,s); const mySpots=nextSpots(i,s);
   const myRecent=!!x.recent; const myBell=bellZone(i,s,door); const myWalk=walkDist(i,door);
-  if(!r1pass)return{eligible:true,disqualified:true,disqR:'r1',r1:false,r1pass:false,r1app,surr,dist:myDist,spots:mySpots,bell:myBell,walk:myWalk,recent:myRecent,finalStars:1,r1Stars:0,r2Stars:0,r3Stars:0,r4Stars:0,r5Stars:0};
-  if(r2disq)return{eligible:true,disqualified:true,disqR:'r2',r1:true,r1pass:true,r1app,surr,dist:myDist,spots:mySpots,bell:myBell,walk:myWalk,recent:myRecent,finalStars:1,r1Stars:r1pass?1:0,r2Stars:0,r3Stars:0,r4Stars:0,r5Stars:0};
-  const cands=s.map((_,j)=>{ if(s[j].status!=='empty')return null; if(hasOcc&&canAvoid&&isAdjOcc(j,s))return null; if(maxSurround(j,s)>=2&&canAvoidSurr)return null; return j; }).filter(x=>x!==null);
-  const mxDist=Math.max(...cands.map(j=>minDist(j,s)));
-  const mxSpots=Math.max(...cands.map(j=>nextSpots(j,s)));
-  const r3r=mySpots===mxSpots?1:mySpots>=mxSpots-1?0.5:0; const r3p=r3r*w.r3;
-  const r4r=myBell===null?null:myBell===2?1:myBell===1?0.5:0; const r4p=r4r===null?0:r4r*w.r4;
+  if(!r1pass) return{eligible:true,disqualified:true,disqR:'r1',r1pass:false,r1app,surr,dist:myDist,spots:mySpots,bell:myBell,walk:myWalk,recent:myRecent,finalStars:1,r1Stars:0,r2Stars:1,r3Stars:1,r4Stars:null,r5Stars:0};
+  if(r2disq)  return{eligible:true,disqualified:true,disqR:'r2',r1pass:true, r1app,surr,dist:myDist,spots:mySpots,bell:myBell,walk:myWalk,recent:myRecent,finalStars:1,r1Stars:1,r2Stars:0,r3Stars:1,r4Stars:null,r5Stars:0};
+  const cands=s.map((_,j)=>{
+    if(s[j].status!=='empty')return null;
+    if(hasOcc&&canAvoid&&isAdjOcc(j,s))return null;
+    if(maxSurround(j,s)>=2&&canAvoidSurr)return null;
+    return j;
+  }).filter(v=>v!==null);
+  const mxDist=cands.length?Math.max(...cands.map(j=>minDist(j,s))):0;
+  const mxSpots=cands.length?Math.max(...cands.map(j=>nextSpots(j,s))):0;
+  const r3r=mySpots===mxSpots?1:mySpots>=mxSpots-1?0.5:0;
+  const r3p=r3r*w.r3; const r3pass=r3r>=0.5;
+  const r4r=myBell===null?null:myBell===2?1:myBell===1?0.5:0;
+  const r4p=r4r===null?0:r4r*w.r4;
   const r5r=distScore(myDist,mxDist); const r5p=r5r*w.r5;
-  const pen=myRecent?-1:0; const raw=r3p+r4p+r5p+pen;
+  const pen=myRecent?-1:0;
+  const raw=r3p+r4p+r5p+pen;
   const mxRaw=w.r3+(door!==null&&door!==undefined?w.r4:0)+w.r5;
   const pct=mxRaw===0?0.8:raw/mxRaw;
-  let fs=pct>=0.8?5:pct>=0.6?4:pct>=0.4?3:2; fs=Math.max(2,Math.min(5,fs));
-  const minW=Math.min(...cands.map(j=>walkDist(j,door))); const maxW=Math.max(...cands.map(j=>walkDist(j,door)));
-  const walkTieLabel=door===null||door===undefined?null:myWalk===minW?'closest':myWalk===maxW?'furthest':'mid';
-  // Per-rule star breakdown
-  const r3Stars=Math.round(r3r*5); // 0,2.5,5 → round to 0,3,5
-  const r4Stars=r4r===null?null:Math.round(r4r*5);
-  const r5Stars=Math.round(r5r*5);
-  return{eligible:true,disqualified:false,r1:true,r1pass:true,r1app,surr,canAvoidSurr,dist:myDist,mxDist,r5p:Math.round(r5p*10)/10,r5r,r5Stars,spots:mySpots,mxSpots,r3p:Math.round(r3p*10)/10,r3r,r3Stars,bell:myBell,r4p:Math.round(r4p*10)/10,r4r,r4Stars,walk:myWalk,walkTieLabel,recent:myRecent,pen,raw:Math.round(raw*10)/10,mxRaw,finalStars:fs,r1Stars:1,r2Stars:1};
+  let fs=pct>=0.8?5:pct>=0.6?4:pct>=0.4?3:2;
+  const minW=cands.length?Math.min(...cands.map(j=>walkDist(j,door))):0;
+  const maxW=cands.length?Math.max(...cands.map(j=>walkDist(j,door))):0;
+  const walkTieLabel=door===null?null:myWalk===minW?'closest':myWalk===maxW?'furthest':'mid';
+  return{
+    eligible:true,disqualified:false,r1pass:true,r1app,surr,canAvoidSurr,
+    dist:myDist,mxDist,spots:mySpots,mxSpots,bell:myBell,walk:myWalk,
+    walkTieLabel,recent:myRecent,pen,raw,mxRaw,finalStars:fs,
+    r3r,r3p,r3pass,r4r,r4p,r5r,r5p,
+    r1Stars:1, r2Stars:1,
+    r3Stars:r3pass?1:0,
+    r4Stars:r4r===null?null:Math.round(r4r*5),
+    r5Stars:Math.round(r5r*5),
+  };
 }
+
 function scoreStall(i,s,d,w){ const b=bd(i,s,d,w); return b.eligible?b.finalStars:0; }
+
 function bests(s,door,w){
-  const scored=s.map((_,i)=>{ if(s[i].status!=='empty')return{i,stars:0,walk:999}; const b=bd(i,s,door,w); return{i,stars:b.eligible?b.finalStars:0,walk:b.eligible&&!b.disqualified?walkDist(i,door):999}; });
-  const mx=Math.max(...scored.map(x=>x.stars)); if(mx===0)return[];
-  const top=scored.filter(x=>x.stars===mx); const minW=Math.min(...top.map(x=>x.walk));
+  const scored=s.map((_,i)=>{
+    if(s[i].status!=='empty')return{i,stars:0,walk:999};
+    const b=bd(i,s,door,w);
+    return{i,stars:b.eligible?b.finalStars:0,walk:b.eligible&&!b.disqualified?walkDist(i,door):999};
+  });
+  const mx=Math.max(...scored.map(x=>x.stars));
+  if(mx===0)return[];
+  const top=scored.filter(x=>x.stars===mx);
+  const minW=Math.min(...top.map(x=>x.walk));
   return top.filter(x=>x.walk===minW).map(x=>x.i);
 }
+
+// Returns true if picking stall i is a "pass" (≥2 stars and not disqualified)
+function isPass(i,s,door,w){
+  if(s[i].status!=='empty')return false;
+  const b=bd(i,s,door,w);
+  return b.eligible&&!b.disqualified&&b.finalStars>=2;
+}
+
 function stH(n,m){ return`<span class="sm">${'★'.repeat(Math.max(0,n))}</span><span class="se">${'★'.repeat(Math.max(0,m-n))}</span>`; }
 
 // ── SVG ROOM ──────────────────────────────────────────
 const SVG_W=560,SVG_H=220,WALL=14,UW=44,UH=54,PW=7,PH=10,DW=36;
-const URINAL_TOP=WALL+4+PH;
-const URINAL_MID_Y=URINAL_TOP+UH/2-4;
+const URINAL_MID_Y=WALL+4+PH+UH/2-4;
+
 function roomX(i,n){ const tw=n*UW+(n-1)*8; return (SVG_W-tw)/2+i*(UW+8); }
 function urinalCX(i,n){ return roomX(i,n)+UW/2; }
 
-function drawRoom(stalls,door,hov,selIdx,revBests,pickedIdx,animDots){
+// passMap: null = no colouring; otherwise array of bool per stall index
+function drawRoom(stalls,door,hov,selIdx,passMap,animDots){
   const n=stalls.length; let o='';
+  // Floor + tiles
   o+=`<rect x="0" y="0" width="${SVG_W}" height="${SVG_H}" fill="${COL.floor()}"/>`;
-  const ts=30;
-  for(let x=WALL;x<SVG_W-WALL;x+=ts) o+=`<line x1="${x}" y1="${WALL}" x2="${x}" y2="${SVG_H-WALL}" stroke="${COL.tile()}" stroke-width="1"/>`;
-  for(let y=WALL;y<SVG_H-WALL;y+=ts) o+=`<line x1="${WALL}" y1="${y}" x2="${SVG_W-WALL}" y2="${y}" stroke="${COL.tile()}" stroke-width="1"/>`;
+  for(let x=WALL;x<SVG_W-WALL;x+=30) o+=`<line x1="${x}" y1="${WALL}" x2="${x}" y2="${SVG_H-WALL}" stroke="${COL.tile()}" stroke-width="1"/>`;
+  for(let y=WALL;y<SVG_H-WALL;y+=30) o+=`<line x1="${WALL}" y1="${y}" x2="${SVG_W-WALL}" y2="${y}" stroke="${COL.tile()}" stroke-width="1"/>`;
+  // Walls
   o+=`<rect x="0" y="0" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
   o+=`<rect x="0" y="0" width="${WALL}" height="${SVG_H}" fill="${COL.wall()}"/>`;
   o+=`<rect x="${SVG_W-WALL}" y="0" width="${WALL}" height="${SVG_H}" fill="${COL.wall()}"/>`;
+  // Door / bottom wall
   if(door!==null&&door!==undefined){
     const dx=roomX(door,n)+UW/2-DW/2;
     o+=`<rect x="0" y="${SVG_H-WALL}" width="${dx}" height="${WALL}" fill="${COL.wall()}"/>`;
@@ -421,82 +443,80 @@ function drawRoom(stalls,door,hov,selIdx,revBests,pickedIdx,animDots){
   } else {
     o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
   }
+  // Stalls
   for(let i=0;i<n;i++){
     const s=stalls[i]; const ux=roomX(i,n); const uy=WALL+4; const cx=ux+UW/2;
     const isOcc=s.status==='occupied', isBrk=s.status==='broken';
-    const isBest=revBests&&revBests.includes(i), isWrong=pickedIdx===i&&revBests&&!revBests.includes(i);
     const isHov=!revealed&&!countingDown&&hov===i&&!isOcc&&!isBrk;
-    let bg=COL.urinalBg(),bc=COL.urinalBorder(),bw=1.5;
-    if(isOcc||isBrk){bg=COL.occupied();}
-    if(isHov){bc='#378ADD';bw=2;}
-    if(selIdx===i){bg=COL.selected;bc=COL.selectedBorder;bw=2;}
-    if(isBest){bg=COL.best;bc=COL.bestBorder;bw=2;}
-    if(isWrong){bg=COL.wrong;bc=COL.wrongBorder;bw=2;}
+    const isPicked=selIdx===i;
+    // Determine colours
+    let bg=COL.urinalBg(), bc=COL.urinalBorder(), bw=1.5;
+    if(isOcc||isBrk){ bg=COL.occupied(); }
+    else if(passMap!==null&&!isOcc&&!isBrk){
+      // Revealed: show pass/fail across all available stalls
+      bg = passMap[i] ? COL.passStall : COL.failStall;
+      bc = passMap[i] ? COL.passStallBorder : COL.failStallBorder;
+      bw = 2;
+    } else if(isHov){ bc='#378ADD'; bw=2; }
     const by=uy+PH; const tap=4;
-    const clickable=(!isOcc&&!isBrk&&!revealed&&!countingDown);
-    const cur=clickable?'pointer':'default';
+    const clickable=!isOcc&&!isBrk&&!revealed&&!countingDown;
     const op=isBrk?'0.4':'1';
     o+=`<rect x="${cx-PW/2}" y="${uy}" width="${PW}" height="${PH}" rx="2" fill="${COL.urinalBorder()}"/>`;
-    o+=`<g onclick="${clickable?`clickUrinal(${i})`:''}" style="cursor:${cur}" opacity="${op}">`;
-    o+=`<path d="M${ux+2} ${by} L${ux+2+UW-4} ${by} L${ux+2+UW-4-tap} ${by+UH} L${ux+2+tap} ${by+UH} Z" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
+    o+=`<g onclick="${clickable?`clickUrinal(${i})`:''}" style="cursor:${clickable?'pointer':'default'}" opacity="${op}">`;
+    o+=`<path d="M${ux+2} ${by} L${ux+UW-2} ${by} L${ux+UW-2-tap} ${by+UH} L${ux+2+tap} ${by+UH} Z" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
     o+=`<path d="M${ux+8} ${by+8} L${ux+UW-6} ${by+8} L${ux+UW-tap-6} ${by+UH-8} L${ux+tap+2} ${by+UH-8} Z" fill="none" stroke="${bc}" stroke-width="0.8" opacity="0.5"/>`;
     o+=`<circle cx="${cx}" cy="${by+UH-14}" r="2.5" fill="${bc}" opacity="0.4"/>`;
     if(isBrk) o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="16" font-family="sans-serif">🔧</text>`;
     else if(isOcc){ o+=`<circle cx="${cx}" cy="${by+UH/2-4}" r="11" fill="${COL.personFill}"/><circle cx="${cx}" cy="${by+UH/2-4}" r="5" fill="#fff" opacity="0.4"/>`; }
-    else if(isBest&&revealed) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="18" fill="#3B6D11" font-weight="500" font-family="sans-serif">✓</text>`;
-    else if(isWrong) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="18" fill="#A32D2D" font-weight="500" font-family="sans-serif">✗</text>`;
+    else if(passMap!==null){
+      // Show ✓ on picked stall, simple colour otherwise
+      if(isPicked) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?COL.passStallBorder:COL.failStallBorder}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`;
+    }
     else if(s.recent) o+=`<text x="${cx}" y="${by+10}" text-anchor="middle" font-size="9" fill="#854F0B" font-family="sans-serif">recent</text>`;
     o+=`</g>`;
     o+=`<text x="${cx}" y="${by+UH+14}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
   }
+  // Animated dots
   if(animDots){ for(const d of animDots){ o+=`<circle cx="${d.cx}" cy="${d.cy}" r="${d.r||11}" fill="${d.color}"/><circle cx="${d.cx}" cy="${d.cy}" r="${(d.r||11)*0.45}" fill="#fff" opacity="0.4"/>`; } }
   document.getElementById('room-svg').innerHTML=o;
 }
 
 // ── COUNTDOWN ─────────────────────────────────────────
-let countingDown=false, animFrame=null;
-let goTime=null, reactionTime=null, totalStars=0, bestReaction=null;
-
 function lerp(a,b,t){ return a+(b-a)*t; }
-function showCountdownText(txt,isGo){ const el=document.getElementById('countdown-text'); el.textContent=txt; el.className=isGo?'go':''; el.style.opacity='1'; setTimeout(()=>{ el.style.opacity='0'; },isGo?600:700); }
-function hideCountdownText(){ document.getElementById('countdown-text').style.opacity='0'; }
+function showCD(txt,isGo){ const el=document.getElementById('countdown-text'); el.textContent=txt; el.className=isGo?'go':''; el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',isGo?600:700); }
+function hideCD(){ document.getElementById('countdown-text').style.opacity='0'; }
 
 function runCountdown(lv){
-  countingDown=true; revealed=false; goTime=null;
+  countingDown=true; goTime=null;
   const n=lv.stalls.length;
-  const door=lv.doorIndex!==null&&lv.doorIndex!==undefined?lv.doorIndex:0;
-  const npcTarget=lv.npcArrival?lv.npcArrival.urinal:null;
-  const doorX=urinalCX(door,n);
-  const doorY_pos=SVG_H-WALL-8;
-  const playerWaitX=doorX, playerWaitY=SVG_H-WALL-30;
-  const npcDestX=npcTarget!==null?urinalCX(npcTarget,n):0;
-  const npcDestY=URINAL_MID_Y;
-  let playerDot={cx:doorX,cy:doorY_pos,color:COL.playerDot,r:11};
+  const door=lv.doorIndex??0;
+  const npcTarget=lv.npcArrival?.urinal??null;
+  const doorX=urinalCX(door,n), doorY=SVG_H-WALL-8;
+  const waitX=doorX, waitY=SVG_H-WALL-30;
+  let playerDot={cx:doorX,cy:doorY,color:COL.playerDot,r:11};
   let npcDot=null;
-  window._playerWaitPos={cx:playerWaitX,cy:playerWaitY};
-  const T_THREE=0,T_PLAYER_START=200,T_PLAYER_END=900;
-  const T_TWO=1000,T_ONE=2000,T_NPC_START=2100,T_NPC_END=2700;
-  const T_GO=3000,T_UNLOCK=3400;
-  setTimeout(()=>showCountdownText('3'),T_THREE);
-  setTimeout(()=>showCountdownText('2'),T_TWO);
-  setTimeout(()=>showCountdownText('1'),T_ONE);
-  setTimeout(()=>{ showCountdownText('GO',true); goTime=performance.now(); },T_GO);
-  const startTime=performance.now();
+  window._playerWaitPos={cx:waitX,cy:waitY};
+  const T={p0:200,p1:900,two:1000,one:2000,n0:2100,n1:2700,go:3000,done:3400};
+  setTimeout(()=>showCD('3'),0);
+  setTimeout(()=>showCD('2'),T.two);
+  setTimeout(()=>showCD('1'),T.one);
+  setTimeout(()=>{ showCD('GO',true); goTime=performance.now(); },T.go);
+  const t0=performance.now();
   function tick(now){
-    const el=now-startTime;
-    if(el>=T_PLAYER_START&&el<T_PLAYER_END){ const t=(el-T_PLAYER_START)/(T_PLAYER_END-T_PLAYER_START); const ease=t<0.5?2*t*t:-1+(4-2*t)*t; playerDot.cx=lerp(doorX,playerWaitX,ease); playerDot.cy=lerp(doorY_pos,playerWaitY,ease); }
-    else if(el>=T_PLAYER_END){ playerDot.cx=playerWaitX; playerDot.cy=playerWaitY; }
+    const el=now-t0;
+    if(el>=T.p0&&el<T.p1){ const t=(el-T.p0)/(T.p1-T.p0),e=t<0.5?2*t*t:-1+(4-2*t)*t; playerDot.cx=lerp(doorX,waitX,e); playerDot.cy=lerp(doorY,waitY,e); }
+    else if(el>=T.p1){ playerDot.cx=waitX; playerDot.cy=waitY; }
     if(npcTarget!==null){
-      if(el>=T_NPC_START&&el<T_NPC_END){ if(!npcDot)npcDot={cx:doorX,cy:doorY_pos,color:COL.npcDot,r:11}; const t=(el-T_NPC_START)/(T_NPC_END-T_NPC_START); const ease=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,npcDestX,ease); npcDot.cy=lerp(doorY_pos,npcDestY,ease); }
-      else if(el>=T_NPC_END){ if(npcDot){npcDot.cx=npcDestX;npcDot.cy=npcDestY;} }
+      const nx=urinalCX(npcTarget,n);
+      if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
+      else if(el>=T.n1&&npcDot){ npcDot.cx=nx; npcDot.cy=URINAL_MID_Y; }
     }
-    const dots=[playerDot]; if(npcDot)dots.push(npcDot);
-    drawRoom(lv.stalls,door,null,null,null,null,dots);
-    if(el<T_UNLOCK){ animFrame=requestAnimationFrame(tick); }
-    else {
+    drawRoom(lv.stalls,door,null,null,null,[playerDot,...(npcDot?[npcDot]:[])]);
+    if(el<T.done){ animFrame=requestAnimationFrame(tick); }
+    else{
       countingDown=false;
       if(npcTarget!==null) lv.stalls[npcTarget]={status:'occupied'};
-      drawRoom(lv.stalls,door,null,null,null,null,[playerDot]);
+      drawRoom(lv.stalls,door,null,null,null,[playerDot]);
       renderDebug();
     }
   }
@@ -505,23 +525,109 @@ function runCountdown(lv){
 
 function animatePlayerWalk(stalls,door,pickedIdx,onComplete){
   const n=stalls.length;
-  const startPos=window._playerWaitPos||{cx:urinalCX(door!==null?door:0,n),cy:SVG_H-WALL-30};
-  const destX=urinalCX(pickedIdx,n), destY=URINAL_MID_Y;
-  const WALK_MS=700; const startTime=performance.now();
+  const sp=window._playerWaitPos||{cx:urinalCX(door??0,n),cy:SVG_H-WALL-30};
+  const dx=urinalCX(pickedIdx,n), dy=URINAL_MID_Y;
+  const t0=performance.now(), DUR=700;
   function tick(now){
-    const t=Math.min(1,(now-startTime)/WALK_MS);
-    const ease=t<0.5?2*t*t:-1+(4-2*t)*t;
-    const cx=lerp(startPos.cx,destX,ease), cy=lerp(startPos.cy,destY,ease);
-    drawRoom(stalls,door,null,null,null,null,[{cx,cy,color:COL.playerDot,r:11}]);
-    if(t<1){ animFrame=requestAnimationFrame(tick); }
-    else { animFrame=null; onComplete(); }
+    const t=Math.min(1,(now-t0)/DUR), e=t<0.5?2*t*t:-1+(4-2*t)*t;
+    drawRoom(stalls,door,null,null,null,[{cx:lerp(sp.cx,dx,e),cy:lerp(sp.cy,dy,e),color:COL.playerDot,r:11}]);
+    t<1?animFrame=requestAnimationFrame(tick):(animFrame=null,onComplete());
   }
   animFrame=requestAnimationFrame(tick);
 }
 
-// ── DEBUG ─────────────────────────────────────────────
+// ── SCORE POPUP ───────────────────────────────────────
+// rulesShown: how many rules to show in popup (null = all 5)
+function showScorePopup(pick, stalls, door, w, rulesShown) {
+  const b = bd(pick, stalls, door, w);
+  const stars = b.eligible ? b.finalStars : 0;
+  const hasOcc = stalls.some(s => s.status === 'occupied');
+  const hasDoor = door !== null && door !== undefined;
+  const count = rulesShown ?? RULES.length; // how many rule rows to show
+
+  const titles = {5:'Perfect! 🎉',4:'Very good 👍',3:'Acceptable 😐',2:'Below average 😬',1:'Rule broken! ❌'};
+  document.getElementById('score-title').textContent = titles[stars] || '—';
+
+  function starRow(val, max=5) {
+    return Array.from({length:max},(_,i)=>`<span style="color:${i<val?'var(--amber)':'var(--border2)'};font-size:15px">★</span>`).join('');
+  }
+  function ruleRow(num, label, type, val) {
+    // val: for hard = bool, for scored = 0-5 or null (n/a)
+    let valHtml;
+    if(val===null) valHtml=`<span style="color:var(--text3);font-size:12px;font-style:italic">n/a</span>`;
+    else if(type==='hard') valHtml=val?`<span class="tick">✓ Pass</span>`:`<span class="cross">✗ Fail</span>`;
+    else valHtml=starRow(val);
+    return `<div class="score-rule-row">
+      <span class="score-rule-label"><b>R${num}</b> — ${label}</span>
+      <span class="score-rule-val">${valHtml}</span>
+    </div>`;
+  }
+
+  // Compute per-rule values
+  const r1val = !b.r1app ? null : b.r1pass;
+  const r2val = !hasOcc  ? null : b.disqualified&&b.disqR==='r2' ? false : b.surr<2;
+  const r3val = b.disqualified ? false : b.r3pass;
+  const r4val = !hasDoor ? null : b.r4Stars;
+  const r5val = b.r5Stars;
+
+  const ruleData = [
+    [1,'Leave a buffer','hard',r1val],
+    [2,"Don't trap anyone",'hard',r2val],
+    [3,'Think ahead','hard',r3val],
+    [4,'Stay inconspicuous','scored',r4val],
+    [5,"Don't over-walk",'scored',r5val],
+  ];
+
+  document.getElementById('score-rules').innerHTML = ruleData.slice(0,count).map(r=>ruleRow(...r)).join('');
+  document.getElementById('score-speed').textContent = reactionTime!==null?(reactionTime/1000).toFixed(2)+'s':'—';
+  document.getElementById('score-stars').innerHTML = Array.from({length:5},(_,i)=>`<span class="sstar${i<stars?' lit':''}">★</span>`).join('');
+
+  // Feedback
+  let fb='';
+  if(stars===5) fb='Textbook. Every rule respected.';
+  else if(b.disqualified&&b.disqR==='r1') fb='A stall with a buffer gap was available.';
+  else if(b.disqualified&&b.disqR==='r2') fb='Your pick fully surrounds someone. Avoidable.';
+  else if(stars===4){ const bn=bests(stalls,door,w).map(x=>x+1).join(' or '); fb=`Solid. Stall${bn.includes('or')?'s':''} ${bn} was slightly better.`; }
+  else if(stars===3) fb=`Acceptable. Left ${b.spots??'?'} valid spot(s) for the next person.`;
+  else if(b.spots===0) fb='You trapped the next guy — zero valid spots left!';
+  else if(hasDoor&&b.bell===0) fb='Too close to the entrance, or suspiciously far away.';
+  else fb='One or more rules scored poorly.';
+  document.getElementById('score-feedback').textContent = fb;
+
+  document.getElementById('score-popup').classList.add('show');
+
+  // Update session stats
+  totalStars += stars;
+  if(isDebugMode) updateDebugStats();
+
+  // Buttons
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('retry-btn').style.display='none';
+
+  if(stars>=2){
+    completedLevels=[...new Set([...completedLevels,currentLevel])];
+    if(isDebugMode) renderNav();
+    const nb=document.getElementById('next-btn');
+    nb.style.display='inline-block';
+    // For tutorial levels (0-4), show rules screen for next level
+    if(!isDebugMode && currentLevel<4){
+      nb.textContent=`See Rule ${currentLevel+2} →`;
+      nb.onclick=()=>{
+        document.getElementById('score-popup').classList.remove('show');
+        showRulesScreen(currentLevel+1,false);
+      };
+    } else {
+      nb.textContent=currentLevel<LEVELS.length-1?'Next level →':'Play again ↺';
+      nb.onclick=()=>nextLevel();
+    }
+  } else {
+    document.getElementById('retry-btn').style.display='inline-block';
+  }
+}
+
+// ── DEBUG TABLE ───────────────────────────────────────
 function renderDebug(){
-  if(!DEBUG)return;
+  if(!isDebugMode)return;
   const{stalls,doorIndex}=LEVELS[currentLevel];
   const w=gW(); const best=bests(stalls,doorIndex,w);
   const bds=stalls.map((_,i)=>bd(i,stalls,doorIndex,w));
@@ -530,175 +636,56 @@ function renderDebug(){
   const hc=stalls.map((_,i)=>`<th>#${i+1}</th>`).join('');
   function row(lbl,cells){ return`<tr><td class="rl">${lbl}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`; }
   const hasOcc=stalls.some(s=>s.status==='occupied');
-  const sc=stalls.map(s=>s.status==='occupied'?`<span class="pill pn">occupied</span>`:s.status==='broken'?`<span class="pill pn">broken</span>`:s.recent?`<span class="pill pw">recent</span>`:`<span class="pill pp">empty</span>`);
-  const r1c=bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1?`<span class="pill pp">ok ✓</span>`:`<span class="pill pf">adj ✗</span>`);
-  const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')||b.surr>=2?`<span class="pill pf">surrounds ✗</span>`:`<span class="pill pp">ok ✓</span>`);
-  const r3c=bds.map(b=>!b.eligible?na:b.disqualified?`<span style="color:var(--text3)">${b.spots}</span>`:`${b.spots}<span style="color:var(--text3);font-size:10px"> /${b.mxSpots}</span><br><b>+${b.r3p}</b>`);
-  const r4c=bds.map(b=>{ if(!b.eligible)return na; if(b.bell===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${bellLabel(b.bell)}</span>`; const cl=b.bell===2?'pp':b.bell===1?'pm':'pf'; return`<span class="pill ${cl}">${bellLabel(b.bell)}</span><br><b>+${b.r4p}</b>`; });
-  const r5c=bds.map(b=>{ if(!b.eligible)return na; if(b.disqualified)return`<span style="color:var(--text3)">${b.dist===999?'∞':b.dist}</span>`; const thr=b.mxDist===999?'∞':Math.ceil(b.mxDist*0.6); return`${b.dist===999?'∞':b.dist}<span style="color:var(--text3);font-size:10px"> (≥${thr})</span><br><b>+${b.r5p}</b>`; });
-  const wkc=bds.map((b)=>{ if(!b.eligible)return na; if(b.walk===0&&doorIndex===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${b.walk}</span>`; const cl=b.walkTieLabel==='closest'?'pp':b.walkTieLabel==='furthest'?'pf':'pn'; return`${b.walk} <span class="pill ${cl}">${b.walkTieLabel||''}</span>`; });
-  const pc=bds.map(b=>!b.eligible?na:b.recent?`<span class="pill pw">−1</span>`:na);
-  const tc=bds.map(b=>!b.eligible?na:stH(b.finalStars,5));
-  const ww=gW();
-  const r4row=doorIndex!==null&&doorIndex!==undefined?row(`r4: entrance zone ×${ww.r4}`,r4c):'';
-  const wkrow=doorIndex!==null&&doorIndex!==undefined?row('walk tiebreaker',wkc):'';
-  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1: no adjacent',r1c)}${row('r2: no surround',r2c)}${row(`r3: next spots ×${ww.r3}`,r3c)}${r4row}${row(`r5: distance ×${ww.r5}`,r5c)}${wkrow}${row('penalty',pc)}${row('total',tc)}</tbody>`;
+  const sc=stalls.map(s=>s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:s.recent?`<span class="pill pw">recent</span>`:`<span class="pill pp">empty</span>`);
+  const r1c=bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">ok ✓</span>`:`<span class="pill pf">adj ✗</span>`);
+  const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')||b.surr>=2?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">ok ✓</span>`);
+  const r3c=bds.map(b=>!b.eligible?na:b.disqualified?`<span style="color:var(--text3)">${b.spots}</span>`:`${b.spots}/${b.mxSpots} <b>+${b.r3p}</b>`);
+  const r4c=bds.map(b=>{ if(!b.eligible)return na; if(b.bell===null||b.bell===undefined)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${bellLabel(b.bell)}</span>`; const cl=b.bell===2?'pp':b.bell===1?'pm':'pf'; return`<span class="pill ${cl}">${bellLabel(b.bell)}</span> <b>+${b.r4p}</b>`; });
+  const r5c=bds.map(b=>{ if(!b.eligible)return na; if(b.disqualified)return`<span style="color:var(--text3)">${b.dist===999?'∞':b.dist}</span>`; return`${b.dist===999?'∞':b.dist} <b>+${b.r5p}</b>`; });
+  const tc=bds.map(b=>!b.eligible?na:`<b>${b.finalStars}★</b>`);
+  const hasDoor=LEVELS[currentLevel].doorIndex!==null&&LEVELS[currentLevel].doorIndex!==undefined;
+  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1: buffer',r1c)}${row('r2: surround',r2c)}${row('r3: next spots',r3c)}${hasDoor?row('r4: zone',r4c):''}${row('r5: distance',r5c)}${row('total',tc)}</tbody>`;
 }
 function updateDebugStats(){
-  if(!DEBUG)return;
   document.getElementById('stat-stars').textContent=totalStars;
   document.getElementById('stat-time').textContent=reactionTime!==null?(reactionTime/1000).toFixed(2)+'s':'—';
   document.getElementById('stat-best').textContent=bestReaction!==null?(bestReaction/1000).toFixed(2)+'s':'—';
 }
-function onWC(){ const w=gW(); ['r3','r4','r5'].forEach(k=>document.getElementById('wv-'+k).textContent=w[k]); const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,hoveredIdx,revealed?picked:null,revealed?bests(stalls,doorIndex,w):null,revealed?picked:null,null); renderDebug(); }
-
-// ── SCORE POPUP ───────────────────────────────────────
-function showScorePopup(pick, stalls, door, w) {
-  const b = bd(pick, stalls, door, w);
-  const best = bests(stalls, door, w);
-  const passed = best.includes(pick);
-  const stars = b.eligible ? b.finalStars : 0;
-  const hasOcc = stalls.some(s => s.status === 'occupied');
-  const hasDoor = door !== null && door !== undefined;
-
-  // Title
-  const titles = { 5:'Perfect! 🎉', 4:'Very good 👍', 3:'Acceptable 😐', 2:'Below average 😬', 1:'Rule broken! ❌' };
-  document.getElementById('score-popup-title').textContent = titles[stars] || '—';
-
-  // Per-rule breakdown
-  function ruleRow(ruleNum, label, value, type) {
-    const isNA = value === null;
-    let valHtml = '';
-    if (isNA) {
-      valHtml = `<span class="score-rule-na">n/a this level</span>`;
-    } else if (type === 'hard') {
-      valHtml = value
-        ? `<span class="tick">✓ Pass</span>`
-        : `<span class="cross">✗ Fail</span>`;
-    } else {
-      // scored: value is 0-5
-      const v = Math.round(value);
-      valHtml = Array.from({length:5},(_,i)=>`<span style="color:${i<v?'var(--amber)':'var(--border2)'};font-size:15px">★</span>`).join('');
-    }
-    return `<div class="score-rule-row">
-      <span class="score-rule-label"><span>R${ruleNum}</span> — ${label}</span>
-      <span class="score-rule-val">${valHtml}</span>
-    </div>`;
-  }
-
-  // R1: pass if not disqualified by r1, or if r1 not applicable
-  const r1pass = !b.eligible ? null : !b.r1app ? null : b.r1pass !== false;
-  // R2: pass if not disqualified by r2
-  const r2pass = !b.eligible ? null : !hasOcc ? null : !(b.disqualified && b.disqR === 'r2') && b.surr < 2;
-  // R3: pass = mySpots >= mxSpots-1 (left at least near-optimal spots)
-  const r3pass = !b.eligible || b.disqualified ? false : b.r3r >= 0.5;
-  // R4 stars (0-5), null if no door
-  const r4stars = !b.eligible || b.disqualified || !hasDoor ? null : (b.r4r === null ? null : Math.round(b.r4r * 5));
-  // R5 stars (0-5)
-  const r5stars = !b.eligible || b.disqualified ? 0 : Math.round(b.r5r * 5);
-
-  document.getElementById('score-rules').innerHTML = [
-    ruleRow(1, 'Leave a buffer', r1pass, 'hard'),
-    ruleRow(2, "Don't trap anyone", r2pass, 'hard'),
-    ruleRow(3, 'Think ahead', r3pass, 'hard'),
-    ruleRow(4, 'Stay inconspicuous', r4stars, 'scored'),
-    ruleRow(5, "Don't over-walk", r5stars, 'scored'),
-  ].join('');
-
-  // Speed
-  const speedEl = document.getElementById('score-speed');
-  speedEl.textContent = reactionTime !== null ? (reactionTime/1000).toFixed(2) + 's' : '—';
-
-  // Total stars
-  document.getElementById('score-total-stars').innerHTML =
-    Array.from({length:5},(_,i)=>`<span class="score-star${i<stars?' lit':''}">★</span>`).join('');
-
-  // Feedback line
-  let fb = '';
-  if (stars === 5) fb = 'Textbook. Every rule respected.';
-  else if (b.disqualified && b.disqR === 'r1') fb = 'There was a stall with a buffer gap available.';
-  else if (b.disqualified && b.disqR === 'r2') fb = 'Your pick fully surrounds someone. Avoidable.';
-  else if (stars === 4) { const bn = best.map(x=>x+1).join(' or '); fb = `Solid. Urinal${best.length>1?'s':''} ${bn} was slightly better.`; }
-  else if (stars === 3) fb = `Acceptable. Left ${b.spots} valid spot(s) for the next arrival.`;
-  else if (b.spots === 0) fb = 'You trapped the next guy — zero valid spots left!';
-  else if (hasDoor && b.bell === 0) fb = 'Too close to the entrance, or suspiciously far away.';
-  else fb = 'One or more rules scored poorly. Check the breakdown above.';
-  document.getElementById('score-feedback').textContent = fb;
-
-  document.getElementById('score-popup').classList.add('show');
-
-  // Buttons
-  totalStars += stars;
-  updateDebugStats();
-  completedLevels = [...new Set([...completedLevels, currentLevel])];
-  renderProgress(); renderNav();
-
-  if (stars >= 2) {
-    const nb = document.getElementById('next-btn');
-    nb.style.display = 'inline-block';
-    // After levels 0-4 (L1-L5), show rules screen for next level
-    if (currentLevel < 4) {
-      nb.textContent = `See Rule ${currentLevel + 2} →`;
-      nb.onclick = () => { document.getElementById('score-popup').classList.remove('show'); showRulesScreen(currentLevel + 1, false); };
-    } else {
-      nb.textContent = currentLevel < LEVELS.length - 1 ? 'Next level →' : 'Play again ↺';
-      nb.onclick = () => nextLevel();
-    }
-  } else {
-    document.getElementById('retry-btn').style.display = 'inline-block';
-  }
+function renderNav(){
+  document.getElementById('debug-nav').innerHTML=LEVELS.map((_,i)=>`<button class="nav-btn${i===currentLevel?' active':''}" onclick="jumpLevel(${i})">L${i+1}</button>`).join('');
 }
+function jumpLevel(i){ currentLevel=i; renderLevel(); }
+function onWC(){ const w=gW(); ['r3','r4','r5'].forEach(k=>document.getElementById('wv-'+k).textContent=w[k]); renderDebug(); }
 
 // ── LEVELS ────────────────────────────────────────────
-function e(n){return Array(n).fill(null).map(()=>({status:"empty"}));}
-function occ(a,...ix){ix.forEach(i=>a[i]={status:"occupied"});return a;}
-function brk(a,...ix){ix.forEach(i=>a[i]={status:"broken"});return a;}
-function rec(a,...ix){ix.forEach(i=>a[i]={status:"empty",recent:true});return a;}
+function e(n){return Array(n).fill(null).map(()=>({status:'empty'}));}
+function occ(a,...ix){ix.forEach(i=>a[i]={status:'occupied'});return a;}
+function brk(a,...ix){ix.forEach(i=>a[i]={status:'broken'});return a;}
+function rec(a,...ix){ix.forEach(i=>a[i]={status:'empty',recent:true});return a;}
 
 const LEVELS=[
   // ── TUTORIAL ──
-  // L1: R1 — 1 0 0, door centre → must pick pos 3 (index 2)
-  { title:"The Buffer Rule", desc:"Someone's already at urinal 1. The middle would put you right next to them. Where do you go?",
-    hint:"R1: Whenever possible, leave an empty buffer between you and others.",
-    doorIndex:1, stalls:occ(e(3),0) },
-  // L2: R2 — 0 1 0 0 1 1, door centre-left (index 2) → pos 1 or 3 ok, pos 4 breaks R2
-  { title:"Don't Trap Anyone", desc:"No matter what you pick here, you'll be next to someone. So the second rule kicks in — don't trap anybody.",
-    hint:"R2: Whenever possible, don't squeeze someone between two occupied stalls.",
-    doorIndex:2, stalls:occ(e(6),1,4,5) },
-  // L3: R3 — 0 0 0 0 1, door centre → pos 1 or 3, not pos 2 or 4
-  { title:"Think Ahead", desc:"Urinal 5 is taken. You need to leave the next person at least one valid spot that doesn't break Rule 1.",
-    hint:"R3: Don't force an upcoming person into an unavoidable buffer violation.",
-    doorIndex:2, stalls:occ(e(5),4) },
-  // L4: R4 — 0 0 0 0 0 0 0 1, door centre (index 3) → pos 4,5,6 good
-  { title:"Don't Be Suspicious", desc:"Urinal 8 is occupied. There's no adjacency issue — but standing way too far from everyone looks odd.",
-    hint:"R4: Don't be the creepy 'hiding something shameful' guy. No lurking at the extremes.",
-    doorIndex:3, stalls:occ(e(8),7) },
-  // L5: R5 — 0 0 0 0 0 0 0 0, door right (index 7) → pos 5,6,7 good (not too close, not too far)
-  { title:"Minimise the Walk", desc:"Empty bathroom, door on the right. Don't trek to the far end unnecessarily — but don't hover right at the entrance either.",
-    hint:"R5: Minimise walking distance while staying aware of the entrance.",
-    doorIndex:7, stalls:e(8) },
+  {title:'R1',stalls:occ(e(3),0),   doorIndex:1},  // L1: 1 0 0 — must pick 3
+  {title:'R2',stalls:occ(e(6),1,4,5),doorIndex:2}, // L2: 0 1 0 0 1 1 — pos 1 or 3
+  {title:'R3',stalls:occ(e(5),4),   doorIndex:2},  // L3: 0 0 0 0 1 — pos 1 or 3
+  {title:'R4',stalls:occ(e(8),7),   doorIndex:3},  // L4: 0 0 0 0 0 0 0 1 — zone 4-6
+  {title:'R5',stalls:e(8),          doorIndex:7},  // L5: 0 0 0 0 0 0 0 0, door right
   // ── STANDARD ──
-  { title:"Don't over-walk", desc:"9 urinals, door on the left. Two spots score equally — but one requires walking further for no reason.", hint:null, doorIndex:0, stalls:e(9) },
-  { title:"All rules in play", desc:"7 urinals, door left, urinal 3 occupied. Apply everything you know.", hint:null, doorIndex:0, stalls:occ(e(7),2) },
-  { title:"The long walk", desc:"9 urinals, door left, urinal 5 occupied. Far enough is enough.", hint:null, doorIndex:0, stalls:occ(e(9),4) },
-  { title:"Broken in the mix", desc:"7 urinals, urinal 4 broken, urinal 2 occupied. Door left.", hint:null, doorIndex:0, stalls:brk(occ(e(7),1),3) },
-  { title:"Door in the middle", desc:"7 urinals, entrance dead centre. Both ends equidistant — which side wins?", hint:null, doorIndex:3, stalls:e(7) },
-  { title:"Warm seats", desc:"7 urinals, urinals 2 and 6 recently used, urinal 4 occupied. Door left.", hint:null, doorIndex:0, stalls:rec(occ(e(7),3),1,5) },
-  { title:"Rush hour", desc:"7 urinals, door right, urinals 2 4 6 occupied. Every gap is compromised.", hint:null, doorIndex:6, stalls:occ(e(7),1,3,5) },
-  { title:"Last minute arrival", desc:"7 urinals, door left. You're about to choose — but someone bursts in just before you. Think fast.", hint:"Watch the red dot. It changes everything.", doorIndex:0, stalls:e(7), npcArrival:{urinal:4} },
-  { title:"They took the good one", desc:"9 urinals, door left, urinal 3 already occupied. The late arrival grabs the best remaining spot.", hint:"The red dot is smart. Find the second-best option.", doorIndex:0, stalls:occ(e(9),2), npcArrival:{urinal:6} },
-  { title:"No easy answer", desc:"9 urinals, door middle, urinals 3 and 7 occupied, urinal 9 broken.", hint:null, doorIndex:4, stalls:brk(occ(e(9),2,6),8) },
+  {stalls:e(9),                                doorIndex:0},
+  {stalls:occ(e(7),2),                         doorIndex:0},
+  {stalls:occ(e(9),4),                         doorIndex:0},
+  {stalls:brk(occ(e(7),1),3),                  doorIndex:0},
+  {stalls:e(7),                                doorIndex:3},
+  {stalls:rec(occ(e(7),3),1,5),                doorIndex:0},
+  {stalls:occ(e(7),1,3,5),                     doorIndex:6},
+  {stalls:e(7),      doorIndex:0, npcArrival:{urinal:4}},
+  {stalls:occ(e(9),2),doorIndex:0, npcArrival:{urinal:6}},
+  {stalls:brk(occ(e(9),2,6),8),               doorIndex:4},
 ];
 
 const ORIGINAL_STALLS=LEVELS.map(lv=>lv.stalls.map(s=>({...s})));
 
 // ── RENDER ────────────────────────────────────────────
-let currentLevel=0, completedLevels=[], picked=null, revealed=false, hoveredIdx=null;
-
-function renderNav(){ document.getElementById('nav-row').innerHTML=LEVELS.map((_,i)=>`<button class="nav-btn${i===currentLevel?' active':''}" onclick="jumpLevel(${i})">L${i+1}</button>`).join(''); }
-function jumpLevel(i){ currentLevel=i; renderLevel(); }
-function renderProgress(){ document.getElementById('progress-bar').innerHTML=LEVELS.map((_,i)=>{ let c='progress-dot'; if(completedLevels.includes(i))c+=' done'; else if(i===currentLevel)c+=' current'; return`<div class="${c}"></div>`; }).join(''); }
-
 function clickUrinal(i){
   if(revealed||countingDown)return;
   const{stalls,doorIndex}=LEVELS[currentLevel];
@@ -706,42 +693,44 @@ function clickUrinal(i){
   if(goTime!==null){ reactionTime=performance.now()-goTime; if(bestReaction===null||reactionTime<bestReaction)bestReaction=reactionTime; }
   picked=i; revealed=true; hoveredIdx=null;
   animatePlayerWalk(stalls,doorIndex,i,()=>{
-    const w=gW(); const best=bests(stalls,doorIndex,w);
-    drawRoom(stalls,doorIndex,null,picked,best,picked,null);
+    const w=gW();
+    // Build pass map for all stalls
+    const passMap=stalls.map((_,j)=>isPass(j,stalls,doorIndex,w));
+    drawRoom(stalls,doorIndex,null,i,passMap,null);
     renderDebug();
-    showScorePopup(i,stalls,doorIndex,w);
+    // In play mode for tutorial levels, only show rules introduced so far
+    const rulesShown=(!isDebugMode&&currentLevel<5)?currentLevel+1:null;
+    showScorePopup(i,stalls,doorIndex,w,rulesShown);
   });
 }
 
 function setupHover(){
   const svg=document.getElementById('room-svg');
-  svg.addEventListener('mousemove',ev=>{ const t=ev.target.closest('[onclick]'); const m=t&&t.getAttribute('onclick')&&t.getAttribute('onclick').match(/clickUrinal\((\d+)\)/); const idx=m?+m[1]:null; if(idx!==hoveredIdx){ hoveredIdx=idx; if(!revealed&&!countingDown){ const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,hoveredIdx,null,null,null,null); } } });
-  svg.addEventListener('mouseleave',()=>{ hoveredIdx=null; if(!revealed&&!countingDown){ const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,null,null,null,null,null); } });
+  svg.addEventListener('mousemove',ev=>{
+    const t=ev.target.closest('[onclick]');
+    const m=t?.getAttribute('onclick')?.match(/clickUrinal\((\d+)\)/);
+    const idx=m?+m[1]:null;
+    if(idx!==hoveredIdx){ hoveredIdx=idx; if(!revealed&&!countingDown){ const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,hoveredIdx,null,null,null); } }
+  });
+  svg.addEventListener('mouseleave',()=>{ hoveredIdx=null; if(!revealed&&!countingDown){ const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,null,null,null,null); } });
 }
 
 function renderLevel(){
   if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}
   countingDown=false; goTime=null; reactionTime=null;
   LEVELS[currentLevel].stalls=ORIGINAL_STALLS[currentLevel].map(s=>({...s}));
-  const lv=LEVELS[currentLevel];
-  document.getElementById('level-tag').textContent=`Level ${currentLevel+1} of ${LEVELS.length}`;
-  document.getElementById('level-title').textContent=lv.title;
-  document.getElementById('level-desc').textContent=lv.desc;
-  const hb=document.getElementById('hint-box');
-  if(lv.hint){hb.textContent=lv.hint;hb.classList.add('show');}else{hb.classList.remove('show');}
   picked=null; revealed=false; hoveredIdx=null;
   document.getElementById('score-popup').classList.remove('show');
   document.getElementById('next-btn').style.display='none';
   document.getElementById('retry-btn').style.display='none';
-  hideCountdownText();
-  if(DEBUG){ document.getElementById('debug-stats').style.display='flex'; document.getElementById('debug-wrap').classList.add('show'); updateDebugStats(); }
-  renderNav(); renderProgress();
-  drawRoom(lv.stalls,lv.doorIndex,null,null,null,null,null);
+  hideCD();
+  if(isDebugMode){ renderNav(); updateDebugStats(); }
+  drawRoom(LEVELS[currentLevel].stalls,LEVELS[currentLevel].doorIndex,null,null,null,null);
   renderDebug();
-  setTimeout(()=>runCountdown(lv),600);
+  setTimeout(()=>runCountdown(LEVELS[currentLevel]),600);
 }
 
-function nextLevel(){ currentLevel<LEVELS.length-1?currentLevel++:(currentLevel=0,completedLevels=[]); renderLevel(); }
+function nextLevel(){ currentLevel=(currentLevel+1)%LEVELS.length; renderLevel(); }
 function retryLevel(){ renderLevel(); }
 
 setupHover();
