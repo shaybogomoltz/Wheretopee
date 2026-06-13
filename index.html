@@ -179,6 +179,11 @@
 <div id="landing-screen">
   <svg width="140" height="200" viewBox="0 0 340 440" style="margin-bottom:0.5rem">
     <circle cx="170" cy="100" r="54" fill="#F5D77A" stroke="#D4A84B" stroke-width="2"/>
+    <!-- Blue P cap -->
+    <ellipse cx="170" cy="68" rx="58" ry="22" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1.5"/>
+    <ellipse cx="170" cy="58" rx="42" ry="32" fill="#2266CC" stroke="#1A4A9A" stroke-width="1.2"/>
+    <ellipse cx="218" cy="68" rx="28" ry="13" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1"/>
+    <text x="170" y="68" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="900" fill="white">P</text>
     <path d="M122 78 Q118 48 135 62" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
     <path d="M138 66 Q136 38 152 54" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
     <path d="M156 60 Q158 34 172 50" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
@@ -261,6 +266,11 @@
 <div id="timeout-screen">
   <svg width="120" height="170" viewBox="0 0 340 440" style="margin-bottom:0.5rem">
     <circle cx="170" cy="100" r="54" fill="#F5D77A" stroke="#D4A84B" stroke-width="2"/>
+    <!-- Blue P cap -->
+    <ellipse cx="170" cy="68" rx="58" ry="22" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1.5"/>
+    <ellipse cx="170" cy="58" rx="42" ry="32" fill="#2266CC" stroke="#1A4A9A" stroke-width="1.2"/>
+    <ellipse cx="218" cy="68" rx="28" ry="13" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1"/>
+    <text x="170" y="68" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="900" fill="white">P</text>
     <path d="M122 78 Q118 48 135 62" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
     <path d="M138 66 Q136 38 152 54" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
     <path d="M156 60 Q158 34 172 50" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
@@ -632,8 +642,27 @@ function minDistToOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).f
 function maxDistToAnyOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 0; return Math.max(...o.map(j=>Math.abs(i-j))); }
 function nextSpots(pick,s){ let c=0; for(let i=0;i<s.length;i++){ if(s[i].status!=='empty'||i===pick)continue; const lb=(i>0)&&(s[i-1].status==='occupied'||i-1===pick); const rb=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick); if(!lb&&!rb)c++; } return c; }
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
-function maxSurround(pick,s){ let mx=0; for(let i=0;i<s.length;i++){ if(s[i].status!=='occupied')continue; const l=(i>0)&&(s[i-1].status==='occupied'||i-1===pick); const r=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick); mx=Math.max(mx,(l?1:0)+(r?1:0)); } return mx; }
-function anyAvoidSurround(s){ return s.some((x,i)=>x.status==='empty'&&maxSurround(i,s)<2); }
+function maxSurround(pick,s){
+  // Only count surround of occupied stalls that pick contributes to
+  // i.e. pick must be on one of the sides of the surrounded stall
+  let mx=0;
+  for(let i=0;i<s.length;i++){
+    if(s[i].status!=='occupied')continue;
+    const pickIsLeft=(i>0)&&(i-1===pick);
+    const pickIsRight=(i<s.length-1)&&(i+1===pick);
+    if(!pickIsLeft&&!pickIsRight) continue; // pick not adjacent to this stall — skip
+    const otherLeft=(i>0)&&(s[i-1].status==='occupied'||i-1===pick);
+    const otherRight=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick);
+    mx=Math.max(mx,(otherLeft?1:0)+(otherRight?1:0));
+  }
+  return mx;
+}
+function anyAvoidSurround(s){
+  return s.some((x,i)=>{
+    if(x.status!=='empty') return false;
+    return maxSurround(i,s)<2;
+  });
+}
 function walkDist(i,door){ return Math.abs(i-door); }
 
 // R4.1: score based on maxDist to any occupied stall relative to best/worst candidate
@@ -760,9 +789,10 @@ const URINAL_MID_Y=WALL+4+PH+UH/2-4;
 function roomX(i,n){ const tw=n*UW+(n-1)*8; return (SVG_W-tw)/2+i*(UW+8); }
 function urinalCX(i,n){ return roomX(i,n)+UW/2; }
 
-function drawRoom(stalls,door,hov,selIdx,passMap,animDots){
+function drawRoom(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
   const n=stalls.length; let o='';
   const dark=isDark();
+  const openPct = (doorOpenPct===undefined||doorOpenPct===null) ? 1 : doorOpenPct;
 
   // ── FLOOR: classic bathroom checkerboard ──
   const floorBg  = dark ? '#1a1918' : '#e8e6e0';
@@ -799,18 +829,17 @@ function drawRoom(stalls,door,hov,selIdx,passMap,animDots){
     // door frame sides
     o+=`<rect x="${dx-3}" y="${dy}" width="3" height="${dh}" fill="${dark?'#555':'#8a8278'}"/>`;
     o+=`<rect x="${dx+dw}" y="${dy}" width="3" height="${dh}" fill="${dark?'#555':'#8a8278'}"/>`;
-    // sliding door panel (slid to the left, partially open)
-    const panelW=dw*0.55;
-    o+=`<rect x="${dx-panelW+4}" y="${dy+1}" width="${panelW}" height="${dh-2}" rx="1" fill="${dark?'#3a3530':'#b0a898'}" stroke="${dark?'#555':'#7a7268'}" stroke-width="1"/>`;
-    // door panel detail lines
-    o+=`<line x1="${dx-panelW+10}" y1="${dy+3}" x2="${dx-panelW+10}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
-    o+=`<line x1="${dx-panelW+panelW/2}" y1="${dy+3}" x2="${dx-panelW+panelW/2}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
-    // door track rail
-    o+=`<rect x="${dx-panelW+4}" y="${dy}" width="${dw+panelW}" height="2" rx="1" fill="${dark?'#666':'#9a9288'}"/>`;
-    // handle dot
-    o+=`<circle cx="${dx+4}" cy="${dy+dh/2}" r="2.5" fill="${dark?'#888':'#6a6258'}"/>`;
-    // entrance label
-    o+=`<text x="${dcx}" y="${SVG_H-1}" text-anchor="middle" font-size="8" fill="${dark?'#5a9ADD':'#378ADD'}" font-family="sans-serif" font-weight="500">entrance</text>`;
+    // sliding door panel — openPct 0=closed, 1=fully open (slid left)
+    const panelW=dw*0.9;
+    const panelOpenX = dx - panelW + 4;       // fully open position
+    const panelClosedX = dx;                   // fully closed position
+    const panelX = panelClosedX + (panelOpenX - panelClosedX) * openPct;
+    o+=`<rect x="${panelX}" y="${dy+1}" width="${panelW}" height="${dh-2}" rx="1" fill="${dark?'#3a3530':'#b0a898'}" stroke="${dark?'#555':'#7a7268'}" stroke-width="1"/>`;
+    o+=`<line x1="${panelX+8}" y1="${dy+3}" x2="${panelX+8}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
+    o+=`<line x1="${panelX+panelW/2}" y1="${dy+3}" x2="${panelX+panelW/2}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
+    o+=`<rect x="${Math.min(panelX,dx)-4}" y="${dy}" width="${panelW+dw+8}" height="2" rx="1" fill="${dark?'#666':'#9a9288'}"/>`;
+    // door handle dot
+    o+=`<circle cx="${panelX+panelW-6}" cy="${dy+dh/2}" r="2.5" fill="${dark?'#888':'#6a6258'}"/>`;
   } else {
     o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${wallBot}"/>`;
   }
@@ -932,6 +961,8 @@ function runCountdown(lv){
   let npcDot=null;
   window._playerWaitPos={cx:waitX,cy:waitY};
   const T={p0:200,p1:900,two:1000,one:2000,n0:2100,n1:2700,go:3000,done:3400};
+  // Door slides open from 0→200ms (on "3")
+  const DOOR_OPEN_START=0, DOOR_OPEN_END=300;
   setTimeout(()=>showCD('3'),0);
   setTimeout(()=>showCD('2'),T.two);
   setTimeout(()=>showCD('1'),T.one);
@@ -939,6 +970,9 @@ function runCountdown(lv){
   const t0=performance.now();
   function tick(now){
     const el=now-t0;
+    // Door open animation
+    const doorPct=Math.min(1,Math.max(0,(el-DOOR_OPEN_START)/(DOOR_OPEN_END-DOOR_OPEN_START)));
+    const ease=doorPct<0.5?2*doorPct*doorPct:-1+(4-2*doorPct)*doorPct;
     if(el>=T.p0&&el<T.p1){ const t=(el-T.p0)/(T.p1-T.p0),e=t<0.5?2*t*t:-1+(4-2*t)*t; playerDot.cx=lerp(doorX,waitX,e); playerDot.cy=lerp(doorY,waitY,e); }
     else if(el>=T.p1){ playerDot.cx=waitX; playerDot.cy=waitY; }
     if(npcTarget!==null){
@@ -946,12 +980,12 @@ function runCountdown(lv){
       if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11,hatFn:NPC_HATS[currentLevel%NPC_HATS.length]}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
       else if(el>=T.n1&&npcDot){ npcDot.cx=nx; npcDot.cy=URINAL_MID_Y; }
     }
-    drawRoom(lv.stalls,door,null,null,null,[playerDot,...(npcDot?[npcDot]:[])]);
+    drawRoom(lv.stalls,door,null,null,null,[playerDot,...(npcDot?[npcDot]:[])],ease);
     if(el<T.done){ animFrame=requestAnimationFrame(tick); }
     else{
       countingDown=false;
       if(npcTarget!==null) lv.stalls[npcTarget]={status:'occupied'};
-      drawRoom(lv.stalls,door,null,null,null,[playerDot]);
+      drawRoom(lv.stalls,door,null,null,null,[playerDot],1);
       renderDebug();
     }
   }
