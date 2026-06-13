@@ -107,7 +107,7 @@
     .timer-bar { height: 100%; border-radius: 5px; width: 0%; transition: background 0.3s; }
 
     .room-wrap { position: relative; }
-    #room-svg { width: 100%; display: block; }
+    #room-svg { width: 100%; display: block; cursor: none; }
     #countdown-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     #countdown-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
     #countdown-text.go { color: #3B6D11; font-size: 56px; }
@@ -640,7 +640,18 @@ const COL = {
 function isAdjOcc(i,s){ return (i>0&&s[i-1].status==='occupied')||(i<s.length-1&&s[i+1].status==='occupied'); }
 function minDistToOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
 function maxDistToAnyOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 0; return Math.max(...o.map(j=>Math.abs(i-j))); }
-function nextSpots(pick,s){ let c=0; for(let i=0;i<s.length;i++){ if(s[i].status!=='empty'||i===pick)continue; const lb=(i>0)&&(s[i-1].status==='occupied'||i-1===pick); const rb=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick); if(!lb&&!rb)c++; } return c; }
+function nextSpots(pick,s){
+  // Simulate the state after pick is occupied, count valid spots for next person
+  const sAfter=s.map((x,j)=>j===pick?{status:'occupied'}:x);
+  const canAvoidAfter=anyNonAdj(sAfter);
+  let c=0;
+  for(let i=0;i<sAfter.length;i++){
+    if(sAfter[i].status!=='empty') continue;
+    const adj=(i>0&&sAfter[i-1].status==='occupied')||(i<sAfter.length-1&&sAfter[i+1].status==='occupied');
+    if(!canAvoidAfter||!adj) c++;
+  }
+  return c;
+}
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
 function maxSurround(pick,s){
   // Only count surround of occupied stalls that pick contributes to
@@ -1080,10 +1091,8 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   if(b.disqualified&&b.disqR==='r1') fb='A stall with a buffer gap was available.';
   else if(b.disqualified&&b.disqR==='r2') fb='Your pick fully surrounds someone. Avoidable.';
   else if(b.eligible&&!b.r3pass) fb='Your pick leaves the next person with no valid options.';
-  else if(r4val!==null&&r4val<=2) fb='You chose an unusual spot — a bit conspicuous.';
-  else if(r5val!==null&&r5val<=2) fb='You walked further than needed.';
-  else if(reactionTime>3000) fb='Good pick, but hesitation costs points.';
-  document.getElementById('score-feedback').textContent = fb;
+  // Feedback — removed per UX decision, points explain everything
+  document.getElementById('score-feedback').textContent = '';
 
   document.getElementById('score-popup').classList.add('show');
 
@@ -1195,16 +1204,28 @@ function getLevelDef(idx){
       // Both: someone departs on "2", someone arrives on "1"
       const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
       const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
-      const arrivalUrinal = Math.min(script.urinal, stalls.length-2);
+      // Find empty stall for arrival (not the departing one, not already occupied)
+      const empties = stalls.map((s,i)=>s.status==='empty'&&i!==departIdx?i:null).filter(x=>x!==null);
+      if(empties.length===0) return{...base, stalls};
+      const preferred = Math.min(script.urinal, stalls.length-2);
+      const arrivalUrinal = empties.reduce((a,b)=>Math.abs(b-preferred)<Math.abs(a-preferred)?b:a);
       return{...base, stalls, npcArrival:{urinal:arrivalUrinal}, npcDeparture:{urinal:departIdx}};
     } else if(chance<0.25 && canDepart && notConsec){
       // Departure only
       const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
       return{...base, stalls, npcDeparture:{urinal:departIdx}};
     } else if(chance<0.5 && notConsec){
-      // Arrival only
+      // Arrival only — find a valid empty stall
       const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
-      return{...base, stalls, npcArrival:{urinal:Math.min(script.urinal,stalls.length-2)}};
+      const preferred = Math.min(script.urinal, stalls.length-2);
+      // Find nearest empty stall if preferred is occupied
+      let arrivalUrinal = preferred;
+      if(stalls[arrivalUrinal].status !== 'empty'){
+        const empties = stalls.map((s,i)=>s.status==='empty'?i:null).filter(x=>x!==null);
+        if(empties.length===0) return{...base, stalls};
+        arrivalUrinal = empties.reduce((a,b)=>Math.abs(b-preferred)<Math.abs(a-preferred)?b:a);
+      }
+      return{...base, stalls, npcArrival:{urinal:arrivalUrinal}};
     }
   }
   return{...base, stalls};
