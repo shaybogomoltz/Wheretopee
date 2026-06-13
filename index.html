@@ -216,7 +216,14 @@
   <button class="landing-btn landing-btn-play" onclick="goLanding()">Back to start</button>
 </div>
 
-<!-- GAME -->
+<!-- L10 NPC INTRO SCREEN -->
+<div id="npc-intro-screen" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;">
+  <div style="font-size:64px;margin-bottom:1rem">👀</div>
+  <div style="font-size:26px;font-weight:600;margin-bottom:10px">It just got real.</div>
+  <div style="font-size:15px;color:var(--text2);max-width:360px;line-height:1.6;margin-bottom:2rem">From now on, other guys might walk in at the last second — right before you decide. Watch the red dot carefully.</div>
+  <button class="landing-btn landing-btn-play" onclick="closeNpcIntro()">I'm ready →</button>
+</div>
+
 <div id="game-screen">
   <div id="app">
 
@@ -298,7 +305,7 @@ let lastNpcLevel = -99; // track NPC spacing
 const RULES = [
   { name:'R1 — Leave a buffer',        desc:'Whenever possible, leave an empty "buffer" between you and others.',               type:'hard',   tag:'✓ / ✗' },
   { name:'R2 — Don\'t trap anyone',    desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',            type:'hard',   tag:'✓ / ✗' },
-  { name:'R3 — Think ahead',           desc:'Don\'t put the next person into an unavoidable buffer violation.',                  type:'hard',   tag:'✓ / ✗' },
+  { name:'R3 — Think ahead',           desc:'Don\'t pick a spot that forces whoever arrives after you to break Rule #1.',        type:'hard',   tag:'✓ / ✗' },
   { name:'R4 — Stay inconspicuous',    desc:'Don\'t be the creepy "hiding something shameful" guy — not too far, not too close.',type:'scored', tag:'★★★★★' },
   { name:'R5 — Don\'t over-walk',      desc:'Minimise walking distance while staying aware of the entrance.',                   type:'scored', tag:'★★★★★' },
 ];
@@ -359,7 +366,20 @@ function startLevelFromRules() {
 }
 
 // ── GAME OVER (rule break or timeout) ────────────────
-function gameOver(reason) {
+let npcIntroShown = false;
+function showNpcIntro(callback) {
+  window._npcIntroCallback = callback;
+  document.getElementById('game-screen').style.display='none';
+  const el=document.getElementById('npc-intro-screen');
+  el.style.display='flex';
+}
+function closeNpcIntro() {
+  document.getElementById('npc-intro-screen').style.display='none';
+  document.getElementById('game-screen').style.display='block';
+  if(window._npcIntroCallback) window._npcIntroCallback();
+}
+
+
   if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
   document.getElementById('timer-wrap').classList.remove('active');
@@ -733,7 +753,7 @@ function showScorePopup(pick, stalls, door, rulesShown) {
 
   if(broke){
     // Rule break → game over
-    setTimeout(()=>gameOver('rule'), 1200);
+    setTimeout(()=>gameOver('rule'), 2500);
   } else {
     const nb = document.getElementById('next-btn');
     nb.style.display='inline-block';
@@ -750,7 +770,8 @@ function showScorePopup(pick, stalls, door, rulesShown) {
 // ── DEBUG TABLE ───────────────────────────────────────
 function renderDebug(){
   if(!isDebugMode) return;
-  const{stalls,doorIndex}=LEVELS[currentLevel];
+  const lv=LEVELS[currentLevel];
+  const stalls=lv.stalls, doorIndex=lv.doorIndex;
   const bds=stalls.map((_,i)=>bd(i,stalls,doorIndex));
   const best=bests(stalls,doorIndex);
   function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified)return'cd'; if(best.includes(i))return'cb'; return''; }
@@ -761,11 +782,11 @@ function renderDebug(){
   const sc=stalls.map(s=>s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:s.recent?`<span class="pill pw">recent</span>`:`<span class="pill pp">empty</span>`);
   const r1c=bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">✓</span>`:`<span class="pill pf">adj ✗</span>`);
   const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
-  const r3c=bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots}/${b.mxSpots}</span>`);
+  const r3c=bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
   const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
   const r5c=bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
-  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1',r1c)}${row('r2',r2c)}${row('r3 spots',r3c)}${row('r4 incon.',r4c)}${row('r5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
+  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1 buffer',r1c)}${row('r2 surround',r2c)}${row('r3 next spots',r3c)}${row('r4 inconsp.',r4c)}${row('r5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
 }
 function updateDebugStats(){
   document.getElementById('stat-pts').textContent=sessionScore;
@@ -874,7 +895,15 @@ function renderLevel(){
   setTimeout(()=>runCountdown(lv),600);
 }
 
-function nextLevel(){ currentLevel++; renderLevel(); }
+function nextLevel(){
+  currentLevel++;
+  if(!isDebugMode && currentLevel===9 && !npcIntroShown){
+    npcIntroShown=true;
+    showNpcIntro(()=>renderLevel());
+  } else {
+    renderLevel();
+  }
+}
 function retryLevel(){ renderLevel(); }
 
 setupHover();
