@@ -101,9 +101,8 @@
     .session-score b { color: var(--text); }
 
     /* ── TIMER BAR ── */
-    .timer-wrap { width: 120px; height: 10px; border-radius: 5px; background: var(--bg3); overflow: hidden; display: none; }
-    .timer-wrap.active { display: block; }
-    .timer-bar { height: 100%; border-radius: 5px; width: 100%; transition: background 0.3s; }
+    .timer-wrap { width: 120px; height: 10px; border-radius: 5px; background: var(--bg3); overflow: hidden; border: 0.5px solid var(--border2); }
+    .timer-bar { height: 100%; border-radius: 5px; width: 0%; transition: background 0.3s; }
 
     .room-wrap { position: relative; }
     #room-svg { width: 100%; display: block; }
@@ -176,14 +175,63 @@
 
 <!-- LANDING -->
 <div id="landing-screen">
-  <div class="landing-logo">🚾</div>
+  <svg width="140" height="200" viewBox="0 0 340 440" style="margin-bottom:0.5rem">
+    <circle cx="170" cy="100" r="54" fill="#F5D77A" stroke="#D4A84B" stroke-width="2"/>
+    <path d="M122 78 Q118 48 135 62" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M138 66 Q136 38 152 54" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M156 60 Q158 34 172 50" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M176 58 Q182 32 194 50" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M196 64 Q208 40 214 62" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M212 74 Q226 56 222 78" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <ellipse cx="148" cy="98" rx="13" ry="15" fill="white" stroke="#333" stroke-width="2"/>
+    <ellipse cx="192" cy="98" rx="13" ry="15" fill="white" stroke="#333" stroke-width="2"/>
+    <circle cx="150" cy="101" r="7" fill="#4A3000"/>
+    <circle cx="194" cy="101" r="7" fill="#4A3000"/>
+    <circle cx="151" cy="102" r="3.5" fill="#111"/>
+    <circle cx="195" cy="102" r="3.5" fill="#111"/>
+    <circle cx="153" cy="99" r="2.5" fill="white"/>
+    <circle cx="197" cy="99" r="2.5" fill="white"/>
+    <path d="M133 82 Q148 71 161 79" fill="none" stroke="#5C3A1E" stroke-width="4" stroke-linecap="round"/>
+    <path d="M179 79 Q192 71 207 82" fill="none" stroke="#5C3A1E" stroke-width="4" stroke-linecap="round"/>
+    <path d="M140 128 Q155 118 170 124 Q185 118 200 128 Q190 145 170 147 Q150 145 140 128 Z" fill="#C0392B"/>
+    <rect x="148" y="128" width="10" height="9" rx="2" fill="white"/>
+    <rect x="160" y="127" width="10" height="10" rx="2" fill="white"/>
+    <rect x="172" y="127" width="10" height="10" rx="2" fill="white"/>
+    <rect x="184" y="128" width="9" height="9" rx="2" fill="white"/>
+    <ellipse cx="170" cy="142" rx="12" ry="6" fill="#E74C3C"/>
+    <ellipse cx="125" cy="118" rx="12" ry="8" fill="#E8825A" opacity="0.4"/>
+    <ellipse cx="215" cy="118" rx="12" ry="8" fill="#E8825A" opacity="0.4"/>
+    <path d="M222 70 Q228 62 225 73 Q221 79 218 73 Q215 67 222 70 Z" fill="#7EB8D4"/>
+    <path d="M110 75 Q104 67 107 78 Q111 84 114 78 Q117 71 110 75 Z" fill="#7EB8D4"/>
+    <path d="M236 88 Q241 80 239 91 Q235 97 233 91 Q230 84 236 88 Z" fill="#7EB8D4"/>
+    <rect x="122" y="152" width="96" height="108" rx="12" fill="#3A85C8" stroke="#2060A0" stroke-width="1.5"/>
+    <path d="M152 152 L170 172 L188 152" fill="#2060A0"/>
+    <path d="M122 168 Q78 138 62 108" fill="none" stroke="#3A85C8" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="58" cy="102" r="15" fill="#F5D77A" stroke="#D4A84B" stroke-width="1.5"/>
+    <path d="M46 94 Q42 84 48 89" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M52 91 Q49 80 55 86" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M60 89 Q58 78 64 84" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M218 175 Q230 210 198 255" fill="none" stroke="#3A85C8" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="194" cy="265" r="14" fill="#F5D77A" stroke="#D4A84B" stroke-width="1.5"/>
+    <path d="M182 258 Q178 265 184 270" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M188 255 Q184 263 190 268" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M196 254 Q193 262 199 267" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M203 256 Q202 264 207 268" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M148 260 Q175 288 185 322" fill="none" stroke="#2C5282" stroke-width="26" stroke-linecap="round"/>
+    <path d="M192 260 Q165 288 155 322" fill="none" stroke="#1A3A6E" stroke-width="26" stroke-linecap="round"/>
+    <path d="M185 322 Q174 362 156 378" fill="none" stroke="#2C5282" stroke-width="22" stroke-linecap="round"/>
+    <path d="M155 322 Q166 362 184 378" fill="none" stroke="#1A3A6E" stroke-width="22" stroke-linecap="round"/>
+    <ellipse cx="152" cy="381" rx="22" ry="11" fill="#222"/>
+    <ellipse cx="188" cy="381" rx="22" ry="11" fill="#333"/>
+    <path d="M134 308 Q137 300 136 310 Q133 317 130 310 Q127 303 134 308 Z" fill="#7EB8D4" opacity="0.9"/>
+    <path d="M126 328 Q129 321 128 330 Q125 337 122 330 Q119 323 126 328 Z" fill="#7EB8D4" opacity="0.6"/>
+  </svg>
   <div class="landing-title">Where To Pee</div>
   <div class="landing-sub">The unwritten rules of the urinal.</div>
   <div class="landing-btns">
     <button class="landing-btn landing-btn-play" onclick="startPlay()">Play</button>
     <button class="landing-btn landing-btn-debug" onclick="startDebug()">Debug mode</button>
   </div>
-  <!-- Leaderboard placeholder -->
   <div class="leaderboard">
     <div class="leaderboard-header">
       <span class="leaderboard-title">🏆 Global Rankings</span>
@@ -209,7 +257,52 @@
 
 <!-- TIMEOUT / FAIL SCREEN -->
 <div id="timeout-screen">
-  <div class="timeout-emoji" id="timeout-emoji">😅</div>
+  <svg width="120" height="170" viewBox="0 0 340 440" style="margin-bottom:0.5rem">
+    <circle cx="170" cy="100" r="54" fill="#F5D77A" stroke="#D4A84B" stroke-width="2"/>
+    <path d="M122 78 Q118 48 135 62" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M138 66 Q136 38 152 54" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M156 60 Q158 34 172 50" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M176 58 Q182 32 194 50" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M196 64 Q208 40 214 62" fill="none" stroke="#5C3A1E" stroke-width="3.5" stroke-linecap="round"/>
+    <ellipse cx="148" cy="98" rx="13" ry="15" fill="white" stroke="#333" stroke-width="2"/>
+    <ellipse cx="192" cy="98" rx="13" ry="15" fill="white" stroke="#333" stroke-width="2"/>
+    <circle cx="150" cy="101" r="7" fill="#4A3000"/>
+    <circle cx="194" cy="101" r="7" fill="#4A3000"/>
+    <circle cx="151" cy="102" r="3.5" fill="#111"/>
+    <circle cx="195" cy="102" r="3.5" fill="#111"/>
+    <circle cx="153" cy="99" r="2.5" fill="white"/>
+    <circle cx="197" cy="99" r="2.5" fill="white"/>
+    <path d="M133 82 Q148 71 161 79" fill="none" stroke="#5C3A1E" stroke-width="4" stroke-linecap="round"/>
+    <path d="M179 79 Q192 71 207 82" fill="none" stroke="#5C3A1E" stroke-width="4" stroke-linecap="round"/>
+    <path d="M140 128 Q155 118 170 124 Q185 118 200 128 Q190 145 170 147 Q150 145 140 128 Z" fill="#C0392B"/>
+    <rect x="148" y="128" width="10" height="9" rx="2" fill="white"/>
+    <rect x="160" y="127" width="10" height="10" rx="2" fill="white"/>
+    <rect x="172" y="127" width="10" height="10" rx="2" fill="white"/>
+    <rect x="184" y="128" width="9" height="9" rx="2" fill="white"/>
+    <ellipse cx="170" cy="142" rx="12" ry="6" fill="#E74C3C"/>
+    <ellipse cx="125" cy="118" rx="12" ry="8" fill="#E8825A" opacity="0.4"/>
+    <ellipse cx="215" cy="118" rx="12" ry="8" fill="#E8825A" opacity="0.4"/>
+    <path d="M222 70 Q228 62 225 73 Q221 79 218 73 Q215 67 222 70 Z" fill="#7EB8D4"/>
+    <path d="M110 75 Q104 67 107 78 Q111 84 114 78 Q117 71 110 75 Z" fill="#7EB8D4"/>
+    <path d="M236 88 Q241 80 239 91 Q235 97 233 91 Q230 84 236 88 Z" fill="#7EB8D4"/>
+    <rect x="122" y="152" width="96" height="108" rx="12" fill="#3A85C8" stroke="#2060A0" stroke-width="1.5"/>
+    <path d="M152 152 L170 172 L188 152" fill="#2060A0"/>
+    <path d="M122 168 Q78 138 62 108" fill="none" stroke="#3A85C8" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="58" cy="102" r="15" fill="#F5D77A" stroke="#D4A84B" stroke-width="1.5"/>
+    <path d="M218 175 Q230 210 198 255" fill="none" stroke="#3A85C8" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="194" cy="265" r="14" fill="#F5D77A" stroke="#D4A84B" stroke-width="1.5"/>
+    <path d="M182 258 Q178 265 184 270" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M188 255 Q184 263 190 268" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M196 254 Q193 262 199 267" fill="none" stroke="#D4A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M148 260 Q175 288 185 322" fill="none" stroke="#2C5282" stroke-width="26" stroke-linecap="round"/>
+    <path d="M192 260 Q165 288 155 322" fill="none" stroke="#1A3A6E" stroke-width="26" stroke-linecap="round"/>
+    <path d="M185 322 Q174 362 156 378" fill="none" stroke="#2C5282" stroke-width="22" stroke-linecap="round"/>
+    <path d="M155 322 Q166 362 184 378" fill="none" stroke="#1A3A6E" stroke-width="22" stroke-linecap="round"/>
+    <ellipse cx="152" cy="381" rx="22" ry="11" fill="#222"/>
+    <ellipse cx="188" cy="381" rx="22" ry="11" fill="#333"/>
+    <path d="M134 308 Q137 300 136 310 Q133 317 130 310 Q127 303 134 308 Z" fill="#7EB8D4" opacity="0.9"/>
+    <path d="M126 328 Q129 321 128 330 Q125 337 122 330 Q119 323 126 328 Z" fill="#7EB8D4" opacity="0.6"/>
+  </svg>
   <div class="timeout-title" id="timeout-title">Don't pee your pants!</div>
   <div class="timeout-sub" id="timeout-sub">You took too long. Back to the start.</div>
   <div class="timeout-score">Total score: <span id="timeout-score-val">0</span> pts</div>
@@ -241,8 +334,9 @@
     </div>
 
     <!-- Game header: session score + timer bar -->
-    <div class="game-header">
-      <div class="session-score" id="session-score" style="display:none">Score: <b id="session-score-val">0</b></div>
+    <div class="game-header" id="game-header">
+      <div class="session-score" id="session-score">Score: <b id="session-score-val">0</b></div>
+      <div id="level-indicator" style="font-size:13px;font-weight:600;color:var(--text)">Level 1</div>
       <div class="timer-wrap" id="timer-wrap">
         <div class="timer-bar" id="timer-bar"></div>
       </div>
@@ -330,9 +424,20 @@ function startDebug() {
 function goLanding() {
   if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
-  ['game-screen','timeout-screen'].forEach(id=>{ document.getElementById(id).style.display='none'; document.getElementById(id).classList?.remove('show'); });
+  // Hide all screens
+  document.getElementById('game-screen').style.display='none';
   document.getElementById('timeout-screen').classList.remove('show');
   document.getElementById('rules-screen').classList.remove('show');
+  document.getElementById('npc-intro-screen').style.display='none';
+  document.getElementById('score-popup').classList.remove('show');
+  document.getElementById("timer-bar").style.width="0%";
+  // Reset state
+  sessionScore=0; currentLevel=0; npcIntroShown=false;
+  lastNpcLevel=-99; npcScriptIdx=0;
+  picked=null; revealed=false; hoveredIdx=null;
+  goTime=null; reactionTime=null;
+  countingDown=false;
+  // Show landing
   document.getElementById('landing-screen').style.display='flex';
 }
 
@@ -382,7 +487,7 @@ function closeNpcIntro() {
 function gameOver(reason) {
   if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
-  document.getElementById('timer-wrap').classList.remove('active');
+  document.getElementById("timer-bar").style.width="0%";
   document.getElementById('game-screen').style.display = 'none';
   document.getElementById('score-popup').classList.remove('show');
   const ts = document.getElementById('timeout-screen');
@@ -396,7 +501,116 @@ function gameOver(reason) {
   sessionScore = 0; currentLevel = 0;
 }
 
-// ── COLOURS ───────────────────────────────────────────
+// ── HATS ─────────────────────────────────────────────
+// Each hat fn takes (cx, cy, r) — centre of dot, radius — returns SVG string
+// All hats drawn top-down, sized relative to dot radius
+
+function hatPlayer(cx,cy,r){
+  // Blue cap with P — always the player
+  const brim=r*1.4;
+  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${brim}" ry="${r*0.55}" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.85}" ry="${r*0.75}" fill="#2266CC" stroke="#1A4A9A" stroke-width="1"/>
+  <ellipse cx="${cx+brim*0.6}" cy="${cy+r*0.2}" rx="${r*0.7}" ry="${r*0.32}" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1"/>
+  <text x="${cx}" y="${cy+r*0.28}" text-anchor="middle" font-family="sans-serif" font-size="${r*0.85}px" font-weight="900" fill="white">P</text>`;
+}
+
+function hatMario(cx,cy,r){
+  const brim=r*1.4;
+  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${brim}" ry="${r*0.55}" fill="#CC2200" stroke="#AA1800" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.85}" ry="${r*0.75}" fill="#DD3311" stroke="#AA1800" stroke-width="1"/>
+  <ellipse cx="${cx+brim*0.55}" cy="${cy+r*0.2}" rx="${r*0.65}" ry="${r*0.3}" fill="#CC2200" stroke="#AA1800" stroke-width="1"/>
+  <circle cx="${cx}" cy="${cy-r*0.1}" r="${r*0.45}" fill="white" stroke="#CC2200" stroke-width="0.8"/>
+  <text x="${cx}" y="${cy+r*0.2}" text-anchor="middle" font-family="sans-serif" font-size="${r*0.65}px" font-weight="900" fill="#CC2200">M</text>`;
+}
+
+function hatHarry(cx,cy,r){
+  // Round glasses + lightning bolt
+  return `<circle cx="${cx-r*0.38}" cy="${cy}" r="${r*0.38}" fill="none" stroke="#222" stroke-width="${r*0.18}"/>
+  <circle cx="${cx+r*0.38}" cy="${cy}" r="${r*0.38}" fill="none" stroke="#222" stroke-width="${r*0.18}"/>
+  <line x1="${cx-r*0.0}" y1="${cy}" x2="${cx+r*0.0}" y2="${cy}" stroke="#222" stroke-width="${r*0.18}"/>
+  <path d="M${cx-r*0.12} ${cy-r*0.85} L${cx+r*0.06} ${cy-r*0.52} L${cx-r*0.06} ${cy-r*0.52} L${cx+r*0.12} ${cy-r*0.2}" fill="none" stroke="#C8A800" stroke-width="${r*0.2}" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+
+function hatLink(cx,cy,r){
+  // Green pointy hat top-down — elongated teardrop
+  return `<ellipse cx="${cx}" cy="${cy+r*0.15}" rx="${r*0.9}" ry="${r*0.72}" fill="#3A8C3A" stroke="#2A6C2A" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.3}" rx="${r}" ry="${r*0.38}" fill="#2A7C2A" stroke="#1A5C1A" stroke-width="1"/>
+  <path d="M${cx} ${cy-r*0.48} Q${cx+r*0.18} ${cy-r*0.18} ${cx} ${cy+r*0.15} Q${cx-r*0.18} ${cy-r*0.18} ${cx} ${cy-r*0.48} Z" fill="#4AAC4A" stroke="#2A6C2A" stroke-width="0.8"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.55}" rx="${r*0.14}" ry="${r*0.22}" fill="#3A8C3A" stroke="#2A6C2A" stroke-width="0.8"/>`;
+}
+
+function hatSherlock(cx,cy,r){
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${r*0.9}" ry="${r*0.72}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.25}" rx="${r}" ry="${r*0.35}" fill="#B8A87A" stroke="#988858" stroke-width="1"/>
+  <ellipse cx="${cx-r*0.88}" cy="${cy-r*0.05}" rx="${r*0.36}" ry="${r*0.22}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2" transform="rotate(-20,${cx-r*0.88},${cy-r*0.05})"/>
+  <ellipse cx="${cx+r*0.88}" cy="${cy-r*0.05}" rx="${r*0.36}" ry="${r*0.22}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2" transform="rotate(20,${cx+r*0.88},${cy-r*0.05})"/>`;
+}
+
+function hatCowboy(cx,cy,r){
+  return `<ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.35}" ry="${r*0.65}" fill="#8B5E3C" stroke="#6B3E1C" stroke-width="1.5"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.75}" ry="${r*0.65}" fill="#6B3E1C" stroke="#4B2E0C" stroke-width="1.5"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.7}" ry="${r*0.6}" fill="#7B4E2C"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.6}" rx="${r*0.26}" ry="${r*0.18}" fill="#7B4E2C" stroke="#6B3E1C" stroke-width="1"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.6}" rx="${r*0.26}" ry="${r*0.18}" fill="#7B4E2C" stroke="#6B3E1C" stroke-width="1"/>`;
+}
+
+function hatTopHat(cx,cy,r){
+  return `<ellipse cx="${cx}" cy="${cy+r*0.22}" rx="${r*1.18}" ry="${r*0.42}" fill="#111" stroke="#444" stroke-width="1.5"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.22}" rx="${r*1.08}" ry="${r*0.34}" fill="#1A1A1A"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.72}" ry="${r*0.62}" fill="#0A0A0A" stroke="#333" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.65}" ry="${r*0.55}" fill="#111"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.18}" rx="${r*0.72}" ry="${r*0.22}" fill="none" stroke="#777" stroke-width="1.5"/>`;
+}
+
+function hatStraw(cx,cy,r){
+  return `<ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.38}" ry="${r*0.56}" fill="#E8C96A" stroke="#C8A940" stroke-width="1.5"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.25}" ry="${r*0.46}" fill="#D4B550"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.72}" ry="${r*0.62}" fill="#E8C96A" stroke="#C8A940" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.65}" ry="${r*0.55}" fill="#DDB840"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*0.72}" ry="${r*0.22}" fill="none" stroke="#C0392B" stroke-width="${r*0.35}"/>`;
+}
+
+function hatCrown(cx,cy,r){
+  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*1.05}" ry="${r*0.35}" fill="#C8960C" stroke="#A87000" stroke-width="1.5"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.95}" ry="${r*0.26}" fill="#DAA820"/>
+  <rect x="${cx-r*0.9}" y="${cy-r*0.55}" width="${r*0.48}" height="${r*0.78}" rx="3" fill="#C8960C" stroke="#A87000" stroke-width="1"/>
+  <rect x="${cx-r*0.32}" y="${cy-r*0.78}" width="${r*0.48}" height="${r}" rx="3" fill="#DAA820" stroke="#A87000" stroke-width="1"/>
+  <rect x="${cx+r*0.25}" y="${cy-r*0.55}" width="${r*0.48}" height="${r*0.78}" rx="3" fill="#C8960C" stroke="#A87000" stroke-width="1"/>
+  <circle cx="${cx-r*0.66}" cy="${cy-r*0.6}" r="${r*0.16}" fill="#E74C3C"/>
+  <circle cx="${cx-r*0.08}" cy="${cy-r*0.82}" r="${r*0.16}" fill="#3498DB"/>
+  <circle cx="${cx+r*0.5}" cy="${cy-r*0.6}" r="${r*0.16}" fill="#2ECC71"/>`;
+}
+
+function hatWizard(cx,cy,r){
+  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.95}" ry="${r*0.36}" fill="#6A0DAD" stroke="#4A0080" stroke-width="1.5"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.85}" ry="${r*0.26}" fill="#7A1DBD"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.56}" ry="${r*0.7}" fill="#5A0090" stroke="#4A0080" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.62}" rx="${r*0.2}" ry="${r*0.3}" fill="#6A0DAD" stroke="#4A0080" stroke-width="1"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.85}" rx="${r*0.1}" ry="${r*0.16}" fill="#7A1DBD"/>
+  <circle cx="${cx-r*0.2}" cy="${cy+r*0.1}" r="${r*0.1}" fill="#FFD700"/>
+  <circle cx="${cx+r*0.15}" cy="${cy-r*0.2}" r="${r*0.08}" fill="#FFD700"/>
+  <circle cx="${cx-r*0.1}" cy="${cy-r*0.45}" r="${r*0.07}" fill="#C0C0C0"/>`;
+}
+
+function hatChef(cx,cy,r){
+  // Toque — white puffball top-down
+  return `<ellipse cx="${cx}" cy="${cy+r*0.15}" rx="${r*0.75}" ry="${r*0.65}" fill="white" stroke="#ccc" stroke-width="1.2"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.1}" rx="${r*0.65}" ry="${r*0.55}" fill="white" stroke="#ddd" stroke-width="1"/>
+  <ellipse cx="${cx}" cy="${cy-r*0.3}" rx="${r*0.55}" ry="${r*0.42}" fill="#f8f8f8" stroke="#ccc" stroke-width="0.8"/>
+  <ellipse cx="${cx}" cy="${cy+r*0.28}" rx="${r*0.75}" ry="${r*0.22}" fill="none" stroke="#bbb" stroke-width="1.5"/>`;
+}
+
+// Hat roster — index maps to NPC hat (0=Mario, 1=Harry...)
+const NPC_HATS = [hatMario, hatHarry, hatLink, hatSherlock, hatCowboy, hatTopHat, hatStraw, hatCrown, hatWizard, hatChef];
+
+function drawDot(cx, cy, color, r, hatFn) {
+  const rad = r || 11;
+  let o = `<circle cx="${cx}" cy="${cy}" r="${rad}" fill="${color}"/>`;
+  o += `<circle cx="${cx}" cy="${cy}" r="${rad*0.45}" fill="#fff" opacity="0.35"/>`;
+  if(hatFn) o += hatFn(cx, cy, rad);
+  return o;
+}
+
 function isDark(){ return window.matchMedia('(prefers-color-scheme:dark)').matches; }
 function C(l,d){ return isDark()?d:l; }
 const COL = {
@@ -585,13 +799,13 @@ function drawRoom(stalls,door,hov,selIdx,passMap,animDots){
     o+=`<path d="M${ux+8} ${by+8} L${ux+UW-6} ${by+8} L${ux+UW-10} ${by+UH-8} L${ux+6} ${by+UH-8} Z" fill="none" stroke="${bc}" stroke-width="0.8" opacity="0.5"/>`;
     o+=`<circle cx="${cx}" cy="${by+UH-14}" r="2.5" fill="${bc}" opacity="0.4"/>`;
     if(isBrk) o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="16" font-family="sans-serif">🔧</text>`;
-    else if(isOcc){ o+=`<circle cx="${cx}" cy="${by+UH/2-4}" r="11" fill="${COL.personFill}"/><circle cx="${cx}" cy="${by+UH/2-4}" r="5" fill="#fff" opacity="0.4"/>`; }
+    else if(isOcc){ o+=drawDot(cx,by+UH/2-4,COL.personFill,11,NPC_HATS[i%NPC_HATS.length]); }
     else if(passMap!==null&&isPicked) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?COL.passStallBorder:COL.failStallBorder}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`;
     else if(s.recent) o+=`<text x="${cx}" y="${by+10}" text-anchor="middle" font-size="9" fill="#854F0B" font-family="sans-serif">recent</text>`;
     o+=`</g>`;
     o+=`<text x="${cx}" y="${by+UH+14}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
   }
-  if(animDots){ for(const d of animDots){ o+=`<circle cx="${d.cx}" cy="${d.cy}" r="${d.r||11}" fill="${d.color}"/><circle cx="${d.cx}" cy="${d.cy}" r="${(d.r||11)*0.45}" fill="#fff" opacity="0.4"/>`; } }
+  if(animDots){ for(const d of animDots){ o+=drawDot(d.cx,d.cy,d.color,d.r,d.hatFn); } }
   document.getElementById('room-svg').innerHTML=o;
 }
 
@@ -603,23 +817,21 @@ let timerExpired = false;
 function startTimerBar() {
   timerStart = performance.now();
   timerExpired = false;
-  const wrap = document.getElementById('timer-wrap');
-  const bar  = document.getElementById('timer-bar');
-  wrap.classList.add('active');
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = '100%';
+  bar.style.background = 'hsl(120,80%,42%)';
 
   function tick(now) {
     const elapsed = now - timerStart;
     const pct = Math.max(0, 1 - elapsed/TIMER_DURATION);
     bar.style.width = (pct*100)+'%';
-    // Colour: green → yellow → red
-    const hue = Math.round(pct * 120); // 120=green, 0=red
+    const hue = Math.round(pct * 120);
     bar.style.background = `hsl(${hue},80%,42%)`;
-
     if(pct > 0) {
       timerAnimFrame = requestAnimationFrame(tick);
     } else {
       timerExpired = true;
-      wrap.classList.remove('active');
+      bar.style.width = '0%';
       if(!revealed) gameOver('timeout');
     }
   }
@@ -628,7 +840,14 @@ function startTimerBar() {
 
 function stopTimerBar() {
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
-  document.getElementById('timer-wrap').classList.remove('active');
+  document.getElementById('timer-bar').style.width = '0%';
+}
+
+function resetTimerBar() {
+  if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = '0%';
+  bar.style.background = '';
 }
 
 // ── COUNTDOWN ─────────────────────────────────────────
@@ -642,7 +861,7 @@ function runCountdown(lv){
   const npcTarget=lv.npcArrival?.urinal??null;
   const doorX=urinalCX(door,n), doorY=SVG_H-WALL-8;
   const waitX=doorX, waitY=SVG_H-WALL-30;
-  let playerDot={cx:doorX,cy:doorY,color:COL.playerDot,r:11};
+  let playerDot={cx:doorX,cy:doorY,color:COL.playerDot,r:11,hatFn:hatPlayer};
   let npcDot=null;
   window._playerWaitPos={cx:waitX,cy:waitY};
   const T={p0:200,p1:900,two:1000,one:2000,n0:2100,n1:2700,go:3000,done:3400};
@@ -657,7 +876,7 @@ function runCountdown(lv){
     else if(el>=T.p1){ playerDot.cx=waitX; playerDot.cy=waitY; }
     if(npcTarget!==null){
       const nx=urinalCX(npcTarget,n);
-      if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
+      if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11,hatFn:NPC_HATS[currentLevel%NPC_HATS.length]}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
       else if(el>=T.n1&&npcDot){ npcDot.cx=nx; npcDot.cy=URINAL_MID_Y; }
     }
     drawRoom(lv.stalls,door,null,null,null,[playerDot,...(npcDot?[npcDot]:[])]);
@@ -679,7 +898,7 @@ function animatePlayerWalk(stalls,door,pickedIdx,onComplete){
   const t0=performance.now(), DUR=700;
   function tick(now){
     const t=Math.min(1,(now-t0)/DUR), e=t<0.5?2*t*t:-1+(4-2*t)*t;
-    drawRoom(stalls,door,null,null,null,[{cx:lerp(sp.cx,dx,e),cy:lerp(sp.cy,dy,e),color:COL.playerDot,r:11}]);
+    drawRoom(stalls,door,null,null,null,[{cx:lerp(sp.cx,dx,e),cy:lerp(sp.cy,dy,e),color:COL.playerDot,r:11,hatFn:hatPlayer}]);
     t<1?animFrame=requestAnimationFrame(tick):(animFrame=null,onComplete());
   }
   animFrame=requestAnimationFrame(tick);
@@ -743,7 +962,6 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   sessionScore += points;
   if(!isDebugMode){
     document.getElementById('session-score-val').textContent = sessionScore.toLocaleString();
-    document.getElementById('session-score').style.display = 'block';
   }
   if(isDebugMode) updateDebugStats();
 
@@ -889,6 +1107,10 @@ function renderLevel(){
   document.getElementById('next-btn').style.display='none';
   document.getElementById('retry-btn').style.display='none';
   hideCD();
+  if(!isDebugMode){
+    document.getElementById('session-score-val').textContent = sessionScore.toLocaleString();
+    document.getElementById('level-indicator').textContent = `Level ${currentLevel+1}`;
+  }
   if(isDebugMode){ renderNav(); updateDebugStats(); }
   drawRoom(lv.stalls,lv.doorIndex,null,null,null,null);
   renderDebug();
