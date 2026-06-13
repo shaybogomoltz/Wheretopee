@@ -146,8 +146,8 @@
     .actions { display: flex; gap: 8px; margin-top: 1rem; }
     .btn { padding: 9px 20px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 14px; cursor: pointer; background: var(--bg); color: var(--text); }
     .btn:hover { background: var(--bg2); }
-    .btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
-    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary { background: var(--blue); color: #fff; border-color: transparent; font-weight: 500; }
+    .btn-primary:hover { opacity: 0.88; }
 
     /* ── DEBUG TABLE ── */
     .debug-wrap { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
@@ -315,7 +315,7 @@
 <div id="npc-intro-screen" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;">
   <div style="font-size:64px;margin-bottom:1rem">👀</div>
   <div style="font-size:26px;font-weight:600;margin-bottom:10px">It just got real.</div>
-  <div style="font-size:15px;color:var(--text2);max-width:360px;line-height:1.6;margin-bottom:2rem">From now on, other guys might walk in at the last second — right before you decide. Watch the red dot carefully.</div>
+  <div style="font-size:15px;color:var(--text2);max-width:360px;line-height:1.6;margin-bottom:2rem">From now on, other guys might walk in at the last second — right before you pick. They change everything.</div>
   <button class="landing-btn landing-btn-play" onclick="closeNpcIntro()">I'm ready →</button>
 </div>
 
@@ -762,51 +762,116 @@ function urinalCX(i,n){ return roomX(i,n)+UW/2; }
 
 function drawRoom(stalls,door,hov,selIdx,passMap,animDots){
   const n=stalls.length; let o='';
-  o+=`<rect x="0" y="0" width="${SVG_W}" height="${SVG_H}" fill="${COL.floor()}"/>`;
-  for(let x=WALL;x<SVG_W-WALL;x+=30) o+=`<line x1="${x}" y1="${WALL}" x2="${x}" y2="${SVG_H-WALL}" stroke="${COL.tile()}" stroke-width="1"/>`;
-  for(let y=WALL;y<SVG_H-WALL;y+=30) o+=`<line x1="${WALL}" y1="${y}" x2="${SVG_W-WALL}" y2="${y}" stroke="${COL.tile()}" stroke-width="1"/>`;
-  o+=`<rect x="0" y="0" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
-  o+=`<rect x="0" y="0" width="${WALL}" height="${SVG_H}" fill="${COL.wall()}"/>`;
-  o+=`<rect x="${SVG_W-WALL}" y="0" width="${WALL}" height="${SVG_H}" fill="${COL.wall()}"/>`;
-  if(door!==null&&door!==undefined){
-    const dx=roomX(door,n)+UW/2-DW/2;
-    o+=`<rect x="0" y="${SVG_H-WALL}" width="${dx}" height="${WALL}" fill="${COL.wall()}"/>`;
-    o+=`<rect x="${dx+DW}" y="${SVG_H-WALL}" width="${SVG_W-(dx+DW)}" height="${WALL}" fill="${COL.wall()}"/>`;
-    o+=`<rect x="${dx}" y="${SVG_H-WALL}" width="${DW}" height="${WALL}" fill="${COL.doorFill()}"/>`;
-    o+=`<line x1="${dx}" y1="${SVG_H-WALL}" x2="${dx}" y2="${SVG_H}" stroke="${COL.doorBorder}" stroke-width="2"/>`;
-    o+=`<line x1="${dx+DW}" y1="${SVG_H-WALL}" x2="${dx+DW}" y2="${SVG_H}" stroke="${COL.doorBorder}" stroke-width="2"/>`;
-    o+=`<path d="M${dx} ${SVG_H-WALL} Q${dx+DW/2} ${SVG_H-WALL-20} ${dx+DW} ${SVG_H-WALL}" stroke="${COL.doorBorder}" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>`;
-    o+=`<text x="${dx+DW/2}" y="${SVG_H-2}" text-anchor="middle" font-size="9" fill="${COL.doorText}" font-family="sans-serif">entrance</text>`;
-  } else {
-    o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
+  const dark=isDark();
+
+  // ── FLOOR: classic bathroom checkerboard ──
+  const floorBg  = dark ? '#1a1918' : '#e8e6e0';
+  const tileA    = dark ? '#222120' : '#f0eee8';
+  const tileB    = dark ? '#161514' : '#d8d4cc';
+  const tileSize = 20;
+  o+=`<rect x="${WALL}" y="${WALL}" width="${SVG_W-WALL*2}" height="${SVG_H-WALL*2}" fill="${floorBg}"/>`;
+  for(let ty=WALL;ty<SVG_H-WALL;ty+=tileSize){
+    for(let tx=WALL;tx<SVG_W-WALL;tx+=tileSize){
+      const even=(Math.floor((tx-WALL)/tileSize)+Math.floor((ty-WALL)/tileSize))%2===0;
+      if(even) o+=`<rect x="${tx}" y="${ty}" width="${tileSize}" height="${tileSize}" fill="${tileA}" opacity="0.6"/>`;
+      else     o+=`<rect x="${tx}" y="${ty}" width="${tileSize}" height="${tileSize}" fill="${tileB}" opacity="0.6"/>`;
+    }
   }
+
+  // ── WALLS ──
+  const wallCol  = dark ? '#2a2520' : '#3a3630';
+  const wallTrim = dark ? '#3a3028' : '#4e4840';
+  o+=`<rect x="0" y="0" width="${SVG_W}" height="${WALL}" fill="${wallCol}"/>`;
+  o+=`<rect x="0" y="${WALL}" width="${SVG_W}" height="3" fill="${wallTrim}" opacity="0.5"/>`;
+  o+=`<rect x="0" y="0" width="${WALL}" height="${SVG_H}" fill="${wallCol}"/>`;
+  o+=`<rect x="${SVG_W-WALL}" y="0" width="${WALL}" height="${SVG_H}" fill="${wallCol}"/>`;
+
+  // ── BOTTOM WALL + SLIDING DOOR ──
+  const wallBot = dark ? '#2a2520' : '#3a3630';
+  if(door!==null&&door!==undefined){
+    const dcx=roomX(door,n)+UW/2;
+    const dw=40, dh=WALL+6;
+    const dx=dcx-dw/2;
+    const dy=SVG_H-dh;
+    o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${wallBot}"/>`;
+    // door opening in wall
+    o+=`<rect x="${dx}" y="${dy}" width="${dw}" height="${dh+1}" fill="${dark?'#111':'#c8c2b8'}"/>`;
+    // door frame sides
+    o+=`<rect x="${dx-3}" y="${dy}" width="3" height="${dh}" fill="${dark?'#555':'#8a8278'}"/>`;
+    o+=`<rect x="${dx+dw}" y="${dy}" width="3" height="${dh}" fill="${dark?'#555':'#8a8278'}"/>`;
+    // sliding door panel (slid to the left, partially open)
+    const panelW=dw*0.55;
+    o+=`<rect x="${dx-panelW+4}" y="${dy+1}" width="${panelW}" height="${dh-2}" rx="1" fill="${dark?'#3a3530':'#b0a898'}" stroke="${dark?'#555':'#7a7268'}" stroke-width="1"/>`;
+    // door panel detail lines
+    o+=`<line x1="${dx-panelW+10}" y1="${dy+3}" x2="${dx-panelW+10}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
+    o+=`<line x1="${dx-panelW+panelW/2}" y1="${dy+3}" x2="${dx-panelW+panelW/2}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
+    // door track rail
+    o+=`<rect x="${dx-panelW+4}" y="${dy}" width="${dw+panelW}" height="2" rx="1" fill="${dark?'#666':'#9a9288'}"/>`;
+    // handle dot
+    o+=`<circle cx="${dx+4}" cy="${dy+dh/2}" r="2.5" fill="${dark?'#888':'#6a6258'}"/>`;
+    // entrance label
+    o+=`<text x="${dcx}" y="${SVG_H-1}" text-anchor="middle" font-size="8" fill="${dark?'#5a9ADD':'#378ADD'}" font-family="sans-serif" font-weight="500">entrance</text>`;
+  } else {
+    o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${wallBot}"/>`;
+  }
+  o+=`<rect x="0" y="${SVG_H-WALL-2}" width="${SVG_W}" height="2" fill="${wallTrim}" opacity="0.4"/>`;
+
+  // ── URINALS ──
   for(let i=0;i<n;i++){
     const s=stalls[i]; const ux=roomX(i,n); const uy=WALL+4; const cx=ux+UW/2;
     const isOcc=s.status==='occupied', isBrk=s.status==='broken';
     const isHov=!revealed&&!countingDown&&hov===i&&!isOcc&&!isBrk;
     const isPicked=selIdx===i;
-    let bg=COL.urinalBg(), bc=COL.urinalBorder(), bw=1.5;
-    if(isOcc||isBrk){ bg=COL.occupied(); }
-    else if(passMap!==null&&!isOcc&&!isBrk){
-      bg=passMap[i]?COL.passStall:COL.failStall;
-      bc=passMap[i]?COL.passStallBorder:COL.failStallBorder;
-      bw=2;
-    } else if(isHov){ bc='#378ADD'; bw=2; }
-    const by=uy+PH; const tap=4;
-    const clickable=!isOcc&&!isBrk&&!revealed&&!countingDown;
-    const op=isBrk?'0.4':'1';
-    o+=`<rect x="${cx-PW/2}" y="${uy}" width="${PW}" height="${PH}" rx="2" fill="${COL.urinalBorder()}"/>`;
+    let bg,bc,bw=1.5;
+    if(isOcc||isBrk){
+      bg=dark?'#252220':'#d4d0c8'; bc=dark?'#3a3530':'#a09890';
+    } else if(passMap!==null){
+      bg=passMap[i]?(dark?'#1a2e14':'#EAF3DE'):(dark?'#2e1414':'#FCEBEB');
+      bc=passMap[i]?'#3B6D11':'#A32D2D'; bw=2;
+    } else if(isHov){
+      bg=dark?'#1e2a3a':'#dde8f5'; bc='#378ADD'; bw=2;
+    } else {
+      bg=dark?'#242220':'#f0ede6'; bc=dark?'#4a4540':'#b0a8a0';
+    }
+
+    const by=uy+PH; const clickable=!isOcc&&!isBrk&&!revealed&&!countingDown;
+    const op=isBrk?'0.35':'1';
+
+    // pipe/mount on wall
+    o+=`<rect x="${cx-4}" y="${uy-2}" width="8" height="${PH+4}" rx="3" fill="${dark?'#4a4540':'#9a9288'}"/>`;
+    o+=`<rect x="${cx-2}" y="${uy}" width="4" height="${PH}" rx="1" fill="${dark?'#6a6560':'#c0b8b0'}"/>`;
+
     o+=`<g onclick="${clickable?`clickUrinal(${i})`:''}" style="cursor:${clickable?'pointer':'default'}" opacity="${op}">`;
-    o+=`<path d="M${ux+2} ${by} L${ux+UW-2} ${by} L${ux+UW-6} ${by+UH} L${ux+6} ${by+UH} Z" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
-    o+=`<path d="M${ux+8} ${by+8} L${ux+UW-6} ${by+8} L${ux+UW-10} ${by+UH-8} L${ux+6} ${by+UH-8} Z" fill="none" stroke="${bc}" stroke-width="0.8" opacity="0.5"/>`;
-    o+=`<circle cx="${cx}" cy="${by+UH-14}" r="2.5" fill="${bc}" opacity="0.4"/>`;
-    if(isBrk) o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="16" font-family="sans-serif">🔧</text>`;
-    else if(isOcc){ o+=drawDot(cx,by+UH/2-4,COL.personFill,11,NPC_HATS[i%NPC_HATS.length]); }
-    else if(passMap!==null&&isPicked) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?COL.passStallBorder:COL.failStallBorder}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`;
-    else if(s.recent) o+=`<text x="${cx}" y="${by+10}" text-anchor="middle" font-size="9" fill="#854F0B" font-family="sans-serif">recent</text>`;
+
+    // outer porcelain shell — more rounded, bathroom-like
+    o+=`<rect x="${ux+3}" y="${by}" width="${UW-6}" height="${UH}" rx="8" fill="${bc}" opacity="0.3"/>`;
+    o+=`<rect x="${ux+4}" y="${by+1}" width="${UW-8}" height="${UH-2}" rx="7" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
+
+    // inner basin bowl
+    o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-16)/2}" ry="${UH*0.28}" fill="${dark?'#1a1918':'#e8e4dc'}" stroke="${bc}" stroke-width="0.8" opacity="0.7"/>`;
+
+    // water reflection in bowl
+    if(!isOcc&&!isBrk){
+      o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-22)/2}" ry="${UH*0.18}" fill="${dark?'#1e2830':'#d8eef8'}" opacity="0.5"/>`;
+    }
+
+    // drain dot
+    o+=`<circle cx="${cx}" cy="${by+UH*0.78}" r="2" fill="${bc}" opacity="0.5"/>`;
+
+    // flush button at top
+    o+=`<rect x="${cx-5}" y="${by+4}" width="10" height="5" rx="2" fill="${bc}" opacity="0.4"/>`;
+
+    if(isBrk){
+      o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="15" font-family="sans-serif">🔧</text>`;
+    } else if(isOcc){
+      o+=drawDot(cx,by+UH*0.45,COL.personFill,11,NPC_HATS[i%NPC_HATS.length]);
+    } else if(passMap!==null&&isPicked){
+      o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?'#3B6D11':'#A32D2D'}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`;
+    }
     o+=`</g>`;
-    o+=`<text x="${cx}" y="${by+UH+14}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
+    o+=`<text x="${cx}" y="${by+UH+13}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
   }
+
   if(animDots){ for(const d of animDots){ o+=drawDot(d.cx,d.cy,d.color,d.r,d.hatFn); } }
   document.getElementById('room-svg').innerHTML=o;
 }
@@ -1037,7 +1102,7 @@ const BASE_LEVELS=[
   {stalls:occ(e(9),4),                   doorIndex:0},
   {stalls:brk(occ(e(7),1),3),            doorIndex:0},
   {stalls:e(7),                          doorIndex:3},
-  {stalls:rec(occ(e(7),3),1,5),          doorIndex:0},
+  {stalls:occ(e(7),3),                   doorIndex:0},
   {stalls:occ(e(7),1,3,5),               doorIndex:6},
   {stalls:occ(e(9),2,6),                 doorIndex:4},
   {stalls:brk(occ(e(9),2,6),8),          doorIndex:4},
