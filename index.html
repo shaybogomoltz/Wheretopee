@@ -541,8 +541,10 @@
 <script>
 // ── VERSION ───────────────────────────────────────────
 const GAME_VERSION = '0.3.0';
-document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
-document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
+  document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
+});
 
 // ── STATE ─────────────────────────────────────────────
 let isDebugMode = false;
