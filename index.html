@@ -28,96 +28,68 @@
     }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* ── AUTH SCREEN ── */
-    #auth-screen {
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; padding: 2rem;
-    }
+    /* AUTH */
+    #auth-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     .auth-logo { font-size: 48px; margin-bottom: 1rem; }
     .auth-title { font-size: 28px; font-weight: 500; margin-bottom: 6px; }
     .auth-sub { font-size: 14px; color: var(--text2); margin-bottom: 2rem; }
-    .auth-card {
-      background: var(--bg2); border-radius: var(--radius-lg);
-      border: 0.5px solid var(--border); padding: 2rem;
-      width: 100%; max-width: 340px;
-    }
+    .auth-card { background: var(--bg2); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; width: 100%; max-width: 340px; }
     .auth-field { margin-bottom: 1rem; }
     .auth-field label { display: block; font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
-    .auth-field input {
-      width: 100%; padding: 10px 12px; border-radius: var(--radius);
-      border: 0.5px solid var(--border2); background: var(--bg);
-      color: var(--text); font-size: 15px; outline: none;
-    }
+    .auth-field input { width: 100%; padding: 10px 12px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); font-size: 15px; outline: none; }
     .auth-field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(55,138,221,0.15); }
-    .auth-btn {
-      width: 100%; padding: 11px; border-radius: var(--radius);
-      background: var(--text); color: var(--bg); border: none;
-      font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 0.5rem;
-    }
+    .auth-btn { width: 100%; padding: 11px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; }
     .auth-btn:hover { opacity: 0.85; }
-    .auth-error {
-      font-size: 13px; color: var(--red); margin-top: 0.75rem;
-      text-align: center; min-height: 18px;
-    }
+    .auth-error { font-size: 13px; color: var(--red); margin-top: 0.75rem; text-align: center; min-height: 18px; }
 
-    /* ── GAME SCREEN ── */
+    /* GAME */
     #game-screen { display: none; }
     #app { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; }
-
-    .game-title-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
+    .game-title-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .game-brand { font-size: 18px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
     .game-brand-emoji { font-size: 22px; }
-    .logout-btn {
-      font-size: 12px; color: var(--text3); background: none; border: none;
-      cursor: pointer; padding: 4px 8px; border-radius: var(--radius);
-    }
+    .logout-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--radius); }
     .logout-btn:hover { background: var(--bg2); color: var(--text2); }
-
     .progress-bar { display: flex; gap: 6px; margin-bottom: 1rem; }
     .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
     .progress-dot.done    { background: var(--green); }
     .progress-dot.current { background: var(--blue); }
-
     .nav-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
-    .nav-btn {
-      padding: 4px 10px; border-radius: var(--radius);
-      border: 0.5px solid var(--border2); font-size: 12px;
-      cursor: pointer; background: var(--bg); color: var(--text2);
-    }
+    .nav-btn { padding: 4px 10px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 12px; cursor: pointer; background: var(--bg); color: var(--text2); }
     .nav-btn:hover  { background: var(--bg2); }
     .nav-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
-
     .level-tag   { font-size: 12px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 4px; }
     .level-title { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
     .level-desc  { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 1.25rem; }
-
-    .hint-box {
-      background: var(--blue-bg); border-radius: var(--radius);
-      padding: 8px 12px; margin-bottom: 1.25rem;
-      font-size: 13px; color: var(--blue-text); line-height: 1.5; display: none;
-    }
+    .hint-box { background: var(--blue-bg); border-radius: var(--radius); padding: 8px 12px; margin-bottom: 1.25rem; font-size: 13px; color: var(--blue-text); line-height: 1.5; display: none; }
     .hint-box.show { display: block; }
 
+    /* SVG room wrapper — position relative so overlay can sit on top */
+    .room-wrap { position: relative; }
     #room-svg { width: 100%; display: block; }
 
-    .debug-wrap {
-      border: 0.5px solid var(--border); border-radius: var(--radius-lg);
-      overflow-x: auto; margin-top: 1rem; display: none;
+    /* Countdown overlay */
+    #countdown-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
     }
+    #countdown-text {
+      font-size: 80px; font-weight: 700;
+      color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+      opacity: 0; transition: opacity 0.15s;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #countdown-text.go { color: #3B6D11; font-size: 56px; }
+
+    /* debug */
+    .debug-wrap { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
     .debug-wrap.show { display: block; }
-    .weights-bar {
-      padding: 10px 14px; border-bottom: 0.5px solid var(--border);
-      display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
-      background: var(--bg2); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    }
+    .weights-bar { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; align-items: center; background: var(--bg2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
     .weight-row   { display: flex; align-items: center; gap: 8px; }
     .weight-label { font-size: 11px; font-weight: 500; color: var(--text2); white-space: nowrap; min-width: 90px; }
     .weight-val   { font-size: 12px; font-weight: 500; min-width: 16px; }
     input[type=range] { width: 80px; }
-
     .debug-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
     .debug-table th { padding: 6px 4px; text-align: center; font-weight: 500; font-size: 11px; color: var(--text2); border-bottom: 0.5px solid var(--border); background: var(--bg2); }
     .debug-table th.rl { text-align: left; padding-left: 10px; width: 120px; }
@@ -126,7 +98,6 @@
     .debug-table tr:last-child td { border-bottom: none; }
     .debug-table td.cb { background: var(--green-mid); color: var(--green-text); }
     .debug-table td.cd, .debug-table td.ci { background: var(--bg2); }
-
     .pill { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 500; }
     .pp { background: var(--green-bg); color: var(--green); }
     .pm { background: var(--blue-bg); color: var(--blue-text); }
@@ -136,373 +107,18 @@
     .sm { color: var(--amber); font-size: 12px; }
     .se { color: var(--border2); font-size: 12px; }
 
-    .feedback-box {
-      border-radius: var(--radius-lg); border: 0.5px solid var(--border);
-      background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none;
-    }
+    /* feedback */
+    .feedback-box { border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none; }
     .feedback-box.show { display: block; }
     .stars-row { display: flex; gap: 3px; margin-bottom: 8px; }
     .star { font-size: 22px; color: var(--border2); }
     .star.lit { color: var(--amber); }
     .feedback-title { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
     .feedback-body  { font-size: 14px; color: var(--text2); line-height: 1.5; }
-
     .actions { display: flex; gap: 8px; margin-top: 1rem; }
-    .btn {
-      padding: 9px 20px; border-radius: var(--radius);
-      border: 0.5px solid var(--border2); font-size: 14px;
-      cursor: pointer; background: var(--bg); color: var(--text);
-    }
+    .btn { padding: 9px 20px; border-radius: var(--radius); border: 0.5px solid var(--border2); font-size: 14px; cursor: pointer; background: var(--bg); color: var(--text); }
     .btn:hover { background: var(--bg2); }
     .btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
     .btn-primary:hover { opacity: 0.85; }
   </style>
 </head>
-<body>
-
-<!-- ══ AUTH SCREEN ══════════════════════════════════════════════════════════ -->
-<div id="auth-screen">
-  <div class="auth-logo">🚾</div>
-  <div class="auth-title">Where To Pee</div>
-  <div class="auth-sub">Sign in to play</div>
-  <div class="auth-card">
-    <div class="auth-field">
-      <label for="auth-user">Username</label>
-      <input type="text" id="auth-user" placeholder="username" autocomplete="username">
-    </div>
-    <div class="auth-field">
-      <label for="auth-pass">Password</label>
-      <input type="password" id="auth-pass" placeholder="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="auth-btn" onclick="doLogin()">Sign in</button>
-    <div class="auth-error" id="auth-error"></div>
-  </div>
-</div>
-
-<!-- ══ GAME SCREEN ══════════════════════════════════════════════════════════ -->
-<div id="game-screen">
-  <div id="app">
-    <div class="game-title-bar">
-      <div class="game-brand">
-        <span class="game-brand-emoji">🚾</span>
-        <span>Where To Pee</span>
-      </div>
-      <button class="logout-btn" onclick="doLogout()">sign out</button>
-    </div>
-
-    <div id="progress-bar" class="progress-bar"></div>
-    <div id="nav-row" class="nav-row"></div>
-    <div class="level-tag"   id="level-tag"></div>
-    <div class="level-title" id="level-title"></div>
-    <div class="level-desc"  id="level-desc"></div>
-    <div class="hint-box"    id="hint-box"></div>
-
-    <svg id="room-svg" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg"></svg>
-
-    <div class="debug-wrap" id="debug-wrap">
-      <div class="weights-bar">
-        <div class="weight-row">
-          <span class="weight-label">R3 next spots</span>
-          <input type="range" min="1" max="4" step="1" value="2" id="w-r3" oninput="onWC()">
-          <span class="weight-val" id="wv-r3">2</span>
-        </div>
-        <div class="weight-row">
-          <span class="weight-label">R4 entrance</span>
-          <input type="range" min="1" max="4" step="1" value="2" id="w-r4" oninput="onWC()">
-          <span class="weight-val" id="wv-r4">2</span>
-        </div>
-        <div class="weight-row">
-          <span class="weight-label">R5 distance</span>
-          <input type="range" min="1" max="4" step="1" value="1" id="w-r5" oninput="onWC()">
-          <span class="weight-val" id="wv-r5">1</span>
-        </div>
-      </div>
-      <table class="debug-table" id="debug-table"></table>
-    </div>
-
-    <div class="feedback-box" id="feedback-box">
-      <div class="stars-row"      id="stars-row"></div>
-      <div class="feedback-title" id="feedback-title"></div>
-      <div class="feedback-body"  id="feedback-body"></div>
-    </div>
-    <div class="actions">
-      <button class="btn btn-primary" id="next-btn"  style="display:none" onclick="nextLevel()">Next level →</button>
-      <button class="btn"             id="retry-btn" style="display:none" onclick="retryLevel()">Try again</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ════════════════════════════════════════════════════════════════════
-//  CONFIG
-// ════════════════════════════════════════════════════════════════════
-const DEBUG = false; // set true to show score breakdown + weight sliders
-
-// Credentials — add more rows as needed: { user: '...', pass: '...' }
-const CREDENTIALS = [
-  { user: 'user', pass: 'pwd'  },
-  { user: 'test', pass: 'test' },
-];
-
-// ── AUTH ─────────────────────────────────────────────────────────────────────
-function doLogin() {
-  const u = document.getElementById('auth-user').value.trim().toLowerCase();
-  const p = document.getElementById('auth-pass').value;
-  const ok = CREDENTIALS.some(c => c.user === u && c.pass === p);
-  if (ok) {
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('game-screen').style.display = 'block';
-    renderLevel();
-  } else {
-    document.getElementById('auth-error').textContent = 'Incorrect username or password.';
-    document.getElementById('auth-pass').value = '';
-  }
-}
-function doLogout() {
-  document.getElementById('game-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('auth-user').value = '';
-  document.getElementById('auth-pass').value = '';
-  document.getElementById('auth-error').textContent = '';
-}
-
-// ── COLOURS ──────────────────────────────────────────────────────────────────
-function isDark(){ return window.matchMedia('(prefers-color-scheme:dark)').matches; }
-function C(l,d){ return isDark()?d:l; }
-const COL={
-  wall:()=>C('#3a3630','#2a2520'), floor:()=>C('#f0ede6','#1e1c19'),
-  tile:()=>C('#e8e5de','#252320'), urinalBg:()=>C('#fff','#2a2927'),
-  urinalBorder:()=>C('#b0ada6','#5a5855'), occupied:()=>C('#e8e5de','#1e1c19'),
-  numberText:()=>C('#999','#666'), doorFill:()=>C('#f0ede6','#1e1c19'),
-  doorBorder:'#378ADD', doorText:'#378ADD', personFill:'#E8825A',
-  best:'#EAF3DE', bestBorder:'#3B6D11',
-  wrong:'#FCEBEB', wrongBorder:'#A32D2D',
-  selected:'#E6F1FB', selectedBorder:'#378ADD',
-};
-
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function isAdjOcc(i,s){ return(i>0&&s[i-1].status==='occupied')||(i<s.length-1&&s[i+1].status==='occupied'); }
-function minDist(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
-function nextSpots(pick,s){ let c=0; for(let i=0;i<s.length;i++){ if(s[i].status!=='empty'||i===pick)continue; const lb=(i>0)&&(s[i-1].status==='occupied'||i-1===pick); const rb=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick); if(!lb&&!rb)c++; } return c; }
-function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
-function maxSurround(pick,s){ let mx=0; for(let i=0;i<s.length;i++){ if(s[i].status!=='occupied')continue; const l=(i>0)&&(s[i-1].status==='occupied'||i-1===pick); const r=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick); mx=Math.max(mx,(l?1:0)+(r?1:0)); } return mx; }
-function anyAvoidSurround(s){ return s.some((x,i)=>x.status==='empty'&&maxSurround(i,s)<2); }
-function distScore(d,mx){ if(mx===999)return 1; return d>=Math.ceil(mx*0.6)?1:0; }
-function bellZone(i,s,door){ if(door===null||door===undefined)return null; const p=Math.abs(i-door)/(s.length-1); if(p<0.15)return 0; if(p<0.25)return 1; if(p<=0.60)return 2; if(p<=0.80)return 1; return 0; }
-function bellLabel(v){ return['too close/far','ok','sweet spot'][v]; }
-function walkDist(i,door){ if(door===null||door===undefined)return 0; return Math.abs(i-door); }
-function gW(){ return{r3:+document.getElementById('w-r3').value,r4:+document.getElementById('w-r4').value,r5:+document.getElementById('w-r5').value}; }
-
-// ── BREAKDOWN ─────────────────────────────────────────────────────────────────
-function bd(i,s,door,w){
-  const x=s[i];
-  if(x.status==='occupied')return{eligible:false,reason:'occupied'};
-  if(x.status==='broken')return{eligible:false,reason:'broken'};
-  const hasOcc=s.some(x=>x.status==='occupied');
-  const canAvoid=anyNonAdj(s); const adj=isAdjOcc(i,s);
-  const r1app=hasOcc&&canAvoid; const r1pass=!r1app||!adj;
-  const surr=maxSurround(i,s); const canAvoidSurr=anyAvoidSurround(s); const r2disq=surr>=2&&canAvoidSurr;
-  const myDist=minDist(i,s); const mySpots=nextSpots(i,s);
-  const myRecent=!!x.recent; const myBell=bellZone(i,s,door); const myWalk=walkDist(i,door);
-  if(!r1pass)return{eligible:true,disqualified:true,disqR:'r1',r1:false,r1app,surr,dist:myDist,spots:mySpots,bell:myBell,walk:myWalk,recent:myRecent,finalStars:1};
-  if(r2disq)return{eligible:true,disqualified:true,disqR:'r2',r1:true,r1app,surr,dist:myDist,spots:mySpots,bell:myBell,walk:myWalk,recent:myRecent,finalStars:1};
-  const cands=s.map((_,j)=>{ if(s[j].status!=='empty')return null; if(hasOcc&&canAvoid&&isAdjOcc(j,s))return null; if(maxSurround(j,s)>=2&&canAvoidSurr)return null; return j; }).filter(x=>x!==null);
-  const mxDist=Math.max(...cands.map(j=>minDist(j,s)));
-  const mxSpots=Math.max(...cands.map(j=>nextSpots(j,s)));
-  const r3r=mySpots===mxSpots?1:mySpots>=mxSpots-1?0.5:0; const r3p=r3r*w.r3;
-  const r4r=myBell===null?0:myBell===2?1:myBell===1?0.5:0; const r4p=r4r*w.r4;
-  const r5r=distScore(myDist,mxDist); const r5p=r5r*w.r5;
-  const pen=myRecent?-1:0; const raw=r3p+r4p+r5p+pen;
-  const mxRaw=w.r3+(door!==null?w.r4:0)+w.r5;
-  const pct=mxRaw===0?0.8:raw/mxRaw;
-  let fs=pct>=0.8?5:pct>=0.6?4:pct>=0.4?3:2; fs=Math.max(2,Math.min(5,fs));
-  const minW=Math.min(...cands.map(j=>walkDist(j,door))); const maxW=Math.max(...cands.map(j=>walkDist(j,door)));
-  const walkTieLabel=door===null?null:myWalk===minW?'closest':myWalk===maxW?'furthest':'mid';
-  return{eligible:true,disqualified:false,r1:true,r1app,surr,canAvoidSurr,dist:myDist,mxDist,r5p:Math.round(r5p*10)/10,r5r,spots:mySpots,mxSpots,r3p:Math.round(r3p*10)/10,r3r,bell:myBell,r4p:Math.round(r4p*10)/10,r4r,walk:myWalk,walkTieLabel,recent:myRecent,pen,raw:Math.round(raw*10)/10,mxRaw,finalStars:fs};
-}
-function scoreStall(i,s,d,w){ const b=bd(i,s,d,w); return b.eligible?b.finalStars:0; }
-function bests(s,door,w){
-  const scored=s.map((_,i)=>{ if(s[i].status!=='empty')return{i,stars:0,walk:999}; const b=bd(i,s,door,w); return{i,stars:b.eligible?b.finalStars:0,walk:b.eligible&&!b.disqualified?walkDist(i,door):999}; });
-  const mx=Math.max(...scored.map(x=>x.stars)); if(mx===0)return[];
-  const top=scored.filter(x=>x.stars===mx); const minW=Math.min(...top.map(x=>x.walk));
-  return top.filter(x=>x.walk===minW).map(x=>x.i);
-}
-function stH(n,m){ return`<span class="sm">${'★'.repeat(Math.max(0,n))}</span><span class="se">${'★'.repeat(Math.max(0,m-n))}</span>`; }
-
-// ── SVG ROOM ──────────────────────────────────────────────────────────────────
-const SVG_W=560,SVG_H=220,WALL=14,UW=44,UH=54,PW=7,PH=10,DW=36;
-function roomX(i,n){ const tw=n*UW+(n-1)*8; return (SVG_W-tw)/2+i*(UW+8); }
-
-function drawRoom(stalls,door,hov,selIdx,revBests,pickedIdx){
-  const n=stalls.length; let o='';
-  o+=`<rect x="0" y="0" width="${SVG_W}" height="${SVG_H}" fill="${COL.floor()}"/>`;
-  const ts=30;
-  for(let x=WALL;x<SVG_W-WALL;x+=ts) o+=`<line x1="${x}" y1="${WALL}" x2="${x}" y2="${SVG_H-WALL}" stroke="${COL.tile()}" stroke-width="1"/>`;
-  for(let y=WALL;y<SVG_H-WALL;y+=ts) o+=`<line x1="${WALL}" y1="${y}" x2="${SVG_W-WALL}" y2="${y}" stroke="${COL.tile()}" stroke-width="1"/>`;
-  o+=`<rect x="0" y="0" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
-  o+=`<rect x="0" y="0" width="${WALL}" height="${SVG_H}" fill="${COL.wall()}"/>`;
-  o+=`<rect x="${SVG_W-WALL}" y="0" width="${WALL}" height="${SVG_H}" fill="${COL.wall()}"/>`;
-  if(door!==null&&door!==undefined){
-    const dx=roomX(door,n)+UW/2-DW/2;
-    o+=`<rect x="0" y="${SVG_H-WALL}" width="${dx}" height="${WALL}" fill="${COL.wall()}"/>`;
-    o+=`<rect x="${dx+DW}" y="${SVG_H-WALL}" width="${SVG_W-(dx+DW)}" height="${WALL}" fill="${COL.wall()}"/>`;
-    o+=`<rect x="${dx}" y="${SVG_H-WALL}" width="${DW}" height="${WALL}" fill="${COL.doorFill()}"/>`;
-    o+=`<line x1="${dx}" y1="${SVG_H-WALL}" x2="${dx}" y2="${SVG_H}" stroke="${COL.doorBorder}" stroke-width="2"/>`;
-    o+=`<line x1="${dx+DW}" y1="${SVG_H-WALL}" x2="${dx+DW}" y2="${SVG_H}" stroke="${COL.doorBorder}" stroke-width="2"/>`;
-    o+=`<path d="M${dx} ${SVG_H-WALL} Q${dx+DW/2} ${SVG_H-WALL-20} ${dx+DW} ${SVG_H-WALL}" stroke="${COL.doorBorder}" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>`;
-    o+=`<text x="${dx+DW/2}" y="${SVG_H-2}" text-anchor="middle" font-size="9" fill="${COL.doorText}" font-family="sans-serif">entrance</text>`;
-  } else {
-    o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
-  }
-  for(let i=0;i<n;i++){
-    const s=stalls[i]; const ux=roomX(i,n); const uy=WALL+4; const cx=ux+UW/2;
-    const isOcc=s.status==='occupied', isBrk=s.status==='broken';
-    const isBest=revBests&&revBests.includes(i), isWrong=pickedIdx===i&&revBests&&!revBests.includes(i);
-    const isHov=!revealed&&hov===i&&!isOcc&&!isBrk;
-    let bg=COL.urinalBg(),bc=COL.urinalBorder(),bw=1.5;
-    if(isOcc||isBrk){bg=COL.occupied();}
-    if(isHov){bc='#378ADD';bw=2;}
-    if(selIdx===i){bg=COL.selected;bc=COL.selectedBorder;bw=2;}
-    if(isBest){bg=COL.best;bc=COL.bestBorder;bw=2;}
-    if(isWrong){bg=COL.wrong;bc=COL.wrongBorder;bw=2;}
-    const by=uy+PH; const tap=4;
-    const cur=(!isOcc&&!isBrk&&!revealed)?'pointer':'default';
-    const op=isBrk?'0.4':'1';
-    o+=`<rect x="${cx-PW/2}" y="${uy}" width="${PW}" height="${PH}" rx="2" fill="${COL.urinalBorder()}"/>`;
-    o+=`<g onclick="clickUrinal(${i})" style="cursor:${cur}" opacity="${op}">`;
-    o+=`<path d="M${ux+2} ${by} L${ux+2+UW-4} ${by} L${ux+2+UW-4-tap} ${by+UH} L${ux+2+tap} ${by+UH} Z" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
-    o+=`<path d="M${ux+8} ${by+8} L${ux+UW-6} ${by+8} L${ux+UW-tap-6} ${by+UH-8} L${ux+tap+2} ${by+UH-8} Z" fill="none" stroke="${bc}" stroke-width="0.8" opacity="0.5"/>`;
-    o+=`<circle cx="${cx}" cy="${by+UH-14}" r="2.5" fill="${bc}" opacity="0.4"/>`;
-    if(isBrk) o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="16" font-family="sans-serif">🔧</text>`;
-    else if(isOcc){ o+=`<circle cx="${cx}" cy="${by+UH/2-4}" r="11" fill="${COL.personFill}"/><circle cx="${cx}" cy="${by+UH/2-4}" r="5" fill="#fff" opacity="0.4"/>`; }
-    else if(isBest&&revealed) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="18" fill="#3B6D11" font-weight="500" font-family="sans-serif">✓</text>`;
-    else if(isWrong) o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="18" fill="#A32D2D" font-weight="500" font-family="sans-serif">✗</text>`;
-    else if(s.recent) o+=`<text x="${cx}" y="${by+10}" text-anchor="middle" font-size="9" fill="#854F0B" font-family="sans-serif">recent</text>`;
-    o+=`</g>`;
-    o+=`<text x="${cx}" y="${by+UH+14}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
-  }
-  document.getElementById('room-svg').innerHTML=o;
-}
-
-// ── DEBUG TABLE ───────────────────────────────────────────────────────────────
-function renderDebug(){
-  if(!DEBUG)return;
-  const{stalls,doorIndex}=LEVELS[currentLevel];
-  const w=gW(); const best=bests(stalls,doorIndex,w);
-  const bds=stalls.map((_,i)=>bd(i,stalls,doorIndex,w));
-  function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified)return'cd'; if(best.includes(i))return'cb'; return''; }
-  const na=`<span style="color:var(--text3)">—</span>`;
-  const hc=stalls.map((_,i)=>`<th>#${i+1}</th>`).join('');
-  function row(lbl,cells){ return`<tr><td class="rl">${lbl}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`; }
-  const hasOcc=stalls.some(s=>s.status==='occupied');
-  const sc=stalls.map(s=>s.status==='occupied'?`<span class="pill pn">occupied</span>`:s.status==='broken'?`<span class="pill pn">broken</span>`:s.recent?`<span class="pill pw">recent</span>`:`<span class="pill pp">empty</span>`);
-  const r1c=bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1?`<span class="pill pp">ok ✓</span>`:`<span class="pill pf">adj ✗</span>`);
-  const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')||b.surr>=2?`<span class="pill pf">surrounds ✗</span>`:`<span class="pill pp">ok ✓</span>`);
-  const r3c=bds.map(b=>!b.eligible?na:b.disqualified?`<span style="color:var(--text3)">${b.spots}</span>`:`${b.spots}<span style="color:var(--text3);font-size:10px"> /${b.mxSpots}</span><br><b>+${b.r3p}</b>`);
-  const r4c=bds.map(b=>{ if(!b.eligible)return na; if(b.bell===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${bellLabel(b.bell)}</span>`; const cl=b.bell===2?'pp':b.bell===1?'pm':'pf'; return`<span class="pill ${cl}">${bellLabel(b.bell)}</span><br><b>+${b.r4p}</b>`; });
-  const r5c=bds.map(b=>{ if(!b.eligible)return na; if(b.disqualified)return`<span style="color:var(--text3)">${b.dist===999?'∞':b.dist}</span>`; const thr=b.mxDist===999?'∞':Math.ceil(b.mxDist*0.6); return`${b.dist===999?'∞':b.dist}<span style="color:var(--text3);font-size:10px"> (≥${thr})</span><br><b>+${b.r5p}</b>`; });
-  const wkc=bds.map((b,i)=>{ if(!b.eligible)return na; if(b.walk===0&&doorIndex===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${b.walk}</span>`; const cl=b.walkTieLabel==='closest'?'pp':b.walkTieLabel==='furthest'?'pf':'pn'; return`${b.walk} <span class="pill ${cl}">${b.walkTieLabel||''}</span>`; });
-  const pc=bds.map(b=>!b.eligible?na:b.recent?`<span class="pill pw">−1</span>`:na);
-  const tc=bds.map(b=>!b.eligible?na:stH(b.finalStars,5));
-  const ww=gW();
-  const r4row=doorIndex!==null&&doorIndex!==undefined?row(`r4: entrance zone ×${ww.r4}`,r4c):'';
-  const wkrow=doorIndex!==null&&doorIndex!==undefined?row('walk tiebreaker',wkc):'';
-  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1: no adjacent',r1c)}${row('r2: no surround',r2c)}${row(`r3: next spots ×${ww.r3}`,r3c)}${r4row}${row(`r5: distance ×${ww.r5}`,r5c)}${wkrow}${row('penalty',pc)}${row('total',tc)}</tbody>`;
-}
-
-function onWC(){ const w=gW(); ['r3','r4','r5'].forEach(k=>document.getElementById('wv-'+k).textContent=w[k]); const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,hoveredIdx,revealed?picked:null,revealed?bests(stalls,doorIndex,w):null,revealed?picked:null); renderDebug(); if(revealed&&picked!==null){ const s=scoreStall(picked,stalls,doorIndex,w); const e=explain(picked,stalls,doorIndex,w); showFeedback(s,e.title,e.body,false); } }
-
-// ── EXPLAIN ───────────────────────────────────────────────────────────────────
-function explain(pick,s,door,w){
-  const b=bd(pick,s,door,w); const best=bests(s,door,w);
-  if(b.disqualified&&b.disqR==='r1')return{title:"Rule 1 broken!",body:"There were urinals with a buffer gap — never go adjacent if you can avoid it."};
-  if(b.disqualified&&b.disqR==='r2')return{title:"Rule 2 broken!",body:"Your pick fully surrounds someone — both their sides occupied. There were options that avoided this."};
-  if(b.finalStars===5){ let r=[]; if(b.r1app)r.push("safe buffer from others"); if(b.surr<2)r.push("no one gets surrounded"); if(b.r3r===1)r.push(`leaves ${b.spots} valid spot(s) for the next person`); if(b.bell===2)r.push("good entrance zone"); if(b.r5r===1)r.push("far enough from others"); if(b.walkTieLabel==='closest')r.push("didn't over-walk"); return{title:"Perfect!",body:"Textbook — "+(r.join(", ")||"optimal on every rule")+"."}; }
-  if(b.finalStars===4){ const bn=best.map(x=>x+1).join(' or '); const wn=door!==null&&b.walkTieLabel==='furthest'?` Also urinal${best.length>1?'s':''} ${bn} required less walking.`:''; return{title:"Very good",body:`Solid. Urinal${best.length>1?'s':''} ${bn} ${best.length>1?'were':'was'} slightly better.${wn}`}; }
-  if(b.finalStars===3)return{title:"Acceptable",body:`You pass. Left ${b.spots} valid spot(s) for the next arrival.`};
-  if(b.spots===0)return{title:"You trapped the next guy!",body:"Zero valid spots left for the next arrival."};
-  if(b.bell===0)return{title:"Wrong zone!",body:"Too close to the entrance or suspiciously far. Aim for the natural middle stretch."};
-  return{title:"Below average",body:"Check the breakdown — one or more rules scored poorly."};
-}
-
-// ── LEVELS ────────────────────────────────────────────────────────────────────
-function e(n){return Array(n).fill(null).map(()=>({status:"empty"}));}
-function occ(a,...ix){ix.forEach(i=>a[i]={status:"occupied"});return a;}
-function brk(a,...ix){ix.forEach(i=>a[i]={status:"broken"});return a;}
-function rec(a,...ix){ix.forEach(i=>a[i]={status:"empty",recent:true});return a;}
-
-const LEVELS=[
-  {title:"Welcome to the bathroom",desc:"3 urinals, no one inside. The middle is awkward — pick an end.",hint:"Rule 1: prefer a urinal that isn't hemmed in on both sides.",doorIndex:null,stalls:e(3)},
-  {title:"Someone's already here",desc:"4 urinals, urinal 1 is occupied. Where do you go?",hint:"Rule 1: if you can avoid standing directly next to someone, you must.",doorIndex:null,stalls:occ(e(4),0)},
-  {title:"Respect the space",desc:"5 urinals, urinals 1 and 4 occupied. Don't fully surround anyone.",hint:"Rule 2: your pick shouldn't trap someone between two occupied urinals.",doorIndex:null,stalls:occ(e(5),0,3)},
-  {title:"Think ahead",desc:"5 urinals, urinal 2 occupied. Leave room for the next person.",hint:"Rule 3: after you pick, count how many valid spots remain for the next arrival.",doorIndex:null,stalls:occ(e(5),1)},
-  {title:"The entrance matters",desc:"5 urinals — door is below. Don't stand right next to it, but don't march to the far end either.",hint:"Rule 4: there's a sweet spot zone. Too close = exposed. Too far = suspicious.",doorIndex:2,stalls:e(5)},
-  {title:"Don't over-walk",desc:"9 urinals, door on the left, no one inside. Two spots are in the sweet zone — but one requires walking further for no reason.",hint:"Walk rule: when two spots score equally, pick the one closer to the door.",doorIndex:0,stalls:e(9)},
-  {title:"All rules in play",desc:"7 urinals, door on the left, urinal 3 occupied. Apply everything you know.",hint:null,doorIndex:0,stalls:occ(e(7),2)},
-  {title:"The long walk",desc:"9 urinals, door left, urinal 5 occupied. Far enough is enough.",hint:null,doorIndex:0,stalls:occ(e(9),4)},
-  {title:"Broken in the mix",desc:"7 urinals, urinal 4 broken, urinal 2 occupied. Door left.",hint:null,doorIndex:0,stalls:brk(occ(e(7),1),3)},
-  {title:"Door in the middle",desc:"7 urinals, entrance dead centre. Both ends equidistant — which side wins?",hint:null,doorIndex:3,stalls:e(7)},
-  {title:"Warm seats",desc:"7 urinals, urinals 2 and 6 recently used, urinal 4 occupied. Door left.",hint:null,doorIndex:0,stalls:rec(occ(e(7),3),1,5)},
-  {title:"Rush hour",desc:"7 urinals, door right, urinals 2 4 6 occupied. Every gap is compromised.",hint:null,doorIndex:6,stalls:occ(e(7),1,3,5)},
-  {title:"No easy answer",desc:"9 urinals, door middle, urinals 3 and 7 occupied, urinal 9 broken.",hint:null,doorIndex:4,stalls:brk(occ(e(9),2,6),8)},
-];
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
-let currentLevel=0,completedLevels=[],picked=null,revealed=false,hoveredIdx=null;
-
-function renderNav(){ document.getElementById('nav-row').innerHTML=LEVELS.map((_,i)=>`<button class="nav-btn${i===currentLevel?' active':''}" onclick="jumpLevel(${i})">L${i+1}</button>`).join(''); }
-function jumpLevel(i){ currentLevel=i; renderLevel(); }
-function renderProgress(){ document.getElementById('progress-bar').innerHTML=LEVELS.map((_,i)=>{ let c='progress-dot'; if(completedLevels.includes(i))c+=' done'; else if(i===currentLevel)c+=' current'; return`<div class="${c}"></div>`; }).join(''); }
-
-function clickUrinal(i){
-  if(revealed)return;
-  const{stalls,doorIndex}=LEVELS[currentLevel];
-  if(stalls[i].status!=='empty')return;
-  picked=i; revealed=true;
-  const w=gW(); const best=bests(stalls,doorIndex,w);
-  drawRoom(stalls,doorIndex,null,picked,best,picked);
-  renderDebug();
-  const st=scoreStall(i,stalls,doorIndex,w); const ex=explain(i,stalls,doorIndex,w);
-  showFeedback(st,ex.title,ex.body,true);
-}
-
-function setupHover(){
-  const svg=document.getElementById('room-svg');
-  svg.addEventListener('mousemove',ev=>{ const t=ev.target.closest('[onclick]'); const m=t&&t.getAttribute('onclick')&&t.getAttribute('onclick').match(/clickUrinal\((\d+)\)/); const idx=m?+m[1]:null; if(idx!==hoveredIdx){ hoveredIdx=idx; if(!revealed){ const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,hoveredIdx,null,null,null); } } });
-  svg.addEventListener('mouseleave',()=>{ hoveredIdx=null; if(!revealed){ const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,null,null,null,null); } });
-}
-
-function renderLevel(){
-  const lv=LEVELS[currentLevel];
-  document.getElementById('level-tag').textContent=`Level ${currentLevel+1} of ${LEVELS.length}`;
-  document.getElementById('level-title').textContent=lv.title;
-  document.getElementById('level-desc').textContent=lv.desc;
-  const hb=document.getElementById('hint-box');
-  if(lv.hint){hb.textContent=lv.hint;hb.classList.add('show');}else{hb.classList.remove('show');}
-  picked=null;revealed=false;hoveredIdx=null;
-  document.getElementById('feedback-box').classList.remove('show');
-  document.getElementById('next-btn').style.display='none';
-  document.getElementById('retry-btn').style.display='none';
-  if(DEBUG){document.getElementById('debug-wrap').classList.add('show');}else{document.getElementById('debug-wrap').classList.remove('show');}
-  renderNav();renderProgress();
-  drawRoom(lv.stalls,lv.doorIndex,null,null,null,null);
-  renderDebug();
-}
-
-function showFeedback(stars,title,body,updateBtns){
-  document.getElementById('stars-row').innerHTML=Array.from({length:5},(_,i)=>`<span class="star${i<stars?' lit':''}">★</span>`).join('');
-  document.getElementById('feedback-title').textContent=title;
-  document.getElementById('feedback-body').textContent=body;
-  document.getElementById('feedback-box').classList.add('show');
-  if(!updateBtns)return;
-  if(stars>=3){completedLevels=[...new Set([...completedLevels,currentLevel])];renderProgress();renderNav();const nb=document.getElementById('next-btn');nb.style.display='inline-block';nb.textContent=currentLevel<LEVELS.length-1?'Next level →':'Play again ↺';}
-  else{document.getElementById('retry-btn').style.display='inline-block';}
-}
-
-function nextLevel(){currentLevel<LEVELS.length-1?currentLevel++:(currentLevel=0,completedLevels=[]);renderLevel();}
-function retryLevel(){renderLevel();}
-
-setupHover();
-</script>
-</body>
-</html>
