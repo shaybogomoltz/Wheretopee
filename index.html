@@ -187,6 +187,17 @@
     .pn { background: var(--bg2); color: var(--text3); border: 0.5px solid var(--border); }
     .pw { background: var(--amber-bg); color: var(--amber-text); }
 
+    /* ── VERSION ── */
+    .version-tag { font-size: 11px; color: var(--text3); letter-spacing: 0.04em; }
+    .version-corner { position: fixed; bottom: 14px; right: 16px; font-size: 11px; color: var(--text3); letter-spacing: 0.04em; pointer-events: none; z-index: 999; }
+
+    /* ── TOOLTIP ── */
+    .tip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .tip-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: var(--bg3); color: var(--text3); font-size: 9px; font-weight: 700; cursor: default; flex-shrink: 0; border: 0.5px solid var(--border2); line-height: 1; }
+    .tip-box { display: none; position: fixed; z-index: 9999; max-width: 220px; background: var(--text); color: var(--bg); font-size: 11px; line-height: 1.55; padding: 7px 10px; border-radius: var(--radius); pointer-events: none; white-space: normal; box-shadow: none; }
+    .tip-icon:hover + .tip-box,
+    .tip-icon:focus + .tip-box { display: block; }
+
     /* ── DEBUG RULES SCREEN ── */
     #debug-rules-screen { display: none; padding: 1rem; }
     #debug-rules-screen.show { display: block; }
@@ -285,6 +296,8 @@
   </svg>
   <div class="landing-title">Where To Pee</div>
   <div class="landing-sub">The unwritten rules of the urinal.</div>
+  <div class="version-tag" id="landing-version"></div>
+  <div style="margin-bottom:2rem"></div>
   <div class="landing-btns">
     <button class="landing-btn landing-btn-play" onclick="startPlay()">Play</button>
     <button class="landing-btn landing-btn-debug" onclick="showDebugChooser()">Debug mode</button>
@@ -526,6 +539,11 @@
 </div>
 
 <script>
+// ── VERSION ───────────────────────────────────────────
+const GAME_VERSION = '0.3.0';
+document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
+document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
+
 // ── STATE ─────────────────────────────────────────────
 let isDebugMode = false;
 let isDebugRulesMode = false;
@@ -1078,47 +1096,66 @@ function drRenderTable(stalls, doorIndex) {
   function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified)return'cd'; if(best.includes(i))return'cb'; return''; }
   const na = `<span style="color:var(--text3)">—</span>`;
   const hc = stalls.map((_,i) => `<th>#${i+1}</th>`).join('');
-  function row(lbl, cells){ return `<tr><td class="rl">${lbl}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`; }
+
+  // row with optional tooltip on the label
+  function row(lbl, cells, tip){
+    const label = tip
+      ? `<span class="tip-wrap">${lbl}<span class="tip-icon" tabindex="0">i</span><span class="tip-box">${tip}</span></span>`
+      : lbl;
+    return `<tr><td class="rl">${label}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`;
+  }
+
   const hasOcc = stalls.some(s=>s.status==='occupied');
 
-  const sc  = stalls.map(s => s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:`<span class="pill pp">empty</span>`);
-  const r1c = bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">✓</span>`:`<span class="pill pf">adj ✗</span>`);
-  // is adjacent to occupied?
+  const sc   = stalls.map(s => s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:`<span class="pill pp">empty</span>`);
+  const r1c  = bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">✓</span>`:`<span class="pill pf">adj ✗</span>`);
   const adjc = bds.map((b,i)=>!b.eligible?na: isAdjOcc(i,stalls)?`<span class="pill pf">yes</span>`:`<span class="pill pp">no</span>`);
-  const r2c = bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
-  // surround count
-  const surrc = bds.map((b,i)=>!b.eligible?na:`${b.surr??0}`);
-  const r3c = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
-  // R4 breakdown
+  const r2c  = bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
+  const surrc= bds.map((b,i)=>!b.eligible?na:`${b.surr??0}`);
+  const r3c  = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
   const r41c = bds.map(b=>!b.eligible||b.disqualified||b.r41s==null?na:`${b.r41s}★`);
   const r42c = bds.map(b=>!b.eligible||b.disqualified||b.r42s==null?na:`${b.r42s}★`);
   const r4c  = bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
-  // dist to nearest/farthest occ
-  const dnc = bds.map(b=>!b.eligible?na:b.distToNearestOcc===999?na:`${b.distToNearestOcc}`);
-  const dfc = bds.map(b=>!b.eligible?na:b.distToFarthestOcc===0&&!hasOcc?na:`${b.distToFarthestOcc}`);
-  // R5
+  const dnc  = bds.map(b=>!b.eligible?na:b.distToNearestOcc===999?na:`${b.distToNearestOcc}`);
+  const dfc  = bds.map(b=>!b.eligible?na:b.distToFarthestOcc===0&&!hasOcc?na:`${b.distToFarthestOcc}`);
   const r5c  = bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
-  // walk distance from door
   const wdc  = bds.map((b,i)=>!b.eligible?na:`${Math.abs(i-doorIndex)}`);
   const ptc  = bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}</b>+spd`);
 
+  const TIPS = {
+    status:   'Whether the stall is empty, occupied by an NPC, or broken. Only empty stalls are eligible picks.',
+    r1:       'R1 — Leave a buffer. Hard rule. If a non-adjacent empty stall exists, you must not pick one adjacent to an occupied stall. n/a = no occupied stalls, or no non-adjacent option exists.',
+    adj:      'Is this stall directly next to an occupied one? Even index gap of 1 counts as adjacent. Feeds into R1.',
+    r2:       'R2 — Don\'t trap anyone. Hard rule. If picking this stall would fully surround an occupied stall on both sides, and an alternative exists, it\'s a fail.',
+    surr:     'How many sides of an adjacent occupied stall your pick would fill. 0 = not adjacent to any occupied stall. 1 = occupying one neighbour slot. 2 = trapping them on both sides (R2 fail).',
+    r3:       'R3 — Think ahead. Shows valid spots left for the next person after your pick / best available across all candidates. If your pick leaves fewer than max−1 valid spots, it\'s a fail.',
+    r4:       'R4 — Stay inconspicuous. Average of R4.1 (proximity to others) and R4.2 (position relative to door). 1★ = suspicious, 5★ = perfectly normal.',
+    r41:      'R4.1 — Not too far from others. Compares your max distance to any occupied stall against all valid candidates. Being the one who went the furthest away looks weird. 5★ = you stayed as close as the best option.',
+    r42:      'R4.2 — Bell curve from door. Very close to the entrance (1★), sweet zone mid-room (5★), all the way at the back (1★). Modelled as a proportional distance from the door stall.',
+    dnear:    'Steps to the nearest occupied stall. Lower = you\'re closer to someone. Used in R4.1 and R5 scoring.',
+    dfar:     'Steps to the farthest occupied stall. Higher = you\'re more spread from the group. Used in R4.1 — being the outlier looks odd.',
+    r5:       'R5 — Don\'t over-walk. If no stalls are occupied, rewards picking closer to the door. If stalls are occupied, rewards picking at ~60% of the max possible distance from the nearest occupant — far enough for privacy, not so far it\'s odd.',
+    walk:     'Number of stalls between the door and this stall. 0 = door stall itself. Used in R5 when the bathroom is empty.',
+    pts:      'Estimated points from R4 + R5 combined (max 60). Speed bonus (max 40) is excluded here since no timer runs in Debug Rules mode.',
+  };
+
   document.getElementById('dr-debug-table').innerHTML = `
-    <thead><tr><th class="rl" style="width:140px"></th>${hc}</tr></thead>
+    <thead><tr><th class="rl" style="width:160px"></th>${hc}</tr></thead>
     <tbody>
-      ${row('status', sc)}
-      ${row('r1 — buffer', r1c)}
-      ${row('↳ adj to occ?', adjc)}
-      ${row('r2 — surround', r2c)}
-      ${row('↳ surround sides', surrc)}
-      ${row('r3 — next spots', r3c)}
-      ${row('r4 combined ★', r4c)}
-      ${row('↳ r4.1 not too far', r41c)}
-      ${row('↳ r4.2 bell curve', r42c)}
-      ${row('↳ dist nearest occ', dnc)}
-      ${row('↳ dist farthest occ', dfc)}
-      ${row('r5 — walk ★', r5c)}
-      ${row('↳ walk from door', wdc)}
-      ${row('pts (excl speed)', ptc)}
+      ${row('status',              sc,   TIPS.status)}
+      ${row('r1 — buffer',        r1c,  TIPS.r1)}
+      ${row('↳ adj to occ?',      adjc, TIPS.adj)}
+      ${row('r2 — surround',      r2c,  TIPS.r2)}
+      ${row('↳ surround sides',   surrc,TIPS.surr)}
+      ${row('r3 — next spots',    r3c,  TIPS.r3)}
+      ${row('r4 combined ★',      r4c,  TIPS.r4)}
+      ${row('↳ r4.1 not too far', r41c, TIPS.r41)}
+      ${row('↳ r4.2 bell curve',  r42c, TIPS.r42)}
+      ${row('↳ dist nearest occ', dnc,  TIPS.dnear)}
+      ${row('↳ dist farthest occ',dfc,  TIPS.dfar)}
+      ${row('r5 — walk ★',        r5c,  TIPS.r5)}
+      ${row('↳ walk from door',   wdc,  TIPS.walk)}
+      ${row('pts (excl speed)',    ptc,  TIPS.pts)}
     </tbody>`;
 }
 
@@ -1434,7 +1471,28 @@ drSvg.addEventListener('mouseleave',()=>{
   _drHoveredIdx=null; drDrawRoom(_drCurrentStalls,_drCurrentDoor,null,null,null,null);
 });
 
+// ── TOOLTIP POSITIONING ───────────────────────────────
+// Reposition tip-box to follow cursor so it never clips screen edges
+document.addEventListener('mousemove', ev => {
+  const icon = ev.target.closest('.tip-icon');
+  if(!icon) return;
+  const box = icon.nextElementSibling;
+  if(!box || !box.classList.contains('tip-box')) return;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let x = ev.clientX + 14, y = ev.clientY + 14;
+  // peek at box size before positioning
+  box.style.left = '0px'; box.style.top = '0px'; box.style.display = 'block';
+  const bw = box.offsetWidth, bh = box.offsetHeight;
+  if(x + bw > vw - 8) x = ev.clientX - bw - 10;
+  if(y + bh > vh - 8) y = ev.clientY - bh - 10;
+  box.style.left = x + 'px';
+  box.style.top  = y + 'px';
+});
+
 setupHover();
 </script>
+<!-- VERSION CORNER -->
+<div class="version-corner" id="corner-version"></div>
+
 </body>
 </html>

@@ -30,15 +30,24 @@ Rules 4–5 are **scored** — they contribute to the star rating (1–5★).
 After the player picks a stall and the blue dot walks to it, a score popup appears showing:
 
 - **R1 / R2 / R3** — ✓ Pass or ✗ Fail
-- **R4 / R5** — star rating (0–5★)
+- **R4 / R5** — star rating (1–5★)
 - **Reaction time** — time from GO to click (in seconds)
-- **Total score** — overall star rating (1–5★)
+- **Total score** — points out of 100
 
-**Star calculation:**
-- Breaking R1 or R2 → automatic 1★
-- Otherwise: weighted sum of R3 (next spots), R4 (entrance zone), R5 (distance)
-- ≥80% of max → 5★ / ≥60% → 4★ / ≥40% → 3★ / else → 2★
-- Minimum passing score to advance: 2★
+**Points breakdown (per level, max 100):**
+- R4: up to 30 pts (`r4s / 5 × 30`)
+- R5: up to 30 pts (`r5s / 5 × 30`)
+- Speed: up to 40 pts (based on reaction time; 0 pts at ≥5s, 40 pts at ≤2s)
+- Breaking R1, R2, or R3 → 0 pts total, game over
+
+**R4 scoring detail:**
+- R4.1 — proximity to others: scored relative to other valid candidates; being the "least conspicuously far" is best
+- R4.2 — bell curve from door: very close to door (1★) → sweet zone mid-room (5★) → very far from door (1★)
+- R4 combined = average of R4.1 and R4.2
+
+**R5 scoring detail:**
+- No occupied stalls: scored by walk distance from door (closer = better)
+- With occupied stalls: sweet zone peaks at ~60% of max possible distance from nearest occupant
 
 ---
 
@@ -101,7 +110,7 @@ Each tutorial level introduces one new rule. Before each tutorial level, a **rul
 0 0 0 0 0 0 0 1
 0 0 0 0 E 0 0 0
 ```
-- ✅ Pass: positions 4, 5, or 6 (`00002001`, `00000201`, etc. — sweet zone)
+- ✅ Pass: positions 4, 5, or 6 (sweet zone)
 - ❌ Fail: positions 1, 2, 3, 7, or 8
 
 *Reasoning: Stall 8 is occupied so stall 7 breaks R1. R2 and R3 don't apply with so many stalls free. R4 kicks in: positions 1–3 are suspiciously far from the group; position 7 is adjacent. The sweet zone is 4–6.*
@@ -131,22 +140,35 @@ All rules apply. No rules screen between levels — goes straight to the next le
 | L8  | 9 urinals, #5 occupied | Left |
 | L9  | 7 urinals, #2 occupied + #4 broken | Left |
 | L10 | 7 urinals, empty | Centre |
-| L11 | 7 urinals, #4 occupied, #2 and #6 recently used | Left |
+| L11 | 7 urinals, #4 occupied | Left |
 | L12 | 7 urinals, #2 #4 #6 occupied | Right |
-| L13 | 7 urinals, NPC last-minute arrival at stall 5 | Left |
-| L14 | 9 urinals, #3 occupied + NPC takes best remaining | Left |
-| L15 | 9 urinals, #3 and #7 occupied, #9 broken | Centre |
+| L13 | 9 urinals, #3 and #7 occupied | Centre |
+| L14 | 9 urinals, #3 and #7 occupied + #9 broken | Centre |
+| L15 | 7 urinals, #1 and #7 occupied | Centre |
 
 ---
 
-## NPC Last-Minute Arrival (L13–L14)
+## NPC Last-Minute Arrival (L10+)
 
-On NPC levels, a red dot bursts in during the countdown and claims a stall before the player can act.
+From L10 onward, an NPC may optionally appear during the countdown. Events are randomised with spacing (no two consecutive NPC levels):
 
-- Countdown: `3` → blue dot appears at door and walks in
-- On `1` → red NPC dot appears and races to its scripted stall
-- On `GO` → NPC is settled, player can now click
-- After click → blue dot walks to chosen stall, result reveals on arrival
+- **Arrival only** (~50% chance): a red dot bursts in during the countdown and claims a stall before GO
+- **Departure only** (~25% chance): an existing NPC walks out during the countdown, freeing a warm stall
+- **Both** (L20+, ~15% chance): one NPC departs and a new one arrives
+
+**Countdown timeline with NPC:**
+
+| Time | Event |
+|------|-------|
+| 0ms | "3" — door opens, blue dot appears |
+| 200–900ms | Blue dot walks in, settles near door |
+| 1000ms | "2" — departing NPC (if any) starts walking out |
+| 1100–1800ms | Departing NPC walks to door and disappears; stall becomes warm |
+| 2000ms | "1" — arriving NPC (if any) bursts in |
+| 2100–2700ms | Arriving NPC walks quickly to its stall |
+| 3000ms | "GO" — NPC is settled, player can click |
+| +700ms | Blue dot walks to chosen stall |
+| On arrival | Stalls reveal green/red, score popup appears |
 
 ---
 
@@ -161,8 +183,12 @@ Landing screen
     │               → L4 → Score popup → Rules screen (all 5)
     │               → L5 → Score popup → L6 → L7 → ... (no rules screen)
     │
-    └── Debug → All levels accessible via nav bar
-                Debug table + weight sliders + reaction time stats visible
+    └── Debug mode → Debug Chooser screen
+                        ├── Debug Levels → all levels via nav bar
+                        │                  debug table + weight sliders + stats
+                        │
+                        └── Debug Rules  → custom scenario builder
+                                           inputs → apply → game visual → debug table
 ```
 
 ---
@@ -173,8 +199,8 @@ All levels use the same countdown before the player can click:
 
 - `3` → Blue dot (player) appears at door
 - `200ms` → Blue dot walks into room, settles near door
-- `2` → 
-- `1` → (NPC levels only) Red dot bursts in and walks briskly to its stall
+- `2` → (NPC departure, if scripted)
+- `1` → (NPC arrival, if scripted) Red dot bursts in and walks briskly to its stall
 - `GO` → Timer starts, player can click
 - After click → Blue dot walks leisurely to chosen stall (700ms)
 - On arrival → Stalls turn green/red, score popup appears
@@ -184,25 +210,120 @@ All levels use the same countdown before the player can click:
 ## Stall Colour Feedback (after pick)
 
 After the blue dot arrives at the chosen stall:
-- 🟢 **Green** — stall would have been a passing pick (≥2★)
+- 🟢 **Green** — stall would have been a passing pick
 - 🔴 **Red** — stall would have failed
 - Picked stall shows **✓** or **✗**
 - Occupied/broken stalls remain unchanged
 
 ---
 
-## Play vs Debug Mode
+## Play vs Debug Modes
 
-| Feature | Play | Debug |
-|---------|------|-------|
-| Nav bar (L1, L2…) | ✗ | ✓ |
-| Level tag / titles | ✗ | ✗ |
-| Progress dots | ✗ | ✗ |
-| Debug score table | ✗ | ✓ |
-| Weight sliders (R3/R4/R5) | ✗ | ✓ |
-| Reaction time stats | ✗ | ✓ |
-| Rules intro screens | ✓ | ✗ |
-| Score popup | ✓ | ✓ |
+| Feature | Play | Debug Levels | Debug Rules |
+|---------|------|--------------|-------------|
+| Nav bar (L1, L2…) | ✗ | ✓ | ✗ |
+| Rules intro screens | ✓ | ✗ | ✗ |
+| Score popup | ✓ | ✓ | ✗ |
+| Timeout / fail state | ✓ | ✓ | ✗ (never fails) |
+| Debug score table | ✗ | ✓ | ✓ (extended) |
+| Weight sliders (R3/R4/R5) | ✗ | ✓ | ✗ |
+| Reaction time stats | ✗ | ✓ | ✗ |
+| Custom stall configuration | ✗ | ✗ | ✓ |
+| Timing mode (3-2-1-Go) | always | always | optional |
+| Result banner after pick | ✗ | ✗ | ✓ |
+
+---
+
+## Debug Levels Mode
+
+Accessed via **Debug mode → Debug Levels**.
+
+- Jump freely between all 15 base levels via the nav bar
+- Full debug table visible at all times (updates after each pick and after countdown)
+- Weight sliders let you adjust R3/R4.1/R5 scoring in real time
+- Reaction time and best-time stats shown in the topbar
+- No fail states — rule breaks are shown in the score popup but don't end the session
+
+---
+
+## Debug Rules Mode
+
+Accessed via **Debug mode → Debug Rules**.
+
+A custom scenario builder for understanding and validating rule logic. No fail states, no session score. Designed for iterating on edge cases.
+
+### Inputs panel
+
+| Input | Description |
+|-------|-------------|
+| Stall count | Slider from 2 to 12 stalls |
+| Stall states | Per-stall dropdown: empty / occupied / broken (colour coded) |
+| Entrance (door) | Button row selecting which stall the door aligns to |
+| Timing checkbox | If checked, runs the 3-2-1-Go countdown animation before enabling clicks; never times out |
+
+### Apply button
+
+Clicking **Apply & render** locks in the current inputs and renders the game visual and debug table. Safe to re-apply at any time.
+
+### Game visual
+
+Normal SVG room rendered from the custom configuration. If timing is enabled, the player dot walks in via the countdown animation. After GO (or immediately if untimed), clicking any empty stall picks it and reveals the result.
+
+### Result banner
+
+After picking, a banner shows:
+- ✓ Valid pick — R4 stars, R5 stars, estimated score (excl. speed)
+- ✗ Rule broken — which rule (R1 / R2 / R3) and why
+
+### Extended debug table
+
+The Debug Rules table shows more variables than the standard debug table:
+
+| Row | What it shows |
+|-----|---------------|
+| status | empty / occ / broken |
+| r1 — buffer | n/a / ✓ / adj ✗ |
+| ↳ adj to occ? | whether this stall is adjacent to an occupied one |
+| r2 — surround | n/a / ✓ / surr ✗ |
+| ↳ surround sides | how many sides of an occupied stall this pick would fill (0–2) |
+| r3 — next spots | next-person valid spots after this pick / max across all candidates |
+| r4 combined ★ | average of R4.1 and R4.2 |
+| ↳ r4.1 not too far | score for distance to nearest occupied stall relative to other candidates |
+| ↳ r4.2 bell curve | score for position relative to door (bell curve) |
+| ↳ dist nearest occ | steps to nearest occupied stall |
+| ↳ dist farthest occ | steps to farthest occupied stall |
+| r5 — walk ★ | overall R5 score |
+| ↳ walk from door | steps from the door to this stall |
+| pts (excl speed) | estimated points from R4 + R5 (speed component excluded) |
+
+Column highlight colours match the standard debug table: green = best candidate, grey = disqualified or ineligible.
+
+---
+
+## `bd()` — Per-Stall Breakdown Object
+
+The core scoring function `bd(i, stalls, door)` returns a breakdown object for stall `i`. Key fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `eligible` | bool | false if stall is occupied or broken |
+| `disqualified` | bool | true if R1 or R2 is broken |
+| `disqR` | string | `'r1'` or `'r2'` — which rule caused disqualification |
+| `r1app` | bool | whether R1 is applicable (occupied stalls exist AND a non-adjacent option exists) |
+| `r1pass` | bool | whether this stall passes R1 |
+| `surr` | int | how many sides of an adjacent occupied stall this pick fills (0–2) |
+| `spots` | int | valid next-person spots after this pick |
+| `mxSpots` | int | max spots across all valid candidates |
+| `r3pass` | bool | whether spots ≥ mxSpots − 1 |
+| `r4s` | int | combined R4 score (1–5) |
+| `r41s` | int | R4.1 sub-score (proximity) |
+| `r42s` | int | R4.2 sub-score (bell curve from door) |
+| `r5s` | int | R5 score (1–5) |
+| `distToNearestOcc` | int | steps to nearest occupied stall (999 if none) |
+| `distToFarthestOcc` | int | steps to farthest occupied stall |
+| `walkD` | int | walk distance from door to this stall |
+| `finalStars` | int | overall star rating (1–5) based on R4+R5 average |
+| `cands` | int[] | indices of all valid candidates (pass R1+R2) |
 
 ---
 
@@ -211,15 +332,62 @@ After the blue dot arrives at the chosen stall:
 - [ ] **Global ranking system** — score per level feeds into a leaderboard. Game is virtually infinite (levels cycle/expand). No progress bar — ranking is the progression mechanic.
 - [ ] **Kids stall** — special stall type with unique logic
 - [ ] **New layouts** — U-shape and stadium configurations
-- [ ] **Suspiciously far walk** — soft penalty for over-walking
+- [ ] **Suspiciously far walk** — soft penalty for over-walking toward someone
 - [ ] **Remove Debug mode** — before public share / production release
 - [ ] **Android + Google Account login** — for ranking system
 
 ---
 
+## Versioning
+
+Version follows **MAJOR.MINOR.PATCH** (semver-inspired):
+
+| Digit | When to bump |
+|-------|-------------|
+| MAJOR | Public launch, complete redesign, or breaking game mechanic change |
+| MINOR | New feature, new mode, new rule, or new screen |
+| PATCH | Bug fix, copy tweak, visual adjustment, or minor logic correction |
+
+Version is displayed in two places on the landing screen:
+- Under the tagline ("The unwritten rules of the urinal.")
+- Fixed bottom-right corner (visible on all screens)
+
+Controlled by the `GAME_VERSION` constant at the top of the script block in `index.html`.
+
+---
+
+## Changelog
+
+### v0.3.0
+- Added **Debug Chooser** screen — "Debug mode" now branches into two sub-modes
+- Added **Debug Rules** mode: custom scenario builder with stall count slider, per-stall state selectors, door picker, and optional timing mode
+- Debug Rules includes an extended debug table with 14 rows and ⓘ hover tooltips explaining each metric and how it's calculated
+- Tooltips use fixed positioning and follow the cursor to avoid clipping at screen edges
+- Added version number display (landing tagline + fixed corner badge)
+- `bd()` function extended with `r41s`, `r42s`, `distToNearestOcc`, `distToFarthestOcc`, `walkD` fields for richer debug output
+
+### v0.2.0
+- Added NPC departure events (NPC walks out during countdown, leaving a warm stall)
+- Added combined NPC arrival + departure events (L20+)
+- Sliding door animation on countdown open
+- Hat system for NPCs — each NPC gets a unique character hat (Mario, Harry Potter, Link, etc.)
+- Checkerboard floor tiles
+- Improved urinal rendering (porcelain bowl, water reflection, flush button)
+
+### v0.1.0
+- Initial game: 5 tutorial levels + 10 standard levels
+- Core rule engine (R1–R5) with hard stops and scored rules
+- Countdown animation with player dot walking in
+- NPC last-minute arrival (L10+)
+- Score popup with reaction time and star rating
+- Debug Levels mode with weight sliders and debug table
+- Landing screen with leaderboard placeholder
+
+---
+
 ## Technical Notes
 
-- Single file: `index.html` (~43KB)
+- Single file: `index.html` (~91KB)
 - No dependencies, no build step
 - Deployed via GitHub Pages from `main` branch
 - Live URL: https://shaybogomoltz.github.io/Wheretopee/
