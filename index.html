@@ -55,6 +55,21 @@
     .leaderboard-score { font-size: 13px; font-weight: 600; color: var(--text2); }
     .leaderboard-level { font-size: 11px; color: var(--text3); margin-left: 4px; }
 
+    /* ── DEBUG CHOOSER ── */
+    #debug-chooser-screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+    #debug-chooser-screen.show { display: flex; }
+    .chooser-wrap { width: 100%; max-width: 400px; }
+    .chooser-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+    .chooser-heading { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+    .chooser-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.75rem; }
+    .chooser-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 1.5rem; }
+    .chooser-card { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 18px 20px; cursor: pointer; text-align: left; width: 100%; transition: background 0.15s; }
+    .chooser-card:hover { background: var(--bg3); }
+    .chooser-card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .chooser-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+    .chooser-back { font-size: 13px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 6px 0; }
+    .chooser-back:hover { color: var(--text2); }
+
     /* ── RULES SCREEN ── */
     #rules-screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     #rules-screen.show { display: flex; }
@@ -171,6 +186,42 @@
     .pf { background: var(--red-bg); color: var(--red); }
     .pn { background: var(--bg2); color: var(--text3); border: 0.5px solid var(--border); }
     .pw { background: var(--amber-bg); color: var(--amber-text); }
+
+    /* ── DEBUG RULES SCREEN ── */
+    #debug-rules-screen { display: none; padding: 1rem; }
+    #debug-rules-screen.show { display: block; }
+    .dr-wrap { max-width: 640px; margin: 0 auto; }
+    .dr-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .dr-topbar-title { font-size: 14px; font-weight: 600; }
+    .dr-topbar-sub { font-size: 12px; color: var(--text3); }
+    .dr-panel { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 1rem; }
+    .dr-panel-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .dr-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .dr-row:last-child { margin-bottom: 0; }
+    .dr-label { font-size: 13px; font-weight: 500; color: var(--text2); min-width: 110px; }
+    .dr-stall-grid { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .dr-stall-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .dr-stall-num { font-size: 10px; color: var(--text3); }
+    .dr-stall-select { font-size: 11px; padding: 3px 5px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); cursor: pointer; appearance: none; -webkit-appearance: none; text-align: center; }
+    .dr-stall-select.s-occ  { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber); }
+    .dr-stall-select.s-brk  { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+    .dr-stall-select.s-empty { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+    .dr-door-btn { padding: 4px 10px; font-size: 11px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text2); cursor: pointer; }
+    .dr-door-btn.active { background: var(--blue); color: #fff; border-color: transparent; }
+    .dr-checkbox-row { display: flex; align-items: center; gap: 8px; }
+    .dr-checkbox-row label { font-size: 13px; color: var(--text2); cursor: pointer; }
+    .dr-apply-btn { width: 100%; padding: 12px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 1rem; }
+    .dr-apply-btn:hover { opacity: 0.85; }
+    .dr-game-wrap { position: relative; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
+    .dr-game-wrap svg { width: 100%; display: block; cursor: none; }
+    .dr-cd-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .dr-cd-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
+    .dr-cd-text.go { color: #3B6D11; font-size: 56px; }
+    .dr-hint { font-size: 12px; color: var(--text3); text-align: center; margin-bottom: 0.75rem; }
+    .dr-result-banner { font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: var(--radius); margin-bottom: 0.75rem; display: none; }
+    .dr-result-banner.show { display: block; }
+    .dr-result-banner.pass { background: var(--green-bg); color: var(--green); }
+    .dr-result-banner.fail { background: var(--red-bg); color: var(--red); }
   </style>
 </head>
 <body>
@@ -179,7 +230,6 @@
 <div id="landing-screen">
   <svg width="140" height="200" viewBox="0 0 340 440" style="margin-bottom:0.5rem">
     <circle cx="170" cy="100" r="54" fill="#F5D77A" stroke="#D4A84B" stroke-width="2"/>
-    <!-- Blue P cap -->
     <ellipse cx="170" cy="68" rx="58" ry="22" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1.5"/>
     <ellipse cx="170" cy="58" rx="42" ry="32" fill="#2266CC" stroke="#1A4A9A" stroke-width="1.2"/>
     <ellipse cx="218" cy="68" rx="28" ry="13" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1"/>
@@ -237,7 +287,7 @@
   <div class="landing-sub">The unwritten rules of the urinal.</div>
   <div class="landing-btns">
     <button class="landing-btn landing-btn-play" onclick="startPlay()">Play</button>
-    <button class="landing-btn landing-btn-debug" onclick="startDebug()">Debug mode</button>
+    <button class="landing-btn landing-btn-debug" onclick="showDebugChooser()">Debug mode</button>
   </div>
   <div class="leaderboard">
     <div class="leaderboard-header">
@@ -249,6 +299,26 @@
     <div class="leaderboard-row"><span class="leaderboard-rank bronze">3</span><span class="leaderboard-name">FlushMaster</span><span class="leaderboard-score">7,300<span class="leaderboard-level">L73</span></span></div>
     <div class="leaderboard-row"><span class="leaderboard-rank">4</span><span class="leaderboard-name">BathroomPro</span><span class="leaderboard-score">6,100<span class="leaderboard-level">L61</span></span></div>
     <div class="leaderboard-row"><span class="leaderboard-rank">5</span><span class="leaderboard-name">StallSurfer</span><span class="leaderboard-score">4,900<span class="leaderboard-level">L49</span></span></div>
+  </div>
+</div>
+
+<!-- DEBUG CHOOSER -->
+<div id="debug-chooser-screen">
+  <div class="chooser-wrap">
+    <div class="chooser-eyebrow">Debug mode</div>
+    <div class="chooser-heading">What are you debugging?</div>
+    <div class="chooser-sub">Choose a debug mode below.</div>
+    <div class="chooser-cards">
+      <button class="chooser-card" onclick="startDebugLevels()">
+        <div class="chooser-card-title">🎮 Debug Levels</div>
+        <div class="chooser-card-desc">Step through all game levels. See the full debug table and weight sliders. Jump between levels freely.</div>
+      </button>
+      <button class="chooser-card" onclick="startDebugRules()">
+        <div class="chooser-card-title">🔬 Debug Rules</div>
+        <div class="chooser-card-desc">Build a custom scenario from scratch. Set stall count, occupancy, entrance, and timing. Inspect all rule variables in real time — no fail states.</div>
+      </button>
+    </div>
+    <button class="chooser-back" onclick="goLanding()">← back to start</button>
   </div>
 </div>
 
@@ -266,7 +336,6 @@
 <div id="timeout-screen">
   <svg width="120" height="170" viewBox="0 0 340 440" style="margin-bottom:0.5rem">
     <circle cx="170" cy="100" r="54" fill="#F5D77A" stroke="#D4A84B" stroke-width="2"/>
-    <!-- Blue P cap -->
     <ellipse cx="170" cy="68" rx="58" ry="22" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1.5"/>
     <ellipse cx="170" cy="58" rx="42" ry="32" fill="#2266CC" stroke="#1A4A9A" stroke-width="1.2"/>
     <ellipse cx="218" cy="68" rx="28" ry="13" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1"/>
@@ -329,10 +398,9 @@
   <button class="landing-btn landing-btn-play" onclick="closeNpcIntro()">I'm ready →</button>
 </div>
 
+<!-- DEBUG LEVELS game screen -->
 <div id="game-screen">
   <div id="app">
-
-    <!-- Debug topbar -->
     <div id="debug-topbar" class="debug-topbar" style="display:none">
       <div id="debug-nav" class="debug-nav"></div>
       <div style="display:flex;align-items:center;gap:12px">
@@ -344,8 +412,6 @@
         <button class="exit-btn" onclick="goLanding()">← exit</button>
       </div>
     </div>
-
-    <!-- Game header: session score + timer bar -->
     <div class="game-header" id="game-header">
       <div class="session-score" id="session-score">Score: <b id="session-score-val">0</b></div>
       <div class="level-indicator" id="level-indicator">Level <b>1</b></div>
@@ -355,13 +421,10 @@
         </div>
       </div>
     </div>
-
     <div class="room-wrap">
       <svg id="room-svg" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg"></svg>
       <div id="countdown-overlay"><span id="countdown-text"></span></div>
     </div>
-
-    <!-- Score popup -->
     <div class="score-popup" id="score-popup">
       <div class="score-title" id="score-title"></div>
       <div class="score-rules" id="score-rules-div"></div>
@@ -384,8 +447,6 @@
         <button class="btn" id="retry-btn" style="display:none" onclick="gameOver('rule')">Try again</button>
       </div>
     </div>
-
-    <!-- Debug table -->
     <div class="debug-wrap" id="debug-wrap">
       <div class="weights-bar">
         <div class="weight-row"><span class="weight-label">R3 next spots</span><input type="range" min="1" max="4" value="2" id="w-r3" oninput="onWC()"><span class="weight-val" id="wv-r3">2</span></div>
@@ -394,6 +455,72 @@
       </div>
       <table class="debug-table" id="debug-table"></table>
     </div>
+  </div>
+</div>
+
+<!-- DEBUG RULES SCREEN -->
+<div id="debug-rules-screen">
+  <div class="dr-wrap">
+    <div class="dr-topbar">
+      <div>
+        <div class="dr-topbar-title">🔬 Debug Rules</div>
+        <div class="dr-topbar-sub">Custom scenario builder — no fail states</div>
+      </div>
+      <button class="exit-btn" onclick="goLanding()">← exit</button>
+    </div>
+
+    <!-- PANEL 1: INPUTS -->
+    <div class="dr-panel">
+      <div class="dr-panel-title">1 — Inputs</div>
+
+      <div class="dr-row">
+        <span class="dr-label">Stalls</span>
+        <input type="range" min="2" max="12" value="6" id="dr-count" oninput="drUpdateCount()" style="width:120px">
+        <span id="dr-count-val" style="font-size:13px;font-weight:600;min-width:20px">6</span>
+      </div>
+
+      <div style="margin-top:4px;margin-bottom:4px">
+        <div class="dr-panel-title" style="margin-bottom:6px">Stall states</div>
+        <div class="dr-stall-grid" id="dr-stall-grid"></div>
+      </div>
+
+      <div class="dr-row" style="margin-top:10px">
+        <span class="dr-label">Entrance (door)</span>
+        <div id="dr-door-btns" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+      </div>
+
+      <div class="dr-row" style="margin-top:6px">
+        <span class="dr-label">Timing</span>
+        <div class="dr-checkbox-row">
+          <input type="checkbox" id="dr-timing" style="width:16px;height:16px;cursor:pointer">
+          <label for="dr-timing">Run 3-2-1-Go countdown (never fails)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLY BUTTON -->
+    <button class="dr-apply-btn" onclick="drApply()">Apply & render →</button>
+
+    <!-- PANEL 2: GAME VISUAL -->
+    <div class="dr-panel" style="padding:12px">
+      <div class="dr-panel-title">2 — Game visual</div>
+      <div class="dr-result-banner" id="dr-result-banner"></div>
+      <div class="dr-game-wrap">
+        <svg id="dr-room-svg" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="dr-cd-overlay"><span class="dr-cd-text" id="dr-cd-text"></span></div>
+      </div>
+      <div class="dr-hint" id="dr-hint">Click Apply to render the scenario</div>
+    </div>
+
+    <!-- PANEL 3: DEBUG TABLE -->
+    <div class="dr-panel" style="padding:0;overflow:hidden">
+      <div style="padding:12px 14px 8px;background:var(--bg2)">
+        <div class="dr-panel-title" style="margin-bottom:0">3 — Debug table</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="debug-table" id="dr-debug-table" style="min-width:100%"></table>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -401,13 +528,23 @@
 <script>
 // ── STATE ─────────────────────────────────────────────
 let isDebugMode = false;
+let isDebugRulesMode = false;
 let currentLevel = 0;
 let sessionScore = 0;
 let picked = null, revealed = false, hoveredIdx = null;
 let goTime = null, reactionTime = null, bestReaction = null;
 let countingDown = false, animFrame = null, timerAnimFrame = null;
 let pendingLevel = 0;
-let lastNpcLevel = -99; // track NPC spacing
+let lastNpcLevel = -99;
+
+// ── DEBUG RULES STATE ──────────────────────────────────
+let drStalls = [];
+let drDoor = 0;
+let drAnimFrame = null;
+let drCountingDown = false;
+let drRevealed = false;
+let drGoTime = null;
+let drTimerFrame = null;
 
 // ── RULES ─────────────────────────────────────────────
 const RULES = [
@@ -418,41 +555,61 @@ const RULES = [
   { name:'R5 — Don\'t over-walk',      desc:'Minimise walking distance while staying aware of the entrance.',                   type:'scored', tag:'★★★★★' },
 ];
 
-// ── LANDING ───────────────────────────────────────────
-function startPlay() {
-  isDebugMode = false;
-  sessionScore = 0; currentLevel = 0;
+// ── NAVIGATION ────────────────────────────────────────
+function hideAllScreens() {
   document.getElementById('landing-screen').style.display = 'none';
+  document.getElementById('debug-chooser-screen').classList.remove('show');
+  document.getElementById('rules-screen').classList.remove('show');
+  document.getElementById('timeout-screen').classList.remove('show');
+  document.getElementById('npc-intro-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('debug-rules-screen').classList.remove('show');
+}
+
+function showDebugChooser() {
+  hideAllScreens();
+  document.getElementById('debug-chooser-screen').classList.add('show');
+}
+
+function startPlay() {
+  isDebugMode = false; isDebugRulesMode = false;
+  sessionScore = 0; currentLevel = 0;
+  hideAllScreens();
   showRulesScreen(0, true);
 }
-function startDebug() {
-  isDebugMode = true;
+
+function startDebugLevels() {
+  isDebugMode = true; isDebugRulesMode = false;
   sessionScore = 0; currentLevel = 0;
-  document.getElementById('landing-screen').style.display = 'none';
+  hideAllScreens();
   document.getElementById('game-screen').style.display = 'block';
   document.getElementById('debug-topbar').style.display = 'flex';
   document.getElementById('debug-wrap').classList.add('show');
   document.getElementById('game-header').style.display = 'none';
   renderLevel();
 }
+
+function startDebugRules() {
+  isDebugMode = false; isDebugRulesMode = true;
+  hideAllScreens();
+  document.getElementById('debug-rules-screen').classList.add('show');
+  drInit();
+}
+
 function goLanding() {
   if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
-  // Hide all screens
-  document.getElementById('game-screen').style.display='none';
-  document.getElementById('timeout-screen').classList.remove('show');
-  document.getElementById('rules-screen').classList.remove('show');
-  document.getElementById('npc-intro-screen').style.display='none';
-  document.getElementById('score-popup').classList.remove('show');
-  document.getElementById("timer-bar").style.width="0%";
-  // Reset state
+  if(drAnimFrame){ cancelAnimationFrame(drAnimFrame); drAnimFrame=null; }
+  if(drTimerFrame){ cancelAnimationFrame(drTimerFrame); drTimerFrame=null; }
   sessionScore=0; currentLevel=0; npcIntroShown=false;
   lastNpcLevel=-99; npcScriptIdx=0;
   picked=null; revealed=false; hoveredIdx=null;
   goTime=null; reactionTime=null;
-  countingDown=false;
-  // Show landing
-  document.getElementById('landing-screen').style.display='flex';
+  countingDown=false; drCountingDown=false; drRevealed=false;
+  document.getElementById('score-popup').classList.remove('show');
+  document.getElementById("timer-bar").style.width="0%";
+  hideAllScreens();
+  document.getElementById('landing-screen').style.display = 'flex';
 }
 
 // ── RULES SCREEN ──────────────────────────────────────
@@ -484,7 +641,7 @@ function startLevelFromRules() {
   renderLevel();
 }
 
-// ── GAME OVER (rule break or timeout) ────────────────
+// ── GAME OVER ─────────────────────────────────────────
 let npcIntroShown = false;
 function showNpcIntro(callback) {
   window._npcIntroCallback = callback;
@@ -499,6 +656,8 @@ function closeNpcIntro() {
 }
 
 function gameOver(reason) {
+  // In debug rules mode, never fail — just ignore timeout
+  if(isDebugRulesMode) return;
   if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
   if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
   document.getElementById('timer-bar').style.width='0%';
@@ -514,105 +673,23 @@ function gameOver(reason) {
 }
 
 // ── HATS ─────────────────────────────────────────────
-// Each hat fn takes (cx, cy, r) — centre of dot, radius — returns SVG string
-// All hats drawn top-down, sized relative to dot radius
-
 function hatPlayer(cx,cy,r){
-  // Blue cap with P — always the player
   const brim=r*1.4;
   return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${brim}" ry="${r*0.55}" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1.2"/>
   <ellipse cx="${cx}" cy="${cy}" rx="${r*0.85}" ry="${r*0.75}" fill="#2266CC" stroke="#1A4A9A" stroke-width="1"/>
   <ellipse cx="${cx+brim*0.6}" cy="${cy+r*0.2}" rx="${r*0.7}" ry="${r*0.32}" fill="#1A5CB5" stroke="#0A3A80" stroke-width="1"/>
   <text x="${cx}" y="${cy+r*0.28}" text-anchor="middle" font-family="sans-serif" font-size="${r*0.85}px" font-weight="900" fill="white">P</text>`;
 }
-
-function hatMario(cx,cy,r){
-  const brim=r*1.4;
-  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${brim}" ry="${r*0.55}" fill="#CC2200" stroke="#AA1800" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.85}" ry="${r*0.75}" fill="#DD3311" stroke="#AA1800" stroke-width="1"/>
-  <ellipse cx="${cx+brim*0.55}" cy="${cy+r*0.2}" rx="${r*0.65}" ry="${r*0.3}" fill="#CC2200" stroke="#AA1800" stroke-width="1"/>
-  <circle cx="${cx}" cy="${cy-r*0.1}" r="${r*0.45}" fill="white" stroke="#CC2200" stroke-width="0.8"/>
-  <text x="${cx}" y="${cy+r*0.2}" text-anchor="middle" font-family="sans-serif" font-size="${r*0.65}px" font-weight="900" fill="#CC2200">M</text>`;
-}
-
-function hatHarry(cx,cy,r){
-  // Round glasses + lightning bolt
-  return `<circle cx="${cx-r*0.38}" cy="${cy}" r="${r*0.38}" fill="none" stroke="#222" stroke-width="${r*0.18}"/>
-  <circle cx="${cx+r*0.38}" cy="${cy}" r="${r*0.38}" fill="none" stroke="#222" stroke-width="${r*0.18}"/>
-  <line x1="${cx-r*0.0}" y1="${cy}" x2="${cx+r*0.0}" y2="${cy}" stroke="#222" stroke-width="${r*0.18}"/>
-  <path d="M${cx-r*0.12} ${cy-r*0.85} L${cx+r*0.06} ${cy-r*0.52} L${cx-r*0.06} ${cy-r*0.52} L${cx+r*0.12} ${cy-r*0.2}" fill="none" stroke="#C8A800" stroke-width="${r*0.2}" stroke-linecap="round" stroke-linejoin="round"/>`;
-}
-
-function hatLink(cx,cy,r){
-  // Green pointy hat top-down — elongated teardrop
-  return `<ellipse cx="${cx}" cy="${cy+r*0.15}" rx="${r*0.9}" ry="${r*0.72}" fill="#3A8C3A" stroke="#2A6C2A" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.3}" rx="${r}" ry="${r*0.38}" fill="#2A7C2A" stroke="#1A5C1A" stroke-width="1"/>
-  <path d="M${cx} ${cy-r*0.48} Q${cx+r*0.18} ${cy-r*0.18} ${cx} ${cy+r*0.15} Q${cx-r*0.18} ${cy-r*0.18} ${cx} ${cy-r*0.48} Z" fill="#4AAC4A" stroke="#2A6C2A" stroke-width="0.8"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.55}" rx="${r*0.14}" ry="${r*0.22}" fill="#3A8C3A" stroke="#2A6C2A" stroke-width="0.8"/>`;
-}
-
-function hatSherlock(cx,cy,r){
-  return `<ellipse cx="${cx}" cy="${cy}" rx="${r*0.9}" ry="${r*0.72}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.25}" rx="${r}" ry="${r*0.35}" fill="#B8A87A" stroke="#988858" stroke-width="1"/>
-  <ellipse cx="${cx-r*0.88}" cy="${cy-r*0.05}" rx="${r*0.36}" ry="${r*0.22}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2" transform="rotate(-20,${cx-r*0.88},${cy-r*0.05})"/>
-  <ellipse cx="${cx+r*0.88}" cy="${cy-r*0.05}" rx="${r*0.36}" ry="${r*0.22}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2" transform="rotate(20,${cx+r*0.88},${cy-r*0.05})"/>`;
-}
-
-function hatCowboy(cx,cy,r){
-  return `<ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.35}" ry="${r*0.65}" fill="#8B5E3C" stroke="#6B3E1C" stroke-width="1.5"/>
-  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.75}" ry="${r*0.65}" fill="#6B3E1C" stroke="#4B2E0C" stroke-width="1.5"/>
-  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.7}" ry="${r*0.6}" fill="#7B4E2C"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.6}" rx="${r*0.26}" ry="${r*0.18}" fill="#7B4E2C" stroke="#6B3E1C" stroke-width="1"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.6}" rx="${r*0.26}" ry="${r*0.18}" fill="#7B4E2C" stroke="#6B3E1C" stroke-width="1"/>`;
-}
-
-function hatTopHat(cx,cy,r){
-  return `<ellipse cx="${cx}" cy="${cy+r*0.22}" rx="${r*1.18}" ry="${r*0.42}" fill="#111" stroke="#444" stroke-width="1.5"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.22}" rx="${r*1.08}" ry="${r*0.34}" fill="#1A1A1A"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.72}" ry="${r*0.62}" fill="#0A0A0A" stroke="#333" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.65}" ry="${r*0.55}" fill="#111"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.18}" rx="${r*0.72}" ry="${r*0.22}" fill="none" stroke="#777" stroke-width="1.5"/>`;
-}
-
-function hatStraw(cx,cy,r){
-  return `<ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.38}" ry="${r*0.56}" fill="#E8C96A" stroke="#C8A940" stroke-width="1.5"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.25}" ry="${r*0.46}" fill="#D4B550"/>
-  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.72}" ry="${r*0.62}" fill="#E8C96A" stroke="#C8A940" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy}" rx="${r*0.65}" ry="${r*0.55}" fill="#DDB840"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*0.72}" ry="${r*0.22}" fill="none" stroke="#C0392B" stroke-width="${r*0.35}"/>`;
-}
-
-function hatCrown(cx,cy,r){
-  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*1.05}" ry="${r*0.35}" fill="#C8960C" stroke="#A87000" stroke-width="1.5"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.95}" ry="${r*0.26}" fill="#DAA820"/>
-  <rect x="${cx-r*0.9}" y="${cy-r*0.55}" width="${r*0.48}" height="${r*0.78}" rx="3" fill="#C8960C" stroke="#A87000" stroke-width="1"/>
-  <rect x="${cx-r*0.32}" y="${cy-r*0.78}" width="${r*0.48}" height="${r}" rx="3" fill="#DAA820" stroke="#A87000" stroke-width="1"/>
-  <rect x="${cx+r*0.25}" y="${cy-r*0.55}" width="${r*0.48}" height="${r*0.78}" rx="3" fill="#C8960C" stroke="#A87000" stroke-width="1"/>
-  <circle cx="${cx-r*0.66}" cy="${cy-r*0.6}" r="${r*0.16}" fill="#E74C3C"/>
-  <circle cx="${cx-r*0.08}" cy="${cy-r*0.82}" r="${r*0.16}" fill="#3498DB"/>
-  <circle cx="${cx+r*0.5}" cy="${cy-r*0.6}" r="${r*0.16}" fill="#2ECC71"/>`;
-}
-
-function hatWizard(cx,cy,r){
-  return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.95}" ry="${r*0.36}" fill="#6A0DAD" stroke="#4A0080" stroke-width="1.5"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.85}" ry="${r*0.26}" fill="#7A1DBD"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.56}" ry="${r*0.7}" fill="#5A0090" stroke="#4A0080" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.62}" rx="${r*0.2}" ry="${r*0.3}" fill="#6A0DAD" stroke="#4A0080" stroke-width="1"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.85}" rx="${r*0.1}" ry="${r*0.16}" fill="#7A1DBD"/>
-  <circle cx="${cx-r*0.2}" cy="${cy+r*0.1}" r="${r*0.1}" fill="#FFD700"/>
-  <circle cx="${cx+r*0.15}" cy="${cy-r*0.2}" r="${r*0.08}" fill="#FFD700"/>
-  <circle cx="${cx-r*0.1}" cy="${cy-r*0.45}" r="${r*0.07}" fill="#C0C0C0"/>`;
-}
-
-function hatChef(cx,cy,r){
-  // Toque — white puffball top-down
-  return `<ellipse cx="${cx}" cy="${cy+r*0.15}" rx="${r*0.75}" ry="${r*0.65}" fill="white" stroke="#ccc" stroke-width="1.2"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.1}" rx="${r*0.65}" ry="${r*0.55}" fill="white" stroke="#ddd" stroke-width="1"/>
-  <ellipse cx="${cx}" cy="${cy-r*0.3}" rx="${r*0.55}" ry="${r*0.42}" fill="#f8f8f8" stroke="#ccc" stroke-width="0.8"/>
-  <ellipse cx="${cx}" cy="${cy+r*0.28}" rx="${r*0.75}" ry="${r*0.22}" fill="none" stroke="#bbb" stroke-width="1.5"/>`;
-}
-
-// Hat roster — index maps to NPC hat (0=Mario, 1=Harry...)
+function hatMario(cx,cy,r){ const brim=r*1.4; return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${brim}" ry="${r*0.55}" fill="#CC2200" stroke="#AA1800" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy}" rx="${r*0.85}" ry="${r*0.75}" fill="#DD3311" stroke="#AA1800" stroke-width="1"/><ellipse cx="${cx+brim*0.55}" cy="${cy+r*0.2}" rx="${r*0.65}" ry="${r*0.3}" fill="#CC2200" stroke="#AA1800" stroke-width="1"/><circle cx="${cx}" cy="${cy-r*0.1}" r="${r*0.45}" fill="white" stroke="#CC2200" stroke-width="0.8"/><text x="${cx}" y="${cy+r*0.2}" text-anchor="middle" font-family="sans-serif" font-size="${r*0.65}px" font-weight="900" fill="#CC2200">M</text>`; }
+function hatHarry(cx,cy,r){ return `<circle cx="${cx-r*0.38}" cy="${cy}" r="${r*0.38}" fill="none" stroke="#222" stroke-width="${r*0.18}"/><circle cx="${cx+r*0.38}" cy="${cy}" r="${r*0.38}" fill="none" stroke="#222" stroke-width="${r*0.18}"/><line x1="${cx-r*0.0}" y1="${cy}" x2="${cx+r*0.0}" y2="${cy}" stroke="#222" stroke-width="${r*0.18}"/><path d="M${cx-r*0.12} ${cy-r*0.85} L${cx+r*0.06} ${cy-r*0.52} L${cx-r*0.06} ${cy-r*0.52} L${cx+r*0.12} ${cy-r*0.2}" fill="none" stroke="#C8A800" stroke-width="${r*0.2}" stroke-linecap="round" stroke-linejoin="round"/>`; }
+function hatLink(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.15}" rx="${r*0.9}" ry="${r*0.72}" fill="#3A8C3A" stroke="#2A6C2A" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy+r*0.3}" rx="${r}" ry="${r*0.38}" fill="#2A7C2A" stroke="#1A5C1A" stroke-width="1"/><path d="M${cx} ${cy-r*0.48} Q${cx+r*0.18} ${cy-r*0.18} ${cx} ${cy+r*0.15} Q${cx-r*0.18} ${cy-r*0.18} ${cx} ${cy-r*0.48} Z" fill="#4AAC4A" stroke="#2A6C2A" stroke-width="0.8"/><ellipse cx="${cx}" cy="${cy-r*0.55}" rx="${r*0.14}" ry="${r*0.22}" fill="#3A8C3A" stroke="#2A6C2A" stroke-width="0.8"/>`; }
+function hatSherlock(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy}" rx="${r*0.9}" ry="${r*0.72}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy+r*0.25}" rx="${r}" ry="${r*0.35}" fill="#B8A87A" stroke="#988858" stroke-width="1"/><ellipse cx="${cx-r*0.88}" cy="${cy-r*0.05}" rx="${r*0.36}" ry="${r*0.22}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2" transform="rotate(-20,${cx-r*0.88},${cy-r*0.05})"/><ellipse cx="${cx+r*0.88}" cy="${cy-r*0.05}" rx="${r*0.36}" ry="${r*0.22}" fill="#C8B88A" stroke="#A89868" stroke-width="1.2" transform="rotate(20,${cx+r*0.88},${cy-r*0.05})"/>`; }
+function hatCowboy(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.35}" ry="${r*0.65}" fill="#8B5E3C" stroke="#6B3E1C" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy}" rx="${r*0.75}" ry="${r*0.65}" fill="#6B3E1C" stroke="#4B2E0C" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy}" rx="${r*0.7}" ry="${r*0.6}" fill="#7B4E2C"/><ellipse cx="${cx}" cy="${cy-r*0.6}" rx="${r*0.26}" ry="${r*0.18}" fill="#7B4E2C" stroke="#6B3E1C" stroke-width="1"/><ellipse cx="${cx}" cy="${cy+r*0.6}" rx="${r*0.26}" ry="${r*0.18}" fill="#7B4E2C" stroke="#6B3E1C" stroke-width="1"/>`; }
+function hatTopHat(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.22}" rx="${r*1.18}" ry="${r*0.42}" fill="#111" stroke="#444" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy+r*0.22}" rx="${r*1.08}" ry="${r*0.34}" fill="#1A1A1A"/><ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.72}" ry="${r*0.62}" fill="#0A0A0A" stroke="#333" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.65}" ry="${r*0.55}" fill="#111"/><ellipse cx="${cx}" cy="${cy+r*0.18}" rx="${r*0.72}" ry="${r*0.22}" fill="none" stroke="#777" stroke-width="1.5"/>`; }
+function hatStraw(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.38}" ry="${r*0.56}" fill="#E8C96A" stroke="#C8A940" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*1.25}" ry="${r*0.46}" fill="#D4B550"/><ellipse cx="${cx}" cy="${cy}" rx="${r*0.72}" ry="${r*0.62}" fill="#E8C96A" stroke="#C8A940" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy}" rx="${r*0.65}" ry="${r*0.55}" fill="#DDB840"/><ellipse cx="${cx}" cy="${cy+r*0.1}" rx="${r*0.72}" ry="${r*0.22}" fill="none" stroke="#C0392B" stroke-width="${r*0.35}"/>`; }
+function hatCrown(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*1.05}" ry="${r*0.35}" fill="#C8960C" stroke="#A87000" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.95}" ry="${r*0.26}" fill="#DAA820"/><rect x="${cx-r*0.9}" y="${cy-r*0.55}" width="${r*0.48}" height="${r*0.78}" rx="3" fill="#C8960C" stroke="#A87000" stroke-width="1"/><rect x="${cx-r*0.32}" y="${cy-r*0.78}" width="${r*0.48}" height="${r}" rx="3" fill="#DAA820" stroke="#A87000" stroke-width="1"/><rect x="${cx+r*0.25}" y="${cy-r*0.55}" width="${r*0.48}" height="${r*0.78}" rx="3" fill="#C8960C" stroke="#A87000" stroke-width="1"/><circle cx="${cx-r*0.66}" cy="${cy-r*0.6}" r="${r*0.16}" fill="#E74C3C"/><circle cx="${cx-r*0.08}" cy="${cy-r*0.82}" r="${r*0.16}" fill="#3498DB"/><circle cx="${cx+r*0.5}" cy="${cy-r*0.6}" r="${r*0.16}" fill="#2ECC71"/>`; }
+function hatWizard(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.95}" ry="${r*0.36}" fill="#6A0DAD" stroke="#4A0080" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy+r*0.2}" rx="${r*0.85}" ry="${r*0.26}" fill="#7A1DBD"/><ellipse cx="${cx}" cy="${cy-r*0.05}" rx="${r*0.56}" ry="${r*0.7}" fill="#5A0090" stroke="#4A0080" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy-r*0.62}" rx="${r*0.2}" ry="${r*0.3}" fill="#6A0DAD" stroke="#4A0080" stroke-width="1"/><ellipse cx="${cx}" cy="${cy-r*0.85}" rx="${r*0.1}" ry="${r*0.16}" fill="#7A1DBD"/><circle cx="${cx-r*0.2}" cy="${cy+r*0.1}" r="${r*0.1}" fill="#FFD700"/><circle cx="${cx+r*0.15}" cy="${cy-r*0.2}" r="${r*0.08}" fill="#FFD700"/><circle cx="${cx-r*0.1}" cy="${cy-r*0.45}" r="${r*0.07}" fill="#C0C0C0"/>`; }
+function hatChef(cx,cy,r){ return `<ellipse cx="${cx}" cy="${cy+r*0.15}" rx="${r*0.75}" ry="${r*0.65}" fill="white" stroke="#ccc" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy-r*0.1}" rx="${r*0.65}" ry="${r*0.55}" fill="white" stroke="#ddd" stroke-width="1"/><ellipse cx="${cx}" cy="${cy-r*0.3}" rx="${r*0.55}" ry="${r*0.42}" fill="#f8f8f8" stroke="#ccc" stroke-width="0.8"/><ellipse cx="${cx}" cy="${cy+r*0.28}" rx="${r*0.75}" ry="${r*0.22}" fill="none" stroke="#bbb" stroke-width="1.5"/>`; }
 const NPC_HATS = [hatMario, hatHarry, hatLink, hatSherlock, hatCowboy, hatTopHat, hatStraw, hatCrown, hatWizard, hatChef];
 
 function drawDot(cx, cy, color, r, hatFn) {
@@ -641,7 +718,6 @@ function isAdjOcc(i,s){ return (i>0&&s[i-1].status==='occupied')||(i<s.length-1&
 function minDistToOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
 function maxDistToAnyOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 0; return Math.max(...o.map(j=>Math.abs(i-j))); }
 function nextSpots(pick,s){
-  // Simulate the state after pick is occupied, count valid spots for next person
   const sAfter=s.map((x,j)=>j===pick?{status:'occupied'}:x);
   const canAvoidAfter=anyNonAdj(sAfter);
   let c=0;
@@ -654,42 +730,33 @@ function nextSpots(pick,s){
 }
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
 function maxSurround(pick,s){
-  // Only count surround of occupied stalls that pick contributes to
-  // i.e. pick must be on one of the sides of the surrounded stall
   let mx=0;
   for(let i=0;i<s.length;i++){
     if(s[i].status!=='occupied')continue;
     const pickIsLeft=(i>0)&&(i-1===pick);
     const pickIsRight=(i<s.length-1)&&(i+1===pick);
-    if(!pickIsLeft&&!pickIsRight) continue; // pick not adjacent to this stall — skip
+    if(!pickIsLeft&&!pickIsRight) continue;
     const otherLeft=(i>0)&&(s[i-1].status==='occupied'||i-1===pick);
     const otherRight=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick);
     mx=Math.max(mx,(otherLeft?1:0)+(otherRight?1:0));
   }
   return mx;
 }
-function anyAvoidSurround(s){
-  return s.some((x,i)=>{
-    if(x.status!=='empty') return false;
-    return maxSurround(i,s)<2;
-  });
-}
+function anyAvoidSurround(s){ return s.some((x,i)=>{ if(x.status!=='empty') return false; return maxSurround(i,s)<2; }); }
 function walkDist(i,door){ return Math.abs(i-door); }
 
-// R4.1: score based on maxDist to any occupied stall relative to best/worst candidate
 function r41Score(i, s, cands) {
   const hasOcc = s.some(x=>x.status==='occupied');
-  if(!hasOcc) return 5; // no one here, R4.1 N/A → full score
+  if(!hasOcc) return 5;
   const myMax = maxDistToAnyOcc(i, s);
   const candMaxes = cands.map(j=>maxDistToAnyOcc(j,s));
   const best = Math.min(...candMaxes);
   const worst = Math.max(...candMaxes);
-  if(worst===best) return 5; // only one option, full score
+  if(worst===best) return 5;
   const score = 1 + 4*(worst-myMax)/(worst-best);
   return Math.round(Math.max(1,Math.min(5,score)));
 }
 
-// R4.2: bell curve from door → 1-5
 function r42Score(i, s, door) {
   const n = s.length;
   const p = Math.abs(i-door)/(n-1||1);
@@ -702,19 +769,17 @@ function r42Score(i, s, door) {
   return 1;
 }
 
-// R4 combined = average of R4.1 and R4.2
 function r4Score(i, s, door, cands) {
   const hasOcc = s.some(x=>x.status==='occupied');
   const s41 = r41Score(i, s, cands);
   const s42 = r42Score(i, s, door);
-  if(!hasOcc) return s42; // no occupied → R4.2 only
+  if(!hasOcc) return s42;
   return Math.round((s41+s42)/2);
 }
 
-// R5: distance from nearest occupied stall (not too close handled by R1, want far enough)
 function r5Score(i, s, door, cands) {
   const myDist = minDistToOcc(i,s);
-  if(myDist===999){ // no occupied stalls — score by walk distance from door
+  if(myDist===999){
     const dists = cands.map(j=>walkDist(j,door));
     const best=Math.min(...dists), worst=Math.max(...dists);
     if(best===worst) return 5;
@@ -724,7 +789,6 @@ function r5Score(i, s, door, cands) {
   const candDists = cands.map(j=>minDistToOcc(j,s));
   const best=Math.min(...candDists), worst=Math.max(...candDists);
   if(best===worst) return 5;
-  // Sweet zone: not too close, not too far. Score peaks at ~60% of max dist.
   const targetDist = Math.ceil(worst*0.6);
   const score = myDist>=targetDist ? 5 : Math.round(1+4*(myDist-best)/(targetDist-best||1));
   return Math.max(1,Math.min(5,score));
@@ -732,7 +796,6 @@ function r5Score(i, s, door, cands) {
 
 function gW(){ return{r3:+document.getElementById('w-r3').value,r4:+document.getElementById('w-r4').value,r5:+document.getElementById('w-r5').value}; }
 
-// Main breakdown
 function bd(i, s, door) {
   if(s[i].status==='occupied') return{eligible:false};
   if(s[i].status==='broken')   return{eligible:false};
@@ -749,7 +812,6 @@ function bd(i, s, door) {
   if(!r1pass) return{eligible:true,disqualified:true,disqR:'r1',r1pass:false,r1app,surr,spots:mySpots,finalStars:1,r4s:null,r5s:null,r3pass:false};
   if(r2disq)  return{eligible:true,disqualified:true,disqR:'r2',r1pass:true, r1app,surr,spots:mySpots,finalStars:1,r4s:null,r5s:null,r3pass:false};
 
-  // Valid candidates (pass R1+R2)
   const cands = s.map((_,j)=>{
     if(s[j].status!=='empty') return null;
     if(hasOcc&&canAvoid&&isAdjOcc(j,s)) return null;
@@ -758,20 +820,24 @@ function bd(i, s, door) {
   }).filter(v=>v!==null);
 
   const mxSpots = cands.length ? Math.max(...cands.map(j=>nextSpots(j,s))) : 0;
-  const r3pass = mySpots >= mxSpots-1; // allow 1 spot below max
+  const r3pass = mySpots >= mxSpots-1;
   const r4s = r4Score(i, s, door, cands);
   const r5s = r5Score(i, s, door, cands);
 
-  // Star rating from R4+R5 average
+  // Extra breakdown vars for debug
+  const distToNearestOcc = minDistToOcc(i,s);
+  const distToFarthestOcc = maxDistToAnyOcc(i,s);
+  const r41s = r41Score(i, s, cands);
+  const r42s = r42Score(i, s, door);
+  const walkD = walkDist(i, door);
+
   const avg = (r4s+r5s)/2;
   const finalStars = avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
 
-  return{eligible:true,disqualified:false,r1pass:true,r1app,surr,spots:mySpots,mxSpots,r3pass,r4s,r5s,finalStars,cands};
+  return{eligible:true,disqualified:false,r1pass:true,r1app,surr,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
 }
 
-// Points per level: 100 total
-// R4: 30pts (r4s/5 * 30), R5: 30pts (r5s/5 * 30), Speed: 40pts
-const SPEED_MAX=2000, SPEED_MIN=5000; // ms
+const SPEED_MAX=2000, SPEED_MIN=5000;
 function calcPoints(b, reactionMs) {
   if(!b.eligible||b.disqualified||!b.r3pass) return 0;
   const r4pts = Math.round((b.r4s/5)*30);
@@ -782,11 +848,7 @@ function calcPoints(b, reactionMs) {
   return r4pts + r5pts + speedPts;
 }
 
-function isPass(i,s,door){
-  if(s[i].status!=='empty') return false;
-  const b=bd(i,s,door);
-  return b.eligible&&!b.disqualified&&b.r3pass;
-}
+function isPass(i,s,door){ if(s[i].status!=='empty') return false; const b=bd(i,s,door); return b.eligible&&!b.disqualified&&b.r3pass; }
 
 function bests(s,door){
   const scores=s.map((_,i)=>{ if(s[i].status!=='empty')return{i,stars:0}; const b=bd(i,s,door); return{i,stars:b.eligible&&!b.disqualified?b.finalStars:0}; });
@@ -800,167 +862,100 @@ const URINAL_MID_Y=WALL+4+PH+UH/2-4;
 function roomX(i,n){ const tw=n*UW+(n-1)*8; return (SVG_W-tw)/2+i*(UW+8); }
 function urinalCX(i,n){ return roomX(i,n)+UW/2; }
 
-function drawRoom(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
+function buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
   const n=stalls.length; let o='';
   const dark=isDark();
   const openPct = (doorOpenPct===undefined||doorOpenPct===null) ? 1 : doorOpenPct;
-
-  // ── FLOOR: classic bathroom checkerboard ──
-  const floorBg  = dark ? '#1a1918' : '#e8e6e0';
-  const tileA    = dark ? '#222120' : '#f0eee8';
-  const tileB    = dark ? '#161514' : '#d8d4cc';
-  const tileSize = 20;
+  const floorBg=dark?'#1a1918':'#e8e6e0', tileA=dark?'#222120':'#f0eee8', tileB=dark?'#161514':'#d8d4cc', tileSize=20;
   o+=`<rect x="${WALL}" y="${WALL}" width="${SVG_W-WALL*2}" height="${SVG_H-WALL*2}" fill="${floorBg}"/>`;
-  for(let ty=WALL;ty<SVG_H-WALL;ty+=tileSize){
-    for(let tx=WALL;tx<SVG_W-WALL;tx+=tileSize){
-      const even=(Math.floor((tx-WALL)/tileSize)+Math.floor((ty-WALL)/tileSize))%2===0;
-      if(even) o+=`<rect x="${tx}" y="${ty}" width="${tileSize}" height="${tileSize}" fill="${tileA}" opacity="0.6"/>`;
-      else     o+=`<rect x="${tx}" y="${ty}" width="${tileSize}" height="${tileSize}" fill="${tileB}" opacity="0.6"/>`;
-    }
+  for(let ty=WALL;ty<SVG_H-WALL;ty+=tileSize) for(let tx=WALL;tx<SVG_W-WALL;tx+=tileSize){
+    const even=(Math.floor((tx-WALL)/tileSize)+Math.floor((ty-WALL)/tileSize))%2===0;
+    o+=`<rect x="${tx}" y="${ty}" width="${tileSize}" height="${tileSize}" fill="${even?tileA:tileB}" opacity="0.6"/>`;
   }
-
-  // ── WALLS ──
-  const wallCol  = dark ? '#2a2520' : '#3a3630';
-  const wallTrim = dark ? '#3a3028' : '#4e4840';
+  const wallCol=dark?'#2a2520':'#3a3630', wallTrim=dark?'#3a3028':'#4e4840';
   o+=`<rect x="0" y="0" width="${SVG_W}" height="${WALL}" fill="${wallCol}"/>`;
   o+=`<rect x="0" y="${WALL}" width="${SVG_W}" height="3" fill="${wallTrim}" opacity="0.5"/>`;
   o+=`<rect x="0" y="0" width="${WALL}" height="${SVG_H}" fill="${wallCol}"/>`;
   o+=`<rect x="${SVG_W-WALL}" y="0" width="${WALL}" height="${SVG_H}" fill="${wallCol}"/>`;
-
-  // ── BOTTOM WALL + SLIDING DOOR ──
-  const wallBot = dark ? '#2a2520' : '#3a3630';
+  const wallBot=dark?'#2a2520':'#3a3630';
   if(door!==null&&door!==undefined){
-    const dcx=roomX(door,n)+UW/2;
-    const dw=40, dh=WALL+6;
-    const dx=dcx-dw/2;
-    const dy=SVG_H-dh;
+    const dcx=roomX(door,n)+UW/2, dw=40, dh=WALL+6, dx=dcx-dw/2, dy=SVG_H-dh;
     o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${wallBot}"/>`;
-    // door opening in wall
     o+=`<rect x="${dx}" y="${dy}" width="${dw}" height="${dh+1}" fill="${dark?'#111':'#c8c2b8'}"/>`;
-    // door frame sides
     o+=`<rect x="${dx-3}" y="${dy}" width="3" height="${dh}" fill="${dark?'#555':'#8a8278'}"/>`;
     o+=`<rect x="${dx+dw}" y="${dy}" width="3" height="${dh}" fill="${dark?'#555':'#8a8278'}"/>`;
-    // sliding door panel — openPct 0=closed, 1=fully open (slid left)
-    const panelW=dw*0.9;
-    const panelOpenX = dx - panelW + 4;       // fully open position
-    const panelClosedX = dx;                   // fully closed position
-    const panelX = panelClosedX + (panelOpenX - panelClosedX) * openPct;
+    const panelW=dw*0.9, panelOpenX=dx-panelW+4, panelClosedX=dx, panelX=panelClosedX+(panelOpenX-panelClosedX)*openPct;
     o+=`<rect x="${panelX}" y="${dy+1}" width="${panelW}" height="${dh-2}" rx="1" fill="${dark?'#3a3530':'#b0a898'}" stroke="${dark?'#555':'#7a7268'}" stroke-width="1"/>`;
     o+=`<line x1="${panelX+8}" y1="${dy+3}" x2="${panelX+8}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
     o+=`<line x1="${panelX+panelW/2}" y1="${dy+3}" x2="${panelX+panelW/2}" y2="${dy+dh-3}" stroke="${dark?'#555':'#928a80'}" stroke-width="0.8"/>`;
     o+=`<rect x="${Math.min(panelX,dx)-4}" y="${dy}" width="${panelW+dw+8}" height="2" rx="1" fill="${dark?'#666':'#9a9288'}"/>`;
-    // door handle dot
     o+=`<circle cx="${panelX+panelW-6}" cy="${dy+dh/2}" r="2.5" fill="${dark?'#888':'#6a6258'}"/>`;
   } else {
     o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${wallBot}"/>`;
   }
   o+=`<rect x="0" y="${SVG_H-WALL-2}" width="${SVG_W}" height="2" fill="${wallTrim}" opacity="0.4"/>`;
 
-  // ── URINALS ──
+  // urinals
+  const isRevealedForClickable = (selIdx !== null && selIdx !== undefined);
   for(let i=0;i<n;i++){
     const s=stalls[i]; const ux=roomX(i,n); const uy=WALL+4; const cx=ux+UW/2;
     const isOcc=s.status==='occupied', isBrk=s.status==='broken';
-    const isHov=!revealed&&!countingDown&&hov===i&&!isOcc&&!isBrk;
+    const isHov=!isRevealedForClickable&&!countingDown&&!drCountingDown&&hov===i&&!isOcc&&!isBrk;
     const isPicked=selIdx===i;
     let bg,bc,bw=1.5;
-    if(isOcc||isBrk){
-      bg=dark?'#252220':'#d4d0c8'; bc=dark?'#3a3530':'#a09890';
-    } else if(passMap!==null){
-      bg=passMap[i]?(dark?'#1a2e14':'#EAF3DE'):(dark?'#2e1414':'#FCEBEB');
-      bc=passMap[i]?'#3B6D11':'#A32D2D'; bw=2;
-    } else if(isHov){
-      bg=dark?'#1e2a3a':'#dde8f5'; bc='#378ADD'; bw=2;
-    } else {
-      bg=dark?'#242220':'#f0ede6'; bc=dark?'#4a4540':'#b0a8a0';
-    }
-
-    const by=uy+PH; const clickable=!isOcc&&!isBrk&&!revealed&&!countingDown;
+    if(isOcc||isBrk){ bg=dark?'#252220':'#d4d0c8'; bc=dark?'#3a3530':'#a09890'; }
+    else if(passMap!==null){ bg=passMap[i]?(dark?'#1a2e14':'#EAF3DE'):(dark?'#2e1414':'#FCEBEB'); bc=passMap[i]?'#3B6D11':'#A32D2D'; bw=2; }
+    else if(isHov){ bg=dark?'#1e2a3a':'#dde8f5'; bc='#378ADD'; bw=2; }
+    else { bg=dark?'#242220':'#f0ede6'; bc=dark?'#4a4540':'#b0a8a0'; }
+    const by=uy+PH;
+    const clickable=!isOcc&&!isBrk&&!isRevealedForClickable&&!countingDown&&!drCountingDown;
     const op=isBrk?'0.35':'1';
-
-    // pipe/mount on wall
     o+=`<rect x="${cx-4}" y="${uy-2}" width="8" height="${PH+4}" rx="3" fill="${dark?'#4a4540':'#9a9288'}"/>`;
     o+=`<rect x="${cx-2}" y="${uy}" width="4" height="${PH}" rx="1" fill="${dark?'#6a6560':'#c0b8b0'}"/>`;
-
-    o+=`<g onclick="${clickable?`clickUrinal(${i})`:''}" style="cursor:${clickable?'pointer':'default'}" opacity="${op}">`;
-
-    // outer porcelain shell — more rounded, bathroom-like
+    // determine onclick target — game or debug rules
+    const onclickFn = isDebugRulesMode ? `drClickUrinal(${i})` : `clickUrinal(${i})`;
+    o+=`<g onclick="${clickable?onclickFn:''}" style="cursor:${clickable?'pointer':'default'}" opacity="${op}">`;
     o+=`<rect x="${ux+3}" y="${by}" width="${UW-6}" height="${UH}" rx="8" fill="${bc}" opacity="0.3"/>`;
     o+=`<rect x="${ux+4}" y="${by+1}" width="${UW-8}" height="${UH-2}" rx="7" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
-
-    // inner basin bowl
     o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-16)/2}" ry="${UH*0.28}" fill="${dark?'#1a1918':'#e8e4dc'}" stroke="${bc}" stroke-width="0.8" opacity="0.7"/>`;
-
-    // water reflection in bowl
-    if(!isOcc&&!isBrk){
-      o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-22)/2}" ry="${UH*0.18}" fill="${dark?'#1e2830':'#d8eef8'}" opacity="0.5"/>`;
-    }
-
-    // drain dot
+    if(!isOcc&&!isBrk) o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-22)/2}" ry="${UH*0.18}" fill="${dark?'#1e2830':'#d8eef8'}" opacity="0.5"/>`;
     o+=`<circle cx="${cx}" cy="${by+UH*0.78}" r="2" fill="${bc}" opacity="0.5"/>`;
-
-    // flush button at top
     o+=`<rect x="${cx-5}" y="${by+4}" width="10" height="5" rx="2" fill="${bc}" opacity="0.4"/>`;
-
-    if(isBrk){
-      o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="15" font-family="sans-serif">🔧</text>`;
-    } else if(isOcc){
-      o+=drawDot(cx,by+UH*0.45,COL.personFill,11,NPC_HATS[i%NPC_HATS.length]);
-    } else if(passMap!==null&&isPicked){
-      o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?'#3B6D11':'#A32D2D'}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`;
-    } else if(s.warm){
-      // warm seat — subtle yellow dots
-      o+=`<circle cx="${cx-6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/>`;
-      o+=`<circle cx="${cx+6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/>`;
-      o+=`<circle cx="${cx}" cy="${by+UH*0.42}" r="2" fill="#E8C040" opacity="0.5"/>`;
-    }
+    if(isBrk){ o+=`<text x="${cx}" y="${by+UH/2+5}" text-anchor="middle" font-size="15" font-family="sans-serif">🔧</text>`; }
+    else if(isOcc){ o+=drawDot(cx,by+UH*0.45,COL.personFill,11,NPC_HATS[i%NPC_HATS.length]); }
+    else if(passMap!==null&&isPicked){ o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?'#3B6D11':'#A32D2D'}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`; }
+    else if(s.warm){ o+=`<circle cx="${cx-6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/><circle cx="${cx+6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/><circle cx="${cx}" cy="${by+UH*0.42}" r="2" fill="#E8C040" opacity="0.5"/>`; }
     o+=`</g>`;
     o+=`<text x="${cx}" y="${by+UH+13}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
   }
-
-  if(animDots){ for(const d of animDots){ o+=drawDot(d.cx,d.cy,d.color,d.r,d.hatFn); } }
-  document.getElementById('room-svg').innerHTML=o;
+  if(animDots){ for(const d of animDots) o+=drawDot(d.cx,d.cy,d.color,d.r,d.hatFn); }
+  return o;
 }
 
-// ── TIMER BAR ─────────────────────────────────────────
-const TIMER_DURATION = 5000; // 5 seconds
+function drawRoom(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
+  document.getElementById('room-svg').innerHTML = buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct);
+}
+function drDrawRoom(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
+  document.getElementById('dr-room-svg').innerHTML = buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct);
+}
+
+// ── TIMER BAR (main game) ─────────────────────────────
+const TIMER_DURATION = 5000;
 let timerStart = null;
 let timerExpired = false;
-
 function startTimerBar() {
-  timerStart = performance.now();
-  timerExpired = false;
+  timerStart = performance.now(); timerExpired = false;
   const bar = document.getElementById('timer-bar');
-  bar.style.width = '100%';
-  bar.style.background = 'hsl(120,80%,42%)';
-
+  bar.style.width = '100%'; bar.style.background = 'hsl(120,80%,42%)';
   function tick(now) {
-    const elapsed = now - timerStart;
-    const pct = Math.max(0, 1 - elapsed/TIMER_DURATION);
-    bar.style.width = (pct*100)+'%';
-    const hue = Math.round(pct * 120);
-    bar.style.background = `hsl(${hue},80%,42%)`;
-    if(pct > 0) {
-      timerAnimFrame = requestAnimationFrame(tick);
-    } else {
-      timerExpired = true;
-      bar.style.width = '0%';
-      if(!revealed) gameOver('timeout');
-    }
+    const elapsed=now-timerStart, pct=Math.max(0,1-elapsed/TIMER_DURATION);
+    bar.style.width=(pct*100)+'%'; bar.style.background=`hsl(${Math.round(pct*120)},80%,42%)`;
+    if(pct>0){ timerAnimFrame=requestAnimationFrame(tick); }
+    else { timerExpired=true; bar.style.width='0%'; if(!revealed) gameOver('timeout'); }
   }
-  timerAnimFrame = requestAnimationFrame(tick);
+  timerAnimFrame=requestAnimationFrame(tick);
 }
-
-function stopTimerBar() {
-  if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
-  document.getElementById('timer-bar').style.width = '0%';
-}
-
-function resetTimerBar() {
-  if(timerAnimFrame){ cancelAnimationFrame(timerAnimFrame); timerAnimFrame=null; }
-  const bar = document.getElementById('timer-bar');
-  bar.style.width = '0%';
-  bar.style.background = '';
-}
+function stopTimerBar(){ if(timerAnimFrame){cancelAnimationFrame(timerAnimFrame);timerAnimFrame=null;} document.getElementById('timer-bar').style.width='0%'; }
 
 // ── COUNTDOWN ─────────────────────────────────────────
 function lerp(a,b,t){ return a+(b-a)*t; }
@@ -975,44 +970,26 @@ function runCountdown(lv){
   const doorX=urinalCX(door,n), doorY=SVG_H-WALL-8;
   const waitX=doorX, waitY=SVG_H-WALL-30;
   let playerDot={cx:doorX,cy:doorY,color:COL.playerDot,r:11,hatFn:hatPlayer};
-  let npcDot=null;
-  let deptDot=null;
+  let npcDot=null; let deptDot=null;
   window._playerWaitPos={cx:waitX,cy:waitY};
-  // Timeline
-  // 0ms: door opens, "3"
-  // 200-900ms: player walks in
-  // 1000ms: "2" — departing NPC starts walking out
-  // 1200-1800ms: departing NPC walks to door and vanishes
-  // 2000ms: "1" — arriving NPC bursts in
-  // 2100-2700ms: arriving NPC walks to stall
-  // 3000ms: GO
   const T={p0:200,p1:900,two:1000,d0:1100,d1:1800,one:2000,n0:2100,n1:2700,go:3000,done:3400};
   const DOOR_OPEN_END=300;
   setTimeout(()=>showCD('3'),0);
   setTimeout(()=>showCD('2'),T.two);
   setTimeout(()=>showCD('1'),T.one);
-  setTimeout(()=>{ showCD('GO',true); goTime=performance.now(); if(!isDebugMode){ const bar=document.getElementById('timer-bar'); bar.style.width='100%'; bar.style.background='hsl(120,80%,42%)'; startTimerBar(); } },T.go);
+  setTimeout(()=>{ showCD('GO',true); goTime=performance.now(); if(!isDebugMode&&!isDebugRulesMode){ startTimerBar(); } },T.go);
   const t0=performance.now();
   function tick(now){
     const el=now-t0;
     const doorPct=Math.min(1,el/DOOR_OPEN_END);
     const ease=doorPct<0.5?2*doorPct*doorPct:-1+(4-2*doorPct)*doorPct;
-    // Player walk in
     if(el>=T.p0&&el<T.p1){ const t=(el-T.p0)/(T.p1-T.p0),e=t<0.5?2*t*t:-1+(4-2*t)*t; playerDot.cx=lerp(doorX,waitX,e); playerDot.cy=lerp(doorY,waitY,e); }
     else if(el>=T.p1){ playerDot.cx=waitX; playerDot.cy=waitY; }
-    // Departing NPC walks out
     if(deptTarget!==null){
       const sx=urinalCX(deptTarget,n);
-      if(el>=T.d0&&el<T.d1){
-        if(!deptDot) deptDot={cx:sx,cy:URINAL_MID_Y,color:COL.npcDot,r:11,hatFn:NPC_HATS[deptTarget%NPC_HATS.length]};
-        const t=(el-T.d0)/(T.d1-T.d0),e=t<0.5?2*t*t:-1+(4-2*t)*t;
-        deptDot.cx=lerp(sx,doorX,e); deptDot.cy=lerp(URINAL_MID_Y,doorY,e);
-      } else if(el>=T.d1){
-        // NPC has left — mark stall as warm
-        if(deptDot){ deptDot=null; lv.stalls[deptTarget]={status:'empty',warm:true}; }
-      }
+      if(el>=T.d0&&el<T.d1){ if(!deptDot) deptDot={cx:sx,cy:URINAL_MID_Y,color:COL.npcDot,r:11,hatFn:NPC_HATS[deptTarget%NPC_HATS.length]}; const t=(el-T.d0)/(T.d1-T.d0),e=t<0.5?2*t*t:-1+(4-2*t)*t; deptDot.cx=lerp(sx,doorX,e); deptDot.cy=lerp(URINAL_MID_Y,doorY,e); }
+      else if(el>=T.d1){ if(deptDot){ deptDot=null; lv.stalls[deptTarget]={status:'empty',warm:true}; } }
     }
-    // Arriving NPC
     if(npcTarget!==null){
       const nx=urinalCX(npcTarget,n);
       if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11,hatFn:NPC_HATS[currentLevel%NPC_HATS.length]}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
@@ -1021,12 +998,7 @@ function runCountdown(lv){
     const dots=[playerDot,...(deptDot?[deptDot]:[]),...(npcDot?[npcDot]:[])];
     drawRoom(lv.stalls,door,null,null,null,dots,ease);
     if(el<T.done){ animFrame=requestAnimationFrame(tick); }
-    else{
-      countingDown=false;
-      if(npcTarget!==null) lv.stalls[npcTarget]={status:'occupied'};
-      drawRoom(lv.stalls,door,null,null,null,[playerDot],1);
-      renderDebug();
-    }
+    else{ countingDown=false; if(npcTarget!==null) lv.stalls[npcTarget]={status:'occupied'}; drawRoom(lv.stalls,door,null,null,null,[playerDot],1); renderDebug(); }
   }
   animFrame=requestAnimationFrame(tick);
 }
@@ -1036,11 +1008,7 @@ function animatePlayerWalk(stalls,door,pickedIdx,onComplete){
   const sp=window._playerWaitPos||{cx:urinalCX(door??0,n),cy:SVG_H-WALL-30};
   const dx=urinalCX(pickedIdx,n), dy=URINAL_MID_Y;
   const t0=performance.now(), DUR=700;
-  function tick(now){
-    const t=Math.min(1,(now-t0)/DUR), e=t<0.5?2*t*t:-1+(4-2*t)*t;
-    drawRoom(stalls,door,null,null,null,[{cx:lerp(sp.cx,dx,e),cy:lerp(sp.cy,dy,e),color:COL.playerDot,r:11,hatFn:hatPlayer}]);
-    t<1?animFrame=requestAnimationFrame(tick):(animFrame=null,onComplete());
-  }
+  function tick(now){ const t=Math.min(1,(now-t0)/DUR), e=t<0.5?2*t*t:-1+(4-2*t)*t; drawRoom(stalls,door,null,null,null,[{cx:lerp(sp.cx,dx,e),cy:lerp(sp.cy,dy,e),color:COL.playerDot,r:11,hatFn:hatPlayer}]); t<1?animFrame=requestAnimationFrame(tick):(animFrame=null,onComplete()); }
   animFrame=requestAnimationFrame(tick);
 }
 
@@ -1050,80 +1018,38 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   const hasOcc = stalls.some(s=>s.status==='occupied');
   const points = calcPoints(b, reactionTime);
   const count = rulesShown ?? RULES.length;
-
-  // Title
   const broke = b.disqualified||(b.eligible&&!b.r3pass);
-  document.getElementById('score-title').textContent = broke
-    ? 'Rule broken! ❌'
-    : points>=90?'Perfect! 🎉':points>=70?'Very good 👍':points>=50?'Acceptable 😐':'Could be better 😬';
-
-  // Rule rows
+  document.getElementById('score-title').textContent = broke ? 'Rule broken! ❌' : points>=90?'Perfect! 🎉':points>=70?'Very good 👍':points>=50?'Acceptable 😐':'Could be better 😬';
   const r1val = !b.r1app ? null : b.r1pass;
   const r2val = !hasOcc  ? null : !(b.disqualified&&b.disqR==='r2')&&b.surr<2;
   const r3val = b.eligible&&!b.disqualified ? b.r3pass : false;
   const r4val = b.eligible&&!b.disqualified&&b.r4s!=null ? b.r4s : null;
   const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? b.r5s : null;
-  const ruleData = [
-    [1,'Leave a buffer','hard',r1val],
-    [2,"Don't trap anyone",'hard',r2val],
-    [3,'Think ahead','hard',r3val],
-    [4,'Stay inconspicuous','scored',r4val],
-    [5,"Don't over-walk",'scored',r5val],
-  ];
+  const ruleData = [[1,'Leave a buffer','hard',r1val],[2,"Don't trap anyone",'hard',r2val],[3,'Think ahead','hard',r3val],[4,'Stay inconspicuous','scored',r4val],[5,"Don't over-walk",'scored',r5val]];
   function starRow(v){ return Array.from({length:5},(_,i)=>`<span style="color:${i<v?'var(--amber)':'var(--border2)'};font-size:14px">★</span>`).join(''); }
   document.getElementById('score-rules-div').innerHTML = ruleData.slice(0,count).map(([num,lbl,type,val])=>{
-    let valHtml;
-    if(val===null) valHtml=`<span style="color:var(--text3);font-size:11px;font-style:italic">n/a</span>`;
-    else if(type==='hard') valHtml=val?`<span class="tick">✓ Pass</span>`:`<span class="cross">✗ Fail</span>`;
-    else valHtml=starRow(val);
+    let valHtml; if(val===null) valHtml=`<span style="color:var(--text3);font-size:11px;font-style:italic">n/a</span>`; else if(type==='hard') valHtml=val?`<span class="tick">✓ Pass</span>`:`<span class="cross">✗ Fail</span>`; else valHtml=starRow(val);
     return `<div class="score-rule-row"><span class="score-rule-label"><b>R${num}</b> — ${lbl}</span><span class="score-rule-val">${valHtml}</span></div>`;
   }).join('');
-
-  // Speed
   document.getElementById('score-speed').textContent = reactionTime!=null?(reactionTime/1000).toFixed(2)+'s':'—';
-
-  // Points + stars
   document.getElementById('score-points').textContent = points;
   document.getElementById('score-stars').innerHTML = Array.from({length:5},(_,i)=>`<span class="sstar${i<b.finalStars?' lit':''}">★</span>`).join('');
-
-  // Feedback
-  let fb='';
-  if(b.disqualified&&b.disqR==='r1') fb='A stall with a buffer gap was available.';
-  else if(b.disqualified&&b.disqR==='r2') fb='Your pick fully surrounds someone. Avoidable.';
-  else if(b.eligible&&!b.r3pass) fb='Your pick leaves the next person with no valid options.';
-  // Feedback — removed per UX decision, points explain everything
   document.getElementById('score-feedback').textContent = '';
-
   document.getElementById('score-popup').classList.add('show');
-
-  // Update session score
   sessionScore += points;
-  if(!isDebugMode){
-    document.getElementById('session-score-val').textContent = sessionScore.toLocaleString();
-  }
+  if(!isDebugMode) document.getElementById('session-score-val').textContent = sessionScore.toLocaleString();
   if(isDebugMode) updateDebugStats();
-
-  // Buttons
   document.getElementById('next-btn').style.display='none';
   document.getElementById('retry-btn').style.display='none';
-
-  if(broke){
-    // Rule break → game over
-    setTimeout(()=>gameOver('rule'), 2500);
-  } else {
-    const nb = document.getElementById('next-btn');
-    nb.style.display='inline-block';
-    if(!isDebugMode && currentLevel<4){
-      nb.textContent=`See Rule ${currentLevel+2} →`;
-      nb.onclick=()=>{ document.getElementById('score-popup').classList.remove('show'); showRulesScreen(currentLevel+1,false); };
-    } else {
-      nb.textContent='Next level →';
-      nb.onclick=()=>nextLevel();
-    }
+  if(broke){ setTimeout(()=>gameOver('rule'), 2500); }
+  else {
+    const nb = document.getElementById('next-btn'); nb.style.display='inline-block';
+    if(!isDebugMode && currentLevel<4){ nb.textContent=`See Rule ${currentLevel+2} →`; nb.onclick=()=>{ document.getElementById('score-popup').classList.remove('show'); showRulesScreen(currentLevel+1,false); }; }
+    else { nb.textContent='Next level →'; nb.onclick=()=>nextLevel(); }
   }
 }
 
-// ── DEBUG TABLE ───────────────────────────────────────
+// ── DEBUG LEVELS TABLE ────────────────────────────────
 function renderDebug(){
   if(!isDebugMode) return;
   const lv=LEVELS[currentLevel];
@@ -1144,6 +1070,58 @@ function renderDebug(){
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
   document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1 buffer',r1c)}${row('r2 surround',r2c)}${row('r3 next spots',r3c)}${row('r4 inconsp.',r4c)}${row('r5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
 }
+
+// ── DEBUG RULES TABLE (extended) ──────────────────────
+function drRenderTable(stalls, doorIndex) {
+  const bds = stalls.map((_,i) => bd(i, stalls, doorIndex));
+  const best = bests(stalls, doorIndex);
+  function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified)return'cd'; if(best.includes(i))return'cb'; return''; }
+  const na = `<span style="color:var(--text3)">—</span>`;
+  const hc = stalls.map((_,i) => `<th>#${i+1}</th>`).join('');
+  function row(lbl, cells){ return `<tr><td class="rl">${lbl}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`; }
+  const hasOcc = stalls.some(s=>s.status==='occupied');
+
+  const sc  = stalls.map(s => s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:`<span class="pill pp">empty</span>`);
+  const r1c = bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">✓</span>`:`<span class="pill pf">adj ✗</span>`);
+  // is adjacent to occupied?
+  const adjc = bds.map((b,i)=>!b.eligible?na: isAdjOcc(i,stalls)?`<span class="pill pf">yes</span>`:`<span class="pill pp">no</span>`);
+  const r2c = bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
+  // surround count
+  const surrc = bds.map((b,i)=>!b.eligible?na:`${b.surr??0}`);
+  const r3c = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
+  // R4 breakdown
+  const r41c = bds.map(b=>!b.eligible||b.disqualified||b.r41s==null?na:`${b.r41s}★`);
+  const r42c = bds.map(b=>!b.eligible||b.disqualified||b.r42s==null?na:`${b.r42s}★`);
+  const r4c  = bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
+  // dist to nearest/farthest occ
+  const dnc = bds.map(b=>!b.eligible?na:b.distToNearestOcc===999?na:`${b.distToNearestOcc}`);
+  const dfc = bds.map(b=>!b.eligible?na:b.distToFarthestOcc===0&&!hasOcc?na:`${b.distToFarthestOcc}`);
+  // R5
+  const r5c  = bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
+  // walk distance from door
+  const wdc  = bds.map((b,i)=>!b.eligible?na:`${Math.abs(i-doorIndex)}`);
+  const ptc  = bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}</b>+spd`);
+
+  document.getElementById('dr-debug-table').innerHTML = `
+    <thead><tr><th class="rl" style="width:140px"></th>${hc}</tr></thead>
+    <tbody>
+      ${row('status', sc)}
+      ${row('r1 — buffer', r1c)}
+      ${row('↳ adj to occ?', adjc)}
+      ${row('r2 — surround', r2c)}
+      ${row('↳ surround sides', surrc)}
+      ${row('r3 — next spots', r3c)}
+      ${row('r4 combined ★', r4c)}
+      ${row('↳ r4.1 not too far', r41c)}
+      ${row('↳ r4.2 bell curve', r42c)}
+      ${row('↳ dist nearest occ', dnc)}
+      ${row('↳ dist farthest occ', dfc)}
+      ${row('r5 — walk ★', r5c)}
+      ${row('↳ walk from door', wdc)}
+      ${row('pts (excl speed)', ptc)}
+    </tbody>`;
+}
+
 function updateDebugStats(){
   document.getElementById('stat-pts').textContent=sessionScore;
   document.getElementById('stat-time').textContent=reactionTime!=null?(reactionTime/1000).toFixed(2)+'s':'—';
@@ -1159,15 +1137,12 @@ function occ(a,...ix){ix.forEach(i=>a[i]={status:'occupied'});return a;}
 function brk(a,...ix){ix.forEach(i=>a[i]={status:'broken'});return a;}
 function rec(a,...ix){ix.forEach(i=>a[i]={status:'empty',recent:true});return a;}
 
-// Base levels — L13+ get NPC injected dynamically from L10
 const BASE_LEVELS=[
-  // ── TUTORIAL ──
-  {stalls:occ(e(3),0),    doorIndex:1},   // L1 R1: 1 0 0
-  {stalls:occ(e(6),1,4,5),doorIndex:2},   // L2 R2: 0 1 0 0 1 1
-  {stalls:occ(e(5),4),    doorIndex:2},   // L3 R3: 0 0 0 0 1
-  {stalls:occ(e(8),7),    doorIndex:4},   // L4 R4: 0 0 0 0 0 0 0 1, door pos 5
-  {stalls:e(8),           doorIndex:7},   // L5 R5: 0 0 0 0 0 0 0 0, door right
-  // ── STANDARD ──
+  {stalls:occ(e(3),0),    doorIndex:1},
+  {stalls:occ(e(6),1,4,5),doorIndex:2},
+  {stalls:occ(e(5),4),    doorIndex:2},
+  {stalls:occ(e(8),7),    doorIndex:4},
+  {stalls:e(8),           doorIndex:7},
   {stalls:e(9),                          doorIndex:0},
   {stalls:occ(e(7),2),                   doorIndex:0},
   {stalls:occ(e(9),4),                   doorIndex:0},
@@ -1180,45 +1155,35 @@ const BASE_LEVELS=[
   {stalls:occ(e(7),0,6),                 doorIndex:3},
 ];
 
-// LEVELS is a live array — from L10 onwards NPC levels may be injected
 let LEVELS = BASE_LEVELS.map(lv=>({...lv}));
 const ORIGINAL_STALLS = BASE_LEVELS.map(lv=>lv.stalls.map(s=>({...s})));
 
-const NPC_SCRIPTS=[
-  {urinal:4},{urinal:2},{urinal:5},{urinal:1},{urinal:6},
-];
+const NPC_SCRIPTS=[{urinal:4},{urinal:2},{urinal:5},{urinal:1},{urinal:6}];
 let npcScriptIdx=0;
 
 function getLevelDef(idx){
   const base = idx < BASE_LEVELS.length ? BASE_LEVELS[idx] : BASE_LEVELS[5+(idx%10)];
   const stalls = base.stalls.map(s=>({...s}));
-  if(idx>=9 && !isDebugMode){
+  if(idx>=9 && !isDebugMode && !isDebugRulesMode){
     const occupied = stalls.map((s,i)=>s.status==='occupied'?i:null).filter(x=>x!==null);
     const canDepart = occupied.length > 0;
-    const canArrive = true;
-    const canBoth = idx>=19 && canDepart; // both events from L20
+    const canBoth = idx>=19 && canDepart;
     const chance = Math.random();
     const notConsec = lastNpcLevel!==idx-1;
-
     if(canBoth && chance<0.15 && notConsec){
-      // Both: someone departs on "2", someone arrives on "1"
       const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
       const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
-      // Find empty stall for arrival (not the departing one, not already occupied)
       const empties = stalls.map((s,i)=>s.status==='empty'&&i!==departIdx?i:null).filter(x=>x!==null);
       if(empties.length===0) return{...base, stalls};
       const preferred = Math.min(script.urinal, stalls.length-2);
       const arrivalUrinal = empties.reduce((a,b)=>Math.abs(b-preferred)<Math.abs(a-preferred)?b:a);
       return{...base, stalls, npcArrival:{urinal:arrivalUrinal}, npcDeparture:{urinal:departIdx}};
     } else if(chance<0.25 && canDepart && notConsec){
-      // Departure only
       const departIdx = occupied[Math.floor(Math.random()*occupied.length)];
       return{...base, stalls, npcDeparture:{urinal:departIdx}};
     } else if(chance<0.5 && notConsec){
-      // Arrival only — find a valid empty stall
       const script = NPC_SCRIPTS[npcScriptIdx%NPC_SCRIPTS.length]; npcScriptIdx++;
       const preferred = Math.min(script.urinal, stalls.length-2);
-      // Find nearest empty stall if preferred is occupied
       let arrivalUrinal = preferred;
       if(stalls[arrivalUrinal].status !== 'empty'){
         const empties = stalls.map((s,i)=>s.status==='empty'?i:null).filter(x=>x!==null);
@@ -1231,7 +1196,7 @@ function getLevelDef(idx){
   return{...base, stalls};
 }
 
-// ── RENDER ────────────────────────────────────────────
+// ── MAIN GAME RENDER ──────────────────────────────────
 function clickUrinal(i){
   if(revealed||countingDown) return;
   const lv=LEVELS[currentLevel];
@@ -1264,7 +1229,6 @@ function renderLevel(){
   stopTimerBar();
   document.getElementById("timer-bar").style.width="0%";
   countingDown=false; goTime=null; reactionTime=null;
-  // Get level def (may inject NPC)
   const lv = getLevelDef(currentLevel);
   if(lv.npcArrival||lv.npcDeparture) lastNpcLevel=currentLevel;
   LEVELS[currentLevel]=lv;
@@ -1273,10 +1237,7 @@ function renderLevel(){
   document.getElementById('next-btn').style.display='none';
   document.getElementById('retry-btn').style.display='none';
   hideCD();
-  if(!isDebugMode){
-    document.getElementById('session-score-val').textContent = sessionScore.toLocaleString();
-    document.getElementById('level-indicator').innerHTML = `Level <b>${currentLevel+1}</b>`;
-  }
+  if(!isDebugMode){ document.getElementById('session-score-val').textContent = sessionScore.toLocaleString(); document.getElementById('level-indicator').innerHTML = `Level <b>${currentLevel+1}</b>`; }
   if(isDebugMode){ renderNav(); updateDebugStats(); }
   drawRoom(lv.stalls,lv.doorIndex,null,null,null,null);
   renderDebug();
@@ -1285,14 +1246,193 @@ function renderLevel(){
 
 function nextLevel(){
   currentLevel++;
-  if(!isDebugMode && currentLevel===9 && !npcIntroShown){
-    npcIntroShown=true;
-    showNpcIntro(()=>renderLevel());
-  } else {
-    renderLevel();
-  }
+  if(!isDebugMode && currentLevel===9 && !npcIntroShown){ npcIntroShown=true; showNpcIntro(()=>renderLevel()); }
+  else { renderLevel(); }
 }
 function retryLevel(){ renderLevel(); }
+
+// ── DEBUG RULES MODE ──────────────────────────────────
+function drInit(){
+  drStalls = Array(6).fill(null).map(()=>({status:'empty'}));
+  drDoor = 0;
+  drRevealed = false;
+  drCountingDown = false;
+  drRebuildInputs();
+  drDrawRoom(drStalls, drDoor, null, null, null, null, 1);
+  drRenderTable(drStalls, drDoor);
+  document.getElementById('dr-hint').textContent = 'Click Apply to render the scenario';
+  const banner = document.getElementById('dr-result-banner');
+  banner.classList.remove('show','pass','fail'); banner.textContent='';
+}
+
+function drRebuildInputs(){
+  const n = drStalls.length;
+  document.getElementById('dr-count-val').textContent = n;
+  document.getElementById('dr-count').value = n;
+
+  // Stall state selectors
+  const grid = document.getElementById('dr-stall-grid');
+  grid.innerHTML = drStalls.map((s,i) => {
+    const cls = s.status==='occupied'?'s-occ':s.status==='broken'?'s-brk':'s-empty';
+    return `<div class="dr-stall-cell">
+      <div class="dr-stall-num">#${i+1}</div>
+      <select class="dr-stall-select ${cls}" onchange="drSetStall(${i},this.value)" id="dr-sel-${i}">
+        <option value="empty"${s.status==='empty'?' selected':''}>empty</option>
+        <option value="occupied"${s.status==='occupied'?' selected':''}>occ</option>
+        <option value="broken"${s.status==='broken'?' selected':''}>broken</option>
+      </select>
+    </div>`;
+  }).join('');
+
+  // Door buttons
+  const db = document.getElementById('dr-door-btns');
+  db.innerHTML = drStalls.map((_,i) => `<button class="dr-door-btn${drDoor===i?' active':''}" onclick="drSetDoor(${i})">${i+1}</button>`).join('');
+}
+
+function drUpdateCount(){
+  const n = +document.getElementById('dr-count').value;
+  document.getElementById('dr-count-val').textContent = n;
+  // Grow or shrink stalls array
+  while(drStalls.length < n) drStalls.push({status:'empty'});
+  if(drStalls.length > n) drStalls = drStalls.slice(0, n);
+  if(drDoor >= n) drDoor = n - 1;
+  drRebuildInputs();
+}
+
+function drSetStall(i, val){
+  drStalls[i] = {status: val};
+  // Update select colour class
+  const sel = document.getElementById('dr-sel-'+i);
+  sel.className = 'dr-stall-select ' + (val==='occupied'?'s-occ':val==='broken'?'s-brk':'s-empty');
+}
+
+function drSetDoor(i){
+  drDoor = i;
+  document.querySelectorAll('.dr-door-btn').forEach((b,j)=>{ b.className='dr-door-btn'+(j===i?' active':''); });
+}
+
+function drShowCD(txt, isGo){
+  const el = document.getElementById('dr-cd-text');
+  el.textContent = txt; el.className = 'dr-cd-text'+(isGo?' go':'');
+  el.style.opacity='1'; setTimeout(()=>el.style.opacity='0', isGo?600:700);
+}
+function drHideCD(){ document.getElementById('dr-cd-text').style.opacity='0'; }
+
+function drApply(){
+  if(drAnimFrame){cancelAnimationFrame(drAnimFrame);drAnimFrame=null;}
+  drRevealed = false; drCountingDown = false; drGoTime = null;
+  const banner = document.getElementById('dr-result-banner');
+  banner.classList.remove('show','pass','fail'); banner.textContent='';
+  document.getElementById('dr-hint').textContent = 'Click a stall to pick it';
+  drHideCD();
+
+  const stalls = drStalls.map(s=>({...s}));
+  const door = drDoor;
+  const timed = document.getElementById('dr-timing').checked;
+
+  // Draw initial room
+  drDrawRoom(stalls, door, null, null, null, null, 1);
+  drRenderTable(stalls, door);
+
+  if(!timed){
+    // No countdown — render directly, wait for click
+    drDrawRoom(stalls, door, null, null, null, null, 1);
+    // Setup hover for dr-room-svg
+    drSetupCurrentRound(stalls, door);
+    return;
+  }
+
+  // Timed: run the 3-2-1-Go animation, but never fail on timeout
+  drCountingDown = true;
+  const n = stalls.length;
+  const doorX = urinalCX(door,n), doorY = SVG_H-WALL-8;
+  const waitX = doorX, waitY = SVG_H-WALL-30;
+  let playerDot = {cx:doorX,cy:doorY,color:COL.playerDot,r:11,hatFn:hatPlayer};
+  window._drWaitPos = {cx:waitX,cy:waitY};
+  const T={p0:200,p1:900,go:3000,done:3400};
+  const DOOR_OPEN_END=300;
+  setTimeout(()=>drShowCD('3'),0);
+  setTimeout(()=>drShowCD('2'),1000);
+  setTimeout(()=>drShowCD('1'),2000);
+  setTimeout(()=>{ drShowCD('GO',true); drGoTime=performance.now(); },T.go);
+  const t0=performance.now();
+  function tick(now){
+    const el=now-t0;
+    const doorPct=Math.min(1,el/DOOR_OPEN_END);
+    const ease=doorPct<0.5?2*doorPct*doorPct:-1+(4-2*doorPct)*doorPct;
+    if(el>=T.p0&&el<T.p1){ const t=(el-T.p0)/(T.p1-T.p0),e=t<0.5?2*t*t:-1+(4-2*t)*t; playerDot.cx=lerp(doorX,waitX,e); playerDot.cy=lerp(doorY,waitY,e); }
+    else if(el>=T.p1){ playerDot.cx=waitX; playerDot.cy=waitY; }
+    drDrawRoom(stalls,door,null,null,null,[playerDot],ease);
+    if(el<T.done){ drAnimFrame=requestAnimationFrame(tick); }
+    else {
+      drCountingDown=false;
+      drDrawRoom(stalls,door,null,null,null,[playerDot],1);
+      window._drWaitPos={cx:playerDot.cx,cy:playerDot.cy};
+      drSetupCurrentRound(stalls, door);
+    }
+  }
+  drAnimFrame = requestAnimationFrame(tick);
+}
+
+let _drCurrentStalls = null;
+let _drCurrentDoor = 0;
+let _drHoveredIdx = null;
+
+function drSetupCurrentRound(stalls, door){
+  _drCurrentStalls = stalls;
+  _drCurrentDoor = door;
+  _drHoveredIdx = null;
+}
+
+function drClickUrinal(i){
+  if(drRevealed || drCountingDown) return;
+  if(!_drCurrentStalls || _drCurrentStalls[i].status!=='empty') return;
+  drRevealed = true; _drHoveredIdx = null;
+  // walk player to stall
+  const stalls=_drCurrentStalls, door=_drCurrentDoor, n=stalls.length;
+  const sp=window._drWaitPos||{cx:urinalCX(door,n),cy:SVG_H-WALL-30};
+  const dx=urinalCX(i,n), dy=URINAL_MID_Y;
+  const t0=performance.now(), DUR=700;
+  function tick(now){
+    const t=Math.min(1,(now-t0)/DUR),e=t<0.5?2*t*t:-1+(4-2*t)*t;
+    drDrawRoom(stalls,door,null,null,null,[{cx:lerp(sp.cx,dx,e),cy:lerp(sp.cy,dy,e),color:COL.playerDot,r:11,hatFn:hatPlayer}]);
+    t<1?drAnimFrame=requestAnimationFrame(tick):(drAnimFrame=null,drReveal(i,stalls,door));
+  }
+  drAnimFrame=requestAnimationFrame(tick);
+}
+
+function drReveal(i, stalls, door){
+  const passMap = stalls.map((_,j)=>isPass(j,stalls,door));
+  drDrawRoom(stalls,door,null,i,passMap,null);
+  drRenderTable(stalls,door);
+  const b = bd(i,stalls,door);
+  const broke = b.disqualified||(b.eligible&&!b.r3pass);
+  const banner = document.getElementById('dr-result-banner');
+  banner.classList.remove('pass','fail');
+  if(broke){
+    banner.textContent = b.disqR==='r1' ? '✗ Rule broken — R1 buffer violated' : b.disqR==='r2' ? '✗ Rule broken — R2 surround violated' : '✗ Rule broken — R3 leaves no valid spots';
+    banner.classList.add('show','fail');
+  } else {
+    const pts = calcPoints(b, drGoTime?performance.now()-drGoTime:null);
+    banner.textContent = `✓ Valid pick — R4: ${b.r4s}★  R5: ${b.r5s}★  Score: ${pts}+spd pts`;
+    banner.classList.add('show','pass');
+  }
+  document.getElementById('dr-hint').textContent = 'Click Apply to try a new configuration';
+}
+
+// Setup hover for debug rules room svg
+const drSvg = document.getElementById('dr-room-svg');
+drSvg.addEventListener('mousemove',ev=>{
+  if(drRevealed||drCountingDown||!_drCurrentStalls) return;
+  const t=ev.target.closest('[onclick]');
+  const m=t?.getAttribute('onclick')?.match(/drClickUrinal\((\d+)\)/);
+  const idx=m?+m[1]:null;
+  if(idx!==_drHoveredIdx){ _drHoveredIdx=idx; drDrawRoom(_drCurrentStalls,_drCurrentDoor,idx,null,null,null); }
+});
+drSvg.addEventListener('mouseleave',()=>{
+  if(drRevealed||drCountingDown||!_drCurrentStalls) return;
+  _drHoveredIdx=null; drDrawRoom(_drCurrentStalls,_drCurrentDoor,null,null,null,null);
+});
 
 setupHover();
 </script>
