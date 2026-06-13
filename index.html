@@ -27,8 +27,6 @@
       }
     }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* AUTH */
     #auth-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     .auth-logo { font-size: 48px; margin-bottom: 1rem; }
     .auth-title { font-size: 28px; font-weight: 500; margin-bottom: 6px; }
@@ -41,8 +39,6 @@
     .auth-btn { width: 100%; padding: 11px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; }
     .auth-btn:hover { opacity: 0.85; }
     .auth-error { font-size: 13px; color: var(--red); margin-top: 0.75rem; text-align: center; min-height: 18px; }
-
-    /* GAME */
     #game-screen { display: none; }
     #app { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; }
     .game-title-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
@@ -63,29 +59,22 @@
     .level-desc  { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 1.25rem; }
     .hint-box { background: var(--blue-bg); border-radius: var(--radius); padding: 8px 12px; margin-bottom: 1.25rem; font-size: 13px; color: var(--blue-text); line-height: 1.5; display: none; }
     .hint-box.show { display: block; }
-
-    /* SVG room wrapper — position relative so overlay can sit on top */
     .room-wrap { position: relative; }
     #room-svg { width: 100%; display: block; }
-
-    /* Countdown overlay */
-    #countdown-overlay {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none;
-    }
-    #countdown-text {
-      font-size: 80px; font-weight: 700;
-      color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5);
-      opacity: 0; transition: opacity 0.15s;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
+    #countdown-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    #countdown-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     #countdown-text.go { color: #3B6D11; font-size: 56px; }
 
-    /* debug */
-    .debug-wrap { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
+    /* debug stats bar */
+    .debug-stats { display: flex; gap: 20px; align-items: center; padding: 8px 14px; background: var(--bg2); border-radius: var(--radius) var(--radius) 0 0; border: 0.5px solid var(--border); border-bottom: none; }
+    .debug-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .debug-stat-label { color: var(--text3); font-size: 11px; }
+    .debug-stat-value { font-weight: 600; color: var(--text); }
+    .debug-stat-value.timer-running { color: var(--blue); }
+
+    .debug-wrap { border: 0.5px solid var(--border); border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow-x: auto; margin-top: 1rem; display: none; }
     .debug-wrap.show { display: block; }
-    .weights-bar { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; align-items: center; background: var(--bg2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .weights-bar { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; align-items: center; background: var(--bg2); }
     .weight-row   { display: flex; align-items: center; gap: 8px; }
     .weight-label { font-size: 11px; font-weight: 500; color: var(--text2); white-space: nowrap; min-width: 90px; }
     .weight-val   { font-size: 12px; font-weight: 500; min-width: 16px; }
@@ -106,8 +95,6 @@
     .pw { background: var(--amber-bg); color: var(--amber-text); }
     .sm { color: var(--amber); font-size: 12px; }
     .se { color: var(--border2); font-size: 12px; }
-
-    /* feedback */
     .feedback-box { border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none; }
     .feedback-box.show { display: block; }
     .stars-row { display: flex; gap: 3px; margin-bottom: 8px; }
@@ -160,6 +147,22 @@
     <div class="room-wrap">
       <svg id="room-svg" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg"></svg>
       <div id="countdown-overlay"><span id="countdown-text"></span></div>
+    </div>
+
+    <!-- debug stats — only shown in DEBUG mode -->
+    <div class="debug-stats" id="debug-stats" style="display:none">
+      <div class="debug-stat">
+        <span class="debug-stat-label">⭐ total stars</span>
+        <span class="debug-stat-value" id="stat-stars">0</span>
+      </div>
+      <div class="debug-stat">
+        <span class="debug-stat-label">⏱ last reaction</span>
+        <span class="debug-stat-value" id="stat-time">—</span>
+      </div>
+      <div class="debug-stat">
+        <span class="debug-stat-label">⏱ best reaction</span>
+        <span class="debug-stat-value" id="stat-best">—</span>
+      </div>
     </div>
 
     <div class="debug-wrap" id="debug-wrap">
@@ -227,8 +230,8 @@ const COL={
   best:'#EAF3DE', bestBorder:'#3B6D11',
   wrong:'#FCEBEB', wrongBorder:'#A32D2D',
   selected:'#E6F1FB', selectedBorder:'#378ADD',
-  playerDot:'#378ADD',   // blue = you
-  npcDot:'#E8534A',      // red = last-minute NPC
+  playerDot:'#378ADD',
+  npcDot:'#E8534A',
 };
 
 // ── HELPERS ───────────────────────────────────────────
@@ -282,16 +285,12 @@ function stH(n,m){ return`<span class="sm">${'★'.repeat(Math.max(0,n))}</span>
 
 // ── SVG ROOM ──────────────────────────────────────────
 const SVG_W=560,SVG_H=220,WALL=14,UW=44,UH=54,PW=7,PH=10,DW=36;
-const URINAL_TOP = WALL+4+PH; // y position where urinal body starts
-const URINAL_MID_Y = URINAL_TOP + UH/2 - 4; // vertical centre of urinal body
-
+const URINAL_TOP=WALL+4+PH;
+const URINAL_MID_Y=URINAL_TOP+UH/2-4;
 function roomX(i,n){ const tw=n*UW+(n-1)*8; return (SVG_W-tw)/2+i*(UW+8); }
 function urinalCX(i,n){ return roomX(i,n)+UW/2; }
-function doorCX(door,n){ return roomX(door,n)+UW/2; }
-function doorY(){ return SVG_H-WALL/2; } // centre of door gap
 
-function drawRoom(stalls, door, hov, selIdx, revBests, pickedIdx, animDots){
-  // animDots: array of {cx, cy, color, r} — animated dots drawn on top
+function drawRoom(stalls,door,hov,selIdx,revBests,pickedIdx,animDots){
   const n=stalls.length; let o='';
   o+=`<rect x="0" y="0" width="${SVG_W}" height="${SVG_H}" fill="${COL.floor()}"/>`;
   const ts=30;
@@ -312,8 +311,6 @@ function drawRoom(stalls, door, hov, selIdx, revBests, pickedIdx, animDots){
   } else {
     o+=`<rect x="0" y="${SVG_H-WALL}" width="${SVG_W}" height="${WALL}" fill="${COL.wall()}"/>`;
   }
-
-  // urinals
   for(let i=0;i<n;i++){
     const s=stalls[i]; const ux=roomX(i,n); const uy=WALL+4; const cx=ux+UW/2;
     const isOcc=s.status==='occupied', isBrk=s.status==='broken';
@@ -342,130 +339,136 @@ function drawRoom(stalls, door, hov, selIdx, revBests, pickedIdx, animDots){
     o+=`</g>`;
     o+=`<text x="${cx}" y="${by+UH+14}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
   }
-
-  // animated dots on top (player blue, npc red)
-  if(animDots){
-    for(const d of animDots){
-      o+=`<circle cx="${d.cx}" cy="${d.cy}" r="${d.r||11}" fill="${d.color}"/>`;
-      o+=`<circle cx="${d.cx}" cy="${d.cy}" r="${(d.r||11)*0.45}" fill="#fff" opacity="0.4"/>`;
-    }
-  }
-
+  if(animDots){ for(const d of animDots){ o+=`<circle cx="${d.cx}" cy="${d.cy}" r="${d.r||11}" fill="${d.color}"/><circle cx="${d.cx}" cy="${d.cy}" r="${(d.r||11)*0.45}" fill="#fff" opacity="0.4"/>`; } }
   document.getElementById('room-svg').innerHTML=o;
 }
 
 // ── COUNTDOWN + ANIMATION ENGINE ─────────────────────
-let countingDown = false;
-let animFrame = null;
+let countingDown=false, animFrame=null;
+// Timer state
+let goTime=null;          // performance.now() when GO fires
+let reactionTime=null;    // ms from GO to click
+let totalStars=0;
+let bestReaction=null;
 
-// Linear interpolation
 function lerp(a,b,t){ return a+(b-a)*t; }
 
-function showCountdownText(txt, isGo){
-  const el = document.getElementById('countdown-text');
-  el.textContent = txt;
-  el.className = isGo ? 'go' : '';
-  el.style.opacity = '1';
-  setTimeout(()=>{ el.style.opacity='0'; }, isGo ? 600 : 700);
+function showCountdownText(txt,isGo){
+  const el=document.getElementById('countdown-text');
+  el.textContent=txt; el.className=isGo?'go':''; el.style.opacity='1';
+  setTimeout(()=>{ el.style.opacity='0'; }, isGo?600:700);
 }
+function hideCountdownText(){ document.getElementById('countdown-text').style.opacity='0'; }
 
-function hideCountdownText(){
-  document.getElementById('countdown-text').style.opacity='0';
-}
+// ── UNIVERSAL COUNTDOWN ───────────────────────────────
+// All levels get 3-2-1-GO. NPC levels add the red dot on "1".
+// After GO, player clicks → blue dot walks to urinal → result reveals.
+//
+// Timeline:
+//   0ms   : "3" + blue dot at door
+//   200ms : blue dot starts walking in
+//   900ms : blue dot settles near door zone
+//   1000ms: "2"
+//   2000ms: "1" + NPC burst (NPC levels only)
+//   2100ms: NPC starts moving (NPC levels)
+//   2700ms: NPC settles (NPC levels)
+//   3000ms: "GO" + goTime set, player can click
+//   3400ms: countdown fully done, blue dot waits at door position
 
-// Runs the full 3-2-1-GO sequence for levels with npcArrival
-// Timeline (ms):
-//   0      : show "3", player dot appears at door
-//   800    : player dot starts moving toward urinals
-//   1000   : show "2"
-//   1800   : player dot reaches urinal zone (stops at entrance area)
-//   2000   : show "1", NPC red dot bursts in from door, moves to target
-//   2800   : NPC dot reaches target urinal, becomes permanent (stall set to occupied)
-//   3000   : show "GO", player dot disappears, game unlocked
 function runCountdown(lv){
-  countingDown = true;
-  revealed = false;
-  const n = lv.stalls.length;
-  const door = lv.doorIndex;
-  const npcTarget = lv.npcArrival.urinal; // 0-indexed
+  countingDown=true; revealed=false; goTime=null;
+  const n=lv.stalls.length;
+  const door=lv.doorIndex!==null&&lv.doorIndex!==undefined ? lv.doorIndex : 0;
+  const npcTarget=lv.npcArrival ? lv.npcArrival.urinal : null;
 
-  const doorX = urinalCX(door, n);
-  const doorY_pos = SVG_H - WALL - 8;
-  const playerDestX = doorX; // player hovers near entrance
-  const playerDestY = SVG_H - WALL - 30;
-  const npcDestX = urinalCX(npcTarget, n);
-  const npcDestY = URINAL_MID_Y;
+  const doorX=urinalCX(door,n);
+  const doorY_pos=SVG_H-WALL-8;
+  const playerWaitX=doorX;
+  const playerWaitY=SVG_H-WALL-30;
+  const npcDestX=npcTarget!==null?urinalCX(npcTarget,n):0;
+  const npcDestY=URINAL_MID_Y;
 
-  let playerDot = { cx: doorX, cy: doorY_pos, color: COL.playerDot, r: 11 };
-  let npcDot = null;
-  let phase = 0; // 0=pre, 1=playerMoving, 2=npcBursting, 3=done
+  let playerDot={cx:doorX,cy:doorY_pos,color:COL.playerDot,r:11};
+  let npcDot=null;
 
-  const startTime = performance.now();
+  // Store player wait position so click handler can animate from here
+  window._playerWaitPos={cx:playerWaitX, cy:playerWaitY};
 
-  // Phase timings
-  const T_THREE   = 0;
-  const T_PLAYER_START = 200;
-  const T_PLAYER_END   = 900;
-  const T_TWO     = 1000;
-  const T_ONE     = 2000;
-  const T_NPC_START    = 2100;
-  const T_NPC_END      = 2700;
-  const T_GO      = 3000;
-  const T_UNLOCK  = 3400;
+  const T_THREE=0, T_PLAYER_START=200, T_PLAYER_END=900;
+  const T_TWO=1000, T_ONE=2000;
+  const T_NPC_START=2100, T_NPC_END=2700;
+  const T_GO=3000, T_UNLOCK=3400;
 
-  // Trigger countdown numbers
   setTimeout(()=>showCountdownText('3'), T_THREE);
   setTimeout(()=>showCountdownText('2'), T_TWO);
   setTimeout(()=>showCountdownText('1'), T_ONE);
-  setTimeout(()=>showCountdownText('GO', true), T_GO);
+  setTimeout(()=>{ showCountdownText('GO',true); goTime=performance.now(); }, T_GO);
+
+  const startTime=performance.now();
 
   function tick(now){
-    const elapsed = now - startTime;
-
-    // Player dot movement: door → hover point
-    if(elapsed >= T_PLAYER_START && elapsed < T_PLAYER_END){
-      const t = (elapsed - T_PLAYER_START) / (T_PLAYER_END - T_PLAYER_START);
-      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // ease in-out
-      playerDot.cx = lerp(doorX, playerDestX, ease);
-      playerDot.cy = lerp(doorY_pos, playerDestY, ease);
-    } else if(elapsed >= T_PLAYER_END && elapsed < T_GO){
-      playerDot.cx = playerDestX;
-      playerDot.cy = playerDestY;
+    const el=now-startTime;
+    // player dot walk in
+    if(el>=T_PLAYER_START&&el<T_PLAYER_END){
+      const t=(el-T_PLAYER_START)/(T_PLAYER_END-T_PLAYER_START);
+      const ease=t<0.5?2*t*t:-1+(4-2*t)*t;
+      playerDot.cx=lerp(doorX,playerWaitX,ease);
+      playerDot.cy=lerp(doorY_pos,playerWaitY,ease);
+    } else if(el>=T_PLAYER_END){
+      playerDot.cx=playerWaitX; playerDot.cy=playerWaitY;
     }
-
-    // NPC dot: appears at door, moves fast to target urinal
-    if(elapsed >= T_NPC_START && elapsed < T_NPC_END){
-      if(!npcDot) npcDot = { cx: doorX, cy: doorY_pos, color: COL.npcDot, r: 11 };
-      const t = (elapsed - T_NPC_START) / (T_NPC_END - T_NPC_START);
-      const ease = 1 - Math.pow(1-t, 3); // ease out cubic — fast start, slow settle
-      npcDot.cx = lerp(doorX, npcDestX, ease);
-      npcDot.cy = lerp(doorY_pos, npcDestY, ease);
-    } else if(elapsed >= T_NPC_END){
-      if(npcDot){
-        npcDot.cx = npcDestX;
-        npcDot.cy = npcDestY;
+    // NPC dot (NPC levels only)
+    if(npcTarget!==null){
+      if(el>=T_NPC_START&&el<T_NPC_END){
+        if(!npcDot) npcDot={cx:doorX,cy:doorY_pos,color:COL.npcDot,r:11};
+        const t=(el-T_NPC_START)/(T_NPC_END-T_NPC_START);
+        const ease=1-Math.pow(1-t,2.5); // slightly less frantic than cubic
+        npcDot.cx=lerp(doorX,npcDestX,ease);
+        npcDot.cy=lerp(doorY_pos,npcDestY,ease);
+      } else if(el>=T_NPC_END){
+        if(npcDot){npcDot.cx=npcDestX;npcDot.cy=npcDestY;}
       }
     }
+    const dots=[];
+    dots.push(playerDot); // player dot stays until they click
+    if(npcDot) dots.push(npcDot);
+    drawRoom(lv.stalls,door,null,null,null,null,dots);
 
-    // Build dot list for this frame
-    const dots = [];
-    if(elapsed < T_GO) dots.push(playerDot);
-    if(npcDot && elapsed < T_UNLOCK) dots.push(npcDot);
-
-    drawRoom(lv.stalls, door, null, null, null, null, dots.length ? dots : null);
-
-    if(elapsed < T_UNLOCK){
-      animFrame = requestAnimationFrame(tick);
+    if(el<T_UNLOCK){
+      animFrame=requestAnimationFrame(tick);
     } else {
-      // Animation done — permanently mark NPC urinal as occupied and unlock
-      countingDown = false;
-      lv.stalls[npcTarget] = { status: 'occupied' };
-      drawRoom(lv.stalls, door, null, null, null, null, null);
+      // countdown done — NPC permanently occupies stall, player dot waits
+      countingDown=false;
+      if(npcTarget!==null) lv.stalls[npcTarget]={status:'occupied'};
+      // keep player dot visible at wait position until they click
+      drawRoom(lv.stalls,door,null,null,null,null,[playerDot]);
       renderDebug();
     }
   }
+  animFrame=requestAnimationFrame(tick);
+}
 
-  animFrame = requestAnimationFrame(tick);
+// ── PLAYER WALK ANIMATION ─────────────────────────────
+// After player clicks, animate blue dot from wait pos to chosen urinal,
+// then reveal result.
+function animatePlayerWalk(stalls, door, pickedIdx, onComplete){
+  const n=stalls.length;
+  const startPos=window._playerWaitPos||{cx:urinalCX(door!==null?door:0,n),cy:SVG_H-WALL-30};
+  const destX=urinalCX(pickedIdx,n);
+  const destY=URINAL_MID_Y;
+  const WALK_MS=700; // blue dot is leisurely
+  const startTime=performance.now();
+
+  function tick(now){
+    const t=Math.min(1,(now-startTime)/WALK_MS);
+    const ease=t<0.5?2*t*t:-1+(4-2*t)*t;
+    const cx=lerp(startPos.cx,destX,ease);
+    const cy=lerp(startPos.cy,destY,ease);
+    drawRoom(stalls,door,null,null,null,null,[{cx,cy,color:COL.playerDot,r:11}]);
+    if(t<1){ animFrame=requestAnimationFrame(tick); }
+    else { animFrame=null; onComplete(); }
+  }
+  animFrame=requestAnimationFrame(tick);
 }
 
 // ── DEBUG TABLE ───────────────────────────────────────
@@ -485,13 +488,20 @@ function renderDebug(){
   const r3c=bds.map(b=>!b.eligible?na:b.disqualified?`<span style="color:var(--text3)">${b.spots}</span>`:`${b.spots}<span style="color:var(--text3);font-size:10px"> /${b.mxSpots}</span><br><b>+${b.r3p}</b>`);
   const r4c=bds.map(b=>{ if(!b.eligible)return na; if(b.bell===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${bellLabel(b.bell)}</span>`; const cl=b.bell===2?'pp':b.bell===1?'pm':'pf'; return`<span class="pill ${cl}">${bellLabel(b.bell)}</span><br><b>+${b.r4p}</b>`; });
   const r5c=bds.map(b=>{ if(!b.eligible)return na; if(b.disqualified)return`<span style="color:var(--text3)">${b.dist===999?'∞':b.dist}</span>`; const thr=b.mxDist===999?'∞':Math.ceil(b.mxDist*0.6); return`${b.dist===999?'∞':b.dist}<span style="color:var(--text3);font-size:10px"> (≥${thr})</span><br><b>+${b.r5p}</b>`; });
-  const wkc=bds.map((b,i)=>{ if(!b.eligible)return na; if(b.walk===0&&doorIndex===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${b.walk}</span>`; const cl=b.walkTieLabel==='closest'?'pp':b.walkTieLabel==='furthest'?'pf':'pn'; return`${b.walk} <span class="pill ${cl}">${b.walkTieLabel||''}</span>`; });
+  const wkc=bds.map((b)=>{ if(!b.eligible)return na; if(b.walk===0&&doorIndex===null)return`<span class="pill pn">n/a</span>`; if(b.disqualified)return`<span style="color:var(--text3)">${b.walk}</span>`; const cl=b.walkTieLabel==='closest'?'pp':b.walkTieLabel==='furthest'?'pf':'pn'; return`${b.walk} <span class="pill ${cl}">${b.walkTieLabel||''}</span>`; });
   const pc=bds.map(b=>!b.eligible?na:b.recent?`<span class="pill pw">−1</span>`:na);
   const tc=bds.map(b=>!b.eligible?na:stH(b.finalStars,5));
   const ww=gW();
   const r4row=doorIndex!==null&&doorIndex!==undefined?row(`r4: entrance zone ×${ww.r4}`,r4c):'';
   const wkrow=doorIndex!==null&&doorIndex!==undefined?row('walk tiebreaker',wkc):'';
   document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1: no adjacent',r1c)}${row('r2: no surround',r2c)}${row(`r3: next spots ×${ww.r3}`,r3c)}${r4row}${row(`r5: distance ×${ww.r5}`,r5c)}${wkrow}${row('penalty',pc)}${row('total',tc)}</tbody>`;
+}
+
+function updateDebugStats(){
+  if(!DEBUG)return;
+  document.getElementById('stat-stars').textContent=totalStars;
+  document.getElementById('stat-time').textContent=reactionTime!==null?(reactionTime/1000).toFixed(2)+'s':'—';
+  document.getElementById('stat-best').textContent=bestReaction!==null?(bestReaction/1000).toFixed(2)+'s':'—';
 }
 
 function onWC(){ const w=gW(); ['r3','r4','r5'].forEach(k=>document.getElementById('wv-'+k).textContent=w[k]); const{stalls,doorIndex}=LEVELS[currentLevel]; drawRoom(stalls,doorIndex,hoveredIdx,revealed?picked:null,revealed?bests(stalls,doorIndex,w):null,revealed?picked:null,null); renderDebug(); if(revealed&&picked!==null){ const s=scoreStall(picked,stalls,doorIndex,w); const e=explain(picked,stalls,doorIndex,w); showFeedback(s,e.title,e.body,false); } }
@@ -516,90 +526,27 @@ function brk(a,...ix){ix.forEach(i=>a[i]={status:"broken"});return a;}
 function rec(a,...ix){ix.forEach(i=>a[i]={status:"empty",recent:true});return a;}
 
 const LEVELS=[
-  // ── TUTORIAL ──
-  {title:"Welcome to the bathroom",
-   desc:"3 urinals, no one inside. The middle is awkward — pick an end.",
-   hint:"Rule 1: prefer a urinal that isn't hemmed in on both sides.",
-   doorIndex:0, stalls:e(3)},
-
-  {title:"Someone's already here",
-   desc:"4 urinals, urinal 1 is occupied. Where do you go?",
-   hint:"Rule 1: if you can avoid standing directly next to someone, you must.",
-   doorIndex:0, stalls:occ(e(4),0)},
-
-  {title:"Respect the space",
-   desc:"5 urinals, urinals 1 and 4 occupied. Don't fully surround anyone.",
-   hint:"Rule 2: your pick shouldn't trap someone between two occupied urinals.",
-   doorIndex:0, stalls:occ(e(5),0,3)},
-
-  {title:"Think ahead",
-   desc:"5 urinals, urinal 2 occupied. Leave room for the next person.",
-   hint:"Rule 3: after you pick, count how many valid spots remain for the next arrival.",
-   doorIndex:0, stalls:occ(e(5),1)},
-
-  {title:"The entrance matters",
-   desc:"5 urinals — door is below. Don't stand right next to it, but don't march to the far end either.",
-   hint:"Rule 4: there's a sweet spot zone. Too close = exposed. Too far = suspicious.",
-   doorIndex:2, stalls:e(5)},
-
-  {title:"Don't over-walk",
-   desc:"9 urinals, door on the left. Two spots score equally — but one requires walking further for no reason.",
-   hint:"Walk rule: when two spots score equally, pick the one closer to the door.",
-   doorIndex:0, stalls:e(9)},
-
-  // ── STANDARD ──
-  {title:"All rules in play",
-   desc:"7 urinals, door left, urinal 3 occupied. Apply everything you know.",
-   hint:null, doorIndex:0, stalls:occ(e(7),2)},
-
-  {title:"The long walk",
-   desc:"9 urinals, door left, urinal 5 occupied. Far enough is enough.",
-   hint:null, doorIndex:0, stalls:occ(e(9),4)},
-
-  {title:"Broken in the mix",
-   desc:"7 urinals, urinal 4 broken, urinal 2 occupied. Door left.",
-   hint:null, doorIndex:0, stalls:brk(occ(e(7),1),3)},
-
-  {title:"Door in the middle",
-   desc:"7 urinals, entrance dead centre. Both ends equidistant — which side wins?",
-   hint:null, doorIndex:3, stalls:e(7)},
-
-  {title:"Warm seats",
-   desc:"7 urinals, urinals 2 and 6 recently used, urinal 4 occupied. Door left.",
-   hint:null, doorIndex:0, stalls:rec(occ(e(7),3),1,5)},
-
-  {title:"Rush hour",
-   desc:"7 urinals, door right, urinals 2 4 6 occupied. Every gap is compromised.",
-   hint:null, doorIndex:6, stalls:occ(e(7),1,3,5)},
-
-  // ── NPC LAST MINUTE ──
-  {title:"Last minute arrival",
-   desc:"7 urinals, door left. You're about to choose — but someone bursts in just before you. Think fast.",
-   hint:"Watch the red dot carefully. It changes everything.",
-   doorIndex:0,
-   stalls:e(7),
-   // NPC picks a suboptimal spot (urinal 5, index 4) — recoverable
-   npcArrival:{ urinal:4, quality:'suboptimal' }},
-
-  {title:"They took the good one",
-   desc:"9 urinals, door left, urinal 3 already occupied. The late arrival goes for the best remaining spot.",
-   hint:"The red dot is smart. You'll have to find the second-best option.",
-   doorIndex:0,
-   stalls:occ(e(9),2),
-   // NPC picks optimal spot (urinal 7, index 6)
-   npcArrival:{ urinal:6, quality:'optimal' }},
-
-  {title:"No easy answer",
-   desc:"9 urinals, door middle, urinals 3 and 7 occupied, urinal 9 broken.",
-   hint:null, doorIndex:4,
-   stalls:brk(occ(e(9),2,6),8)},
+  {title:"Welcome to the bathroom",desc:"3 urinals, no one inside. The middle is awkward — pick an end.",hint:"Rule 1: prefer a urinal that isn't hemmed in on both sides.",doorIndex:0,stalls:e(3)},
+  {title:"Someone's already here",desc:"4 urinals, urinal 1 is occupied. Where do you go?",hint:"Rule 1: if you can avoid standing directly next to someone, you must.",doorIndex:0,stalls:occ(e(4),0)},
+  {title:"Respect the space",desc:"5 urinals, urinals 1 and 4 occupied. Don't fully surround anyone.",hint:"Rule 2: your pick shouldn't trap someone between two occupied urinals.",doorIndex:0,stalls:occ(e(5),0,3)},
+  {title:"Think ahead",desc:"5 urinals, urinal 2 occupied. Leave room for the next person.",hint:"Rule 3: after you pick, count how many valid spots remain for the next arrival.",doorIndex:0,stalls:occ(e(5),1)},
+  {title:"The entrance matters",desc:"5 urinals — door is below. Don't stand right next to it, but don't march to the far end either.",hint:"Rule 4: there's a sweet spot zone. Too close = exposed. Too far = suspicious.",doorIndex:2,stalls:e(5)},
+  {title:"Don't over-walk",desc:"9 urinals, door on the left. Two spots score equally — but one requires walking further for no reason.",hint:"Walk rule: when two spots score equally, pick the one closer to the door.",doorIndex:0,stalls:e(9)},
+  {title:"All rules in play",desc:"7 urinals, door left, urinal 3 occupied. Apply everything you know.",hint:null,doorIndex:0,stalls:occ(e(7),2)},
+  {title:"The long walk",desc:"9 urinals, door left, urinal 5 occupied. Far enough is enough.",hint:null,doorIndex:0,stalls:occ(e(9),4)},
+  {title:"Broken in the mix",desc:"7 urinals, urinal 4 broken, urinal 2 occupied. Door left.",hint:null,doorIndex:0,stalls:brk(occ(e(7),1),3)},
+  {title:"Door in the middle",desc:"7 urinals, entrance dead centre. Both ends equidistant — which side wins?",hint:null,doorIndex:3,stalls:e(7)},
+  {title:"Warm seats",desc:"7 urinals, urinals 2 and 6 recently used, urinal 4 occupied. Door left.",hint:null,doorIndex:0,stalls:rec(occ(e(7),3),1,5)},
+  {title:"Rush hour",desc:"7 urinals, door right, urinals 2 4 6 occupied. Every gap is compromised.",hint:null,doorIndex:6,stalls:occ(e(7),1,3,5)},
+  {title:"Last minute arrival",desc:"7 urinals, door left. You're about to choose — but someone bursts in just before you. Think fast.",hint:"Watch the red dot carefully. It changes everything.",doorIndex:0,stalls:e(7),npcArrival:{urinal:4,quality:'suboptimal'}},
+  {title:"They took the good one",desc:"9 urinals, door left, urinal 3 already occupied. The late arrival goes for the best remaining spot.",hint:"The red dot is smart. You'll have to find the second-best option.",doorIndex:0,stalls:occ(e(9),2),npcArrival:{urinal:6,quality:'optimal'}},
+  {title:"No easy answer",desc:"9 urinals, door middle, urinals 3 and 7 occupied, urinal 9 broken.",hint:null,doorIndex:4,stalls:brk(occ(e(9),2,6),8)},
 ];
 
-// Store original stalls so retry can reset npcArrival modifications
-const ORIGINAL_STALLS = LEVELS.map(lv => lv.stalls.map(s=>({...s})));
+const ORIGINAL_STALLS=LEVELS.map(lv=>lv.stalls.map(s=>({...s})));
 
 // ── RENDER ────────────────────────────────────────────
-let currentLevel=0, completedLevels=[], picked=null, revealed=false, hoveredIdx=null;
+let currentLevel=0,completedLevels=[],picked=null,revealed=false,hoveredIdx=null;
 
 function renderNav(){ document.getElementById('nav-row').innerHTML=LEVELS.map((_,i)=>`<button class="nav-btn${i===currentLevel?' active':''}" onclick="jumpLevel(${i})">L${i+1}</button>`).join(''); }
 function jumpLevel(i){ currentLevel=i; renderLevel(); }
@@ -609,12 +556,29 @@ function clickUrinal(i){
   if(revealed||countingDown)return;
   const{stalls,doorIndex}=LEVELS[currentLevel];
   if(stalls[i].status!=='empty')return;
+
+  // Record reaction time
+  if(goTime!==null){
+    reactionTime=performance.now()-goTime;
+    if(bestReaction===null||reactionTime<bestReaction) bestReaction=reactionTime;
+  }
+
   picked=i; revealed=true;
-  const w=gW(); const best=bests(stalls,doorIndex,w);
-  drawRoom(stalls,doorIndex,null,picked,best,picked,null);
-  renderDebug();
-  const st=scoreStall(i,stalls,doorIndex,w); const ex=explain(i,stalls,doorIndex,w);
-  showFeedback(st,ex.title,ex.body,true);
+
+  // Cancel hover
+  hoveredIdx=null;
+
+  // Animate blue dot walking to chosen urinal, then reveal
+  animatePlayerWalk(stalls, doorIndex, i, ()=>{
+    const w=gW(); const best=bests(stalls,doorIndex,w);
+    drawRoom(stalls,doorIndex,null,picked,best,picked,null);
+    renderDebug();
+    const st=scoreStall(i,stalls,doorIndex,w);
+    totalStars+=st;
+    updateDebugStats();
+    const ex=explain(i,stalls,doorIndex,w);
+    showFeedback(st,ex.title,ex.body,true);
+  });
 }
 
 function setupHover(){
@@ -624,33 +588,30 @@ function setupHover(){
 }
 
 function renderLevel(){
-  // Cancel any running animation
-  if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
-  countingDown=false;
-
-  // Reset stalls to original (in case npcArrival modified them)
-  LEVELS[currentLevel].stalls = ORIGINAL_STALLS[currentLevel].map(s=>({...s}));
-
+  if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}
+  countingDown=false; goTime=null; reactionTime=null;
+  LEVELS[currentLevel].stalls=ORIGINAL_STALLS[currentLevel].map(s=>({...s}));
   const lv=LEVELS[currentLevel];
   document.getElementById('level-tag').textContent=`Level ${currentLevel+1} of ${LEVELS.length}`;
   document.getElementById('level-title').textContent=lv.title;
   document.getElementById('level-desc').textContent=lv.desc;
   const hb=document.getElementById('hint-box');
   if(lv.hint){hb.textContent=lv.hint;hb.classList.add('show');}else{hb.classList.remove('show');}
-  picked=null; revealed=false; hoveredIdx=null;
+  picked=null;revealed=false;hoveredIdx=null;
   document.getElementById('feedback-box').classList.remove('show');
   document.getElementById('next-btn').style.display='none';
   document.getElementById('retry-btn').style.display='none';
   hideCountdownText();
-  if(DEBUG){document.getElementById('debug-wrap').classList.add('show');}else{document.getElementById('debug-wrap').classList.remove('show');}
-  renderNav(); renderProgress();
-  drawRoom(lv.stalls, lv.doorIndex, null, null, null, null, null);
+  // Show/hide debug elements
+  const showDebug=DEBUG;
+  document.getElementById('debug-stats').style.display=showDebug?'flex':'none';
+  document.getElementById('debug-wrap').classList.toggle('show',showDebug);
+  if(showDebug) updateDebugStats();
+  renderNav();renderProgress();
+  drawRoom(lv.stalls,lv.doorIndex,null,null,null,null,null);
   renderDebug();
-
-  // If this level has an NPC arrival, start the countdown after a short pause
-  if(lv.npcArrival){
-    setTimeout(()=>runCountdown(lv), 800);
-  }
+  // All levels get the countdown
+  setTimeout(()=>runCountdown(lv),600);
 }
 
 function showFeedback(stars,title,body,updateBtns){
