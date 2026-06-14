@@ -76,13 +76,13 @@
     .rules-wrap { width: 100%; max-width: 500px; }
     .rules-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
     .rules-heading { font-size: 24px; font-weight: 600; margin-bottom: 1.25rem; }
-    .rules-list { display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border2); margin-bottom: 1.5rem; }
+    .rules-list { display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border2); margin-bottom: 1.5rem; width: 100%; }
     .rule-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
     .rule-row:last-child { border-bottom: none; }
     .rule-row.new-rule { background: var(--blue-bg); }
     .rule-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--text); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
     .rule-row.new-rule .rule-num { background: var(--blue); }
-    .rule-body { flex: 1; }
+    .rule-body { flex: 1; min-width: 0; }
     .rule-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; color: var(--text); }
     .rule-row.new-rule .rule-name { color: var(--blue-text); }
     .rule-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
@@ -205,7 +205,7 @@
     .tip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; }
     .tip-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: var(--bg3); color: var(--text3); font-size: 9px; font-weight: 700; cursor: default; flex-shrink: 0; border: 0.5px solid var(--border2); line-height: 1; }
     .tip-box { display: none; position: fixed; z-index: 9999; max-width: 220px; background: var(--text); color: var(--bg); font-size: 11px; line-height: 1.55; padding: 7px 10px; border-radius: var(--radius); pointer-events: none; white-space: normal; box-shadow: none; }
-    .tip-icon:hover + .tip-box { display: block; }
+    /* tip-box shown via JS only, not CSS hover */
 
     /* ── DEBUG RULES SCREEN ── */
     #debug-rules-screen { display: none; padding: 1rem; }
@@ -564,7 +564,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.8';
+const GAME_VERSION = '0.3.10';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -1215,10 +1215,10 @@ function renderDebug(){
     return {aloneY,perfP,acP,sdP,dec};
   }
   const r1_alone=bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pp">Y</span>`:`<span class="pill pn">N</span>`));
-  const r1_perf =bds.map(b=>!b.eligible?na:b.r1.alone?na_pill:(b.r1.myClass==='P'?`<span class="pill pp">P</span>`:`<span class="pill pf">NotP</span>`));
-  const r1_ac   =bds.map(b=>!b.eligible?na:b.r1.alone?na_pill:(b.r1.myClass==='Ac'?`<span class="pill pp">Ac</span>`:`<span class="pill pf">NotAc</span>`));
-  const r1_sd   =bds.map(b=>!b.eligible?na:b.r1.alone?na_pill:(b.r1.myClass==='Sd'?`<span class="pill pw">Sd</span>`:`<span class="pill pn">NotSd</span>`));
-  const r1_dec  =bds.map(b=>!b.eligible?na:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`));
+  const r1_perf =bds.map(b=>!b.eligible?na:(b.r1.myClass==='P'?`<span class="pill ${b.r1.alone?'pn':'pp'}">P</span>`:`<span class="pill pf">NotP</span>`));
+  const r1_ac   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Ac'?`<span class="pill ${b.r1.alone?'pn':'pp'}">Ac</span>`:`<span class="pill ${b.r1.alone?'pn':'pf'}">NotAc</span>`));
+  const r1_sd   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Sd'?`<span class="pill ${b.r1.alone?'pn':'pw'}">Sd</span>`:`<span class="pill pn">NotSd</span>`));
+  const r1_dec  =bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pn">alone</span>`:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`)));
   const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
   const r3c=bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
   const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
@@ -1248,10 +1248,10 @@ function drRenderTable(stalls, doorIndex) {
   const sc   = stalls.map(s => s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:`<span class="pill pp">empty</span>`);
   const na_p = `<span style="color:var(--text3)">n/a</span>`;
   const r1_alone2=bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pp">Y</span>`:`<span class="pill pn">N</span>`));
-  const r1_perf2 =bds.map(b=>!b.eligible?na:b.r1.alone?na_p:(b.r1.myClass==='P'?`<span class="pill pp">P</span>`:`<span class="pill pf">NotP</span>`));
-  const r1_ac2   =bds.map(b=>!b.eligible?na:b.r1.alone?na_p:(b.r1.myClass==='Ac'?`<span class="pill pp">Ac</span>`:`<span class="pill pf">NotAc</span>`));
-  const r1_sd2   =bds.map(b=>!b.eligible?na:b.r1.alone?na_p:(b.r1.myClass==='Sd'?`<span class="pill pw">Sd</span>`:`<span class="pill pn">NotSd</span>`));
-  const r1_dec2  =bds.map(b=>!b.eligible?na:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`));
+  const r1_perf2 =bds.map(b=>!b.eligible?na:(b.r1.myClass==='P'?`<span class="pill ${b.r1.alone?'pn':'pp'}">P</span>`:`<span class="pill pf">NotP</span>`));
+  const r1_ac2   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Ac'?`<span class="pill ${b.r1.alone?'pn':'pp'}">Ac</span>`:`<span class="pill ${b.r1.alone?'pn':'pf'}">NotAc</span>`));
+  const r1_sd2   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Sd'?`<span class="pill ${b.r1.alone?'pn':'pw'}">Sd</span>`:`<span class="pill pn">NotSd</span>`));
+  const r1_dec2  =bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pn">alone</span>`:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`)));
   const r2c  = bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
   const surrc= bds.map((b,i)=>!b.eligible?na:`${b.surr??0}`);
   const r3c  = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
@@ -1632,20 +1632,33 @@ drSvg.addEventListener('mouseleave',()=>{
 
 // ── TOOLTIP POSITIONING ───────────────────────────────
 // Reposition tip-box to follow cursor so it never clips screen edges
+// ── TOOLTIP: single active tooltip, follows cursor ──
+let _activeTipBox = null;
 document.addEventListener('mousemove', ev => {
   const icon = ev.target.closest('.tip-icon');
-  if(!icon) return;
+  if(!icon) {
+    // Mouse left all icons — hide active
+    if(_activeTipBox){ _activeTipBox.style.display='none'; _activeTipBox=null; }
+    return;
+  }
   const box = icon.nextElementSibling;
   if(!box || !box.classList.contains('tip-box')) return;
+  // Hide previously active if different
+  if(_activeTipBox && _activeTipBox !== box){
+    _activeTipBox.style.display = 'none';
+  }
+  _activeTipBox = box;
   const vw = window.innerWidth, vh = window.innerHeight;
   let x = ev.clientX + 14, y = ev.clientY + 14;
-  // peek at box size before positioning
   box.style.left = '0px'; box.style.top = '0px'; box.style.display = 'block';
   const bw = box.offsetWidth, bh = box.offsetHeight;
   if(x + bw > vw - 8) x = ev.clientX - bw - 10;
   if(y + bh > vh - 8) y = ev.clientY - bh - 10;
   box.style.left = x + 'px';
   box.style.top  = y + 'px';
+});
+document.addEventListener('mouseleave', () => {
+  if(_activeTipBox){ _activeTipBox.style.display='none'; _activeTipBox=null; }
 });
 
 setupHover();
