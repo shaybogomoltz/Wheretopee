@@ -133,7 +133,7 @@
     .timer-bar { height: 100%; border-radius: 5px; width: 0%; transition: background 0.3s; }
 
     .room-wrap { position: relative; }
-    #room-svg { width: 100%; display: block; cursor: none; user-select: none; }
+    #room-svg { width: 100%; display: block; user-select: none; }
     #countdown-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     #countdown-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
     #countdown-text.go { color: #3B6D11; font-size: 56px; }
@@ -198,6 +198,22 @@
     .pn { background: var(--bg2); color: var(--text3); border: 0.5px solid var(--border); }
     .pw { background: var(--amber-bg); color: var(--amber-text); }
 
+    /* ── DEBUG PASSWORD MODAL ── */
+    #debug-pw-modal { display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+    #debug-pw-modal.show { display:flex; }
+    .pw-box { background:var(--bg2); border:0.5px solid var(--border2); border-radius:var(--radius-lg); padding:28px 24px; width:100%; max-width:320px; box-shadow:0 8px 40px rgba(0,0,0,0.3); }
+    .pw-title { font-size:16px; font-weight:600; margin-bottom:6px; }
+    .pw-sub   { font-size:13px; color:var(--text2); margin-bottom:18px; }
+    .pw-input { width:100%; padding:10px 12px; border-radius:var(--radius); border:0.5px solid var(--border2); background:var(--bg); color:var(--text); font-size:14px; font-family:inherit; outline:none; box-sizing:border-box; letter-spacing:0.08em; }
+    .pw-input:focus { border-color:var(--blue); }
+    .pw-error { font-size:12px; color:var(--red); margin-top:6px; min-height:16px; }
+    .pw-actions { display:flex; gap:8px; margin-top:16px; }
+    .pw-btn { flex:1; padding:10px; border-radius:var(--radius); border:none; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit; }
+    .pw-btn-cancel { background:var(--bg3); color:var(--text2); }
+    .pw-btn-cancel:hover { background:var(--border2); }
+    .pw-btn-enter  { background:var(--text); color:var(--bg); }
+    .pw-btn-enter:hover { opacity:0.85; }
+
     /* ── VERSION ── */
     .version-tag { font-size: 11px; color: var(--text3); letter-spacing: 0.04em; }
     .version-corner { position: fixed; bottom: 14px; right: 16px; font-size: 11px; color: var(--text3); letter-spacing: 0.04em; pointer-events: none; z-index: 999; }
@@ -234,7 +250,7 @@
     .dr-apply-btn { width: 100%; padding: 12px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 1rem; }
     .dr-apply-btn:hover { opacity: 0.85; }
     .dr-game-wrap { position: relative; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
-    .dr-game-wrap svg { width: 100%; display: block; cursor: none; user-select: none; }
+    .dr-game-wrap svg { width: 100%; display: block; user-select: none; }
     .dr-cd-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     .dr-cd-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
     .dr-cd-text.go { color: #3B6D11; font-size: 56px; }
@@ -310,7 +326,7 @@
   <div style="margin-bottom:2rem"></div>
   <div class="landing-btns">
     <button class="landing-btn landing-btn-play" onclick="startPlay()">Play</button>
-    <button class="landing-btn landing-btn-debug" onclick="showDebugChooser()">Debug mode</button>
+    <button class="landing-btn landing-btn-debug" onclick="showDebugModal()">Debug mode</button>
   </div>
   <div class="leaderboard">
     <div class="leaderboard-header">
@@ -322,6 +338,20 @@
     <div class="leaderboard-row"><span class="leaderboard-rank bronze">3</span><span class="leaderboard-name">FlushMaster</span><span class="leaderboard-score">7,300<span class="leaderboard-level">L73</span></span></div>
     <div class="leaderboard-row"><span class="leaderboard-rank">4</span><span class="leaderboard-name">BathroomPro</span><span class="leaderboard-score">6,100<span class="leaderboard-level">L61</span></span></div>
     <div class="leaderboard-row"><span class="leaderboard-rank">5</span><span class="leaderboard-name">StallSurfer</span><span class="leaderboard-score">4,900<span class="leaderboard-level">L49</span></span></div>
+  </div>
+</div>
+
+<!-- DEBUG PASSWORD MODAL -->
+<div id="debug-pw-modal">
+  <div class="pw-box">
+    <div class="pw-title">🔒 Debug mode</div>
+    <div class="pw-sub">Enter the password to continue.</div>
+    <input class="pw-input" id="pw-input" type="password" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')pwSubmit(); if(event.key==='Escape')pwCancel();">
+    <div class="pw-error" id="pw-error"></div>
+    <div class="pw-actions">
+      <button class="pw-btn pw-btn-cancel" onclick="pwCancel()">Cancel</button>
+      <button class="pw-btn pw-btn-enter" onclick="pwSubmit()">Enter →</button>
+    </div>
   </div>
 </div>
 
@@ -565,7 +595,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.18';
+const GAME_VERSION = '0.3.23';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -648,6 +678,29 @@ function hideAllScreens() {
   document.getElementById('debug-rules-screen').classList.remove('show');
 }
 
+// ── DEBUG PASSWORD ───────────────────────────────────
+const DEBUG_PW = 'ILOVECLAUDE';
+function showDebugModal() {
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').textContent = '';
+  document.getElementById('debug-pw-modal').classList.add('show');
+  setTimeout(() => document.getElementById('pw-input').focus(), 50);
+}
+function pwCancel() {
+  document.getElementById('debug-pw-modal').classList.remove('show');
+}
+function pwSubmit() {
+  const val = document.getElementById('pw-input').value.trim().toUpperCase();
+  if(val === DEBUG_PW) {
+    document.getElementById('debug-pw-modal').classList.remove('show');
+    showDebugChooser();
+  } else {
+    document.getElementById('pw-error').textContent = 'Wrong password. Try again.';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
 function showDebugChooser() {
   hideAllScreens();
   document.getElementById('debug-chooser-screen').classList.add('show');
@@ -704,13 +757,11 @@ function showRulesScreen(levelIdx, isFirst) {
   document.getElementById('rules-cta').textContent = levelIdx === 0 ? `Let's go →` : `Next level →`;
   document.getElementById('rules-list').innerHTML = RULES.slice(0, rulesCount).map((r, i) => {
     const isNew = i === newRuleIdx;
-    // Show tagTip on ALL rules (hover always works)
-    // But auto-show only when this rule is being introduced for the first time (isNew)
     const showTip = !!r.tagTip;
-    // Give each tip a unique id so JS can auto-show then fade it
-    const tipId = showTip ? `tag-tip-${i}` : '';
+    // Only the NEW rule gets an id — so auto-show can only ever target the current intro rule
+    const tipId = (showTip && isNew) ? `tag-tip-${i}` : '';
     const tagHtml = showTip
-      ? `<div class="tag-wrap"><div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div><div class="tag-tip" id="${tipId}">${r.tagTip}</div></div>`
+      ? `<div class="tag-wrap"><div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div><div class="tag-tip"${tipId?` id="${tipId}"`:''}>${r.tagTip}</div></div>`
       : `<div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div>`;
     return `<div class="rule-row${isNew?' new-rule':''}">
       <div class="rule-num">#${i+1}</div>
@@ -1131,7 +1182,7 @@ function buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
     o+=`<rect x="${cx-2}" y="${uy}" width="4" height="${PH}" rx="1" fill="${dark?'#6a6560':'#c0b8b0'}"/>`;
     // determine onclick target — game or debug rules
     const onclickFn = isDebugRulesMode ? `drClickUrinal(${i})` : `clickUrinal(${i})`;
-    o+=`<g onclick="${clickable?onclickFn:''}" style="cursor:${clickable?'pointer':'none'}" opacity="${op}">`;
+    o+=`<g onclick="${clickable?onclickFn:''}" style="cursor:${clickable?'pointer':'default'}" opacity="${op}">`;
     o+=`<rect x="${ux+3}" y="${by}" width="${UW-6}" height="${UH}" rx="8" fill="${bc}" opacity="0.3"/>`;
     o+=`<rect x="${ux+4}" y="${by+1}" width="${UW-8}" height="${UH-2}" rx="7" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
     o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-16)/2}" ry="${UH*0.28}" fill="${dark?'#1a1918':'#e8e4dc'}" stroke="${bc}" stroke-width="0.8" opacity="0.7"/>`;
@@ -1206,11 +1257,11 @@ function runCountdown(lv){
     if(deptTarget!==null){
       const sx=urinalCX(deptTarget,n);
       if(el>=T.d0&&el<T.d1){ if(!deptDot) deptDot={cx:sx,cy:URINAL_MID_Y,color:COL.npcDot,r:11,hatFn:NPC_HATS[deptTarget%NPC_HATS.length]}; const t=(el-T.d0)/(T.d1-T.d0),e=t<0.5?2*t*t:-1+(4-2*t)*t; deptDot.cx=lerp(sx,doorX,e); deptDot.cy=lerp(URINAL_MID_Y,doorY,e); }
-      else if(el>=T.d1){ if(deptDot){ deptDot=null; lv.stalls[deptTarget]={status:'empty',warm:true}; } }
+      else if(el>=T.d1){ if(deptDot){ lv.stalls[deptTarget]={status:'empty',warm:true}; deptDot=null; } }
     }
     if(npcTarget!==null){
       const nx=urinalCX(npcTarget,n);
-      if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11,hatFn:NPC_HATS[currentLevel%NPC_HATS.length]}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
+      if(el>=T.n0&&el<T.n1){ if(!npcDot)npcDot={cx:doorX,cy:doorY,color:COL.npcDot,r:11,hatFn:NPC_HATS[npcTarget%NPC_HATS.length]}; const t=(el-T.n0)/(T.n1-T.n0),e=1-Math.pow(1-t,2.5); npcDot.cx=lerp(doorX,nx,e); npcDot.cy=lerp(doorY,URINAL_MID_Y,e); }
       else if(el>=T.n1&&npcDot){ npcDot.cx=nx; npcDot.cy=URINAL_MID_Y; }
     }
     const dots=[playerDot,...(deptDot?[deptDot]:[]),...(npcDot?[npcDot]:[])];
