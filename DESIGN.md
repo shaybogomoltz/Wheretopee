@@ -1,3 +1,15 @@
+### v0.3.15
+- **R#2 completely rewritten** using 4-tier cascading logic
+  - SR1 — does your pick cause any NPC to become fully sandwiched? (avoidable = fail)
+  - SR2 — do you end up sandwiched by NPCs? evaluated among SR1 survivors only
+  - SR3 — does your pick increase partially man-sandwiched NPCs? SR1+SR2 survivors only
+  - SR4 — does your pick increase partially wall-sandwiched NPCs? SR1+SR2+SR3 survivors only
+  - Each tier only compares against picks that survived all previous tiers
+- Old `maxSurround` / `anyAvoidSurround` functions removed
+- Debug table (both modes): 5 new R#2 rows — NPC full, you sandwiched?, NPC partial man, NPC partial wall, decision
+- Candidate filter in `bd()` updated to use new `r2Eval()` per stall
+- Bumped to v0.3.15
+
 # Where To Pee — Design Document
 
 > A browser game about the unwritten rules of urinal etiquette.

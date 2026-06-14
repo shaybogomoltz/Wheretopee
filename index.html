@@ -565,7 +565,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.14';
+const GAME_VERSION = '0.3.15';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -873,20 +873,69 @@ function nextSpots(pick,s){
   return nonAdj;
 }
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
-function maxSurround(pick,s){
-  let mx=0;
-  for(let i=0;i<s.length;i++){
-    if(s[i].status!=='occupied')continue;
-    const pickIsLeft=(i>0)&&(i-1===pick);
-    const pickIsRight=(i<s.length-1)&&(i+1===pick);
-    if(!pickIsLeft&&!pickIsRight) continue;
-    const otherLeft=(i>0)&&(s[i-1].status==='occupied'||i-1===pick);
-    const otherRight=(i<s.length-1)&&(s[i+1].status==='occupied'||i+1===pick);
-    mx=Math.max(mx,(otherLeft?1:0)+(otherRight?1:0));
-  }
-  return mx;
+// ── R2 NEW LOGIC ─────────────────────────────────────
+// Count how many NPCs are fully/partialMan/partialWall sandwiched
+// excludeIdx = the player's picked stall (not counted as an NPC)
+function r2CountSandwiches(s, excludeIdx){
+  let full=0, partialMan=0, partialWall=0;
+  s.forEach((st,j)=>{
+    if(j===excludeIdx) return;
+    if(st.status!=='occupied') return;
+    const L = j===0 ? 'wall' : s[j-1].status;
+    const R = j===s.length-1 ? 'wall' : s[j+1].status;
+    const lOcc=L==='occupied', rOcc=R==='occupied';
+    const lWall=L==='wall',    rWall=R==='wall';
+    if(lOcc&&rOcc)                      { full++;        return; }
+    if((lOcc&&rWall)||(rOcc&&lWall))    { partialWall++; return; }
+    if(lOcc||rOcc)                      { partialMan++;  return; }
+  });
+  return {full, partialMan, partialWall};
 }
-function anyAvoidSurround(s){ return s.some((x,i)=>{ if(x.status!=='empty') return false; return maxSurround(i,s)<2; }); }
+// Is the player fully sandwiched by NPCs on both sides?
+function r2PlayerSandwiched(pick, s){
+  const L = pick===0 ? null : s[pick-1].status;
+  const R = pick===s.length-1 ? null : s[pick+1].status;
+  return L==='occupied' && R==='occupied';
+}
+function r2AfterPick(s, pick){ return s.map((x,j)=>j===pick?{status:'occupied'}:x); }
+// Full R2 evaluation
+function r2Eval(pick, s){
+  if(s[pick].status!=='empty') return {eligible:false};
+  const empties = s.map((x,j)=>x.status==='empty'?j:null).filter(j=>j!==null);
+  const before  = r2CountSandwiches(s, -1);
+  // Pre-compute outcomes for all picks
+  const oc = Object.fromEntries(empties.map(j=>([j,{
+    after: r2CountSandwiches(r2AfterPick(s,j), j),
+    ps:    r2PlayerSandwiched(j, s)
+  }])));
+  const myAfter = r2CountSandwiches(r2AfterPick(s,pick), pick);
+  const myPS    = r2PlayerSandwiched(pick, s);
+
+  // SR1 — any pick avoids increasing NPC full sandwiches?
+  const anyAvoidSR1 = empties.some(j=>oc[j].after.full<=before.full);
+  if(anyAvoidSR1 && myAfter.full>before.full)
+    return {eligible:true,r2pass:false,failAt:'SR1',myAfter,before,myPS};
+
+  // SR2 — among SR1-survivors, any avoids player sandwich?
+  const sr1surv = empties.filter(j=>!anyAvoidSR1||oc[j].after.full<=before.full);
+  const anyAvoidSR2 = sr1surv.some(j=>!oc[j].ps);
+  if(anyAvoidSR2 && myPS)
+    return {eligible:true,r2pass:false,failAt:'SR2',myAfter,before,myPS};
+
+  // SR3 — among SR1+SR2-survivors, any avoids increasing NPC partial man?
+  const sr2surv = sr1surv.filter(j=>!anyAvoidSR2||!oc[j].ps);
+  const anyAvoidSR3 = sr2surv.some(j=>oc[j].after.partialMan<=before.partialMan);
+  if(anyAvoidSR3 && myAfter.partialMan>before.partialMan)
+    return {eligible:true,r2pass:false,failAt:'SR3',myAfter,before,myPS};
+
+  // SR4 — among SR1+SR2+SR3-survivors, any avoids increasing NPC partial wall?
+  const sr3surv = sr2surv.filter(j=>!anyAvoidSR3||oc[j].after.partialMan<=before.partialMan);
+  const anyAvoidSR4 = sr3surv.some(j=>oc[j].after.partialWall<=before.partialWall);
+  if(anyAvoidSR4 && myAfter.partialWall>before.partialWall)
+    return {eligible:true,r2pass:false,failAt:'SR4',myAfter,before,myPS};
+
+  return {eligible:true,r2pass:true,myAfter,before,myPS};
+}
 function walkDist(i,door){ return Math.abs(i-door); }
 
 function r41Score(i, s, cands) {
@@ -947,20 +996,19 @@ function bd(i, s, door) {
   // ── R1: new tier-based logic ──
   const r1 = r1Eval(i, s);
   const r1pass = r1.r1pass;
-  const surr = maxSurround(i,s);
-  const canAvoidSurr = anyAvoidSurround(s);
-  const r2disq = surr>=2&&canAvoidSurr;
+  const r2 = r2Eval(i, s);
   const mySpots = nextSpots(i,s);
 
-  if(!r1pass) return{eligible:true,disqualified:true,disqR:'r1',r1pass:false,r1,surr,spots:mySpots,finalStars:0,r4s:null,r5s:null,r3pass:false};
-  if(r2disq)  return{eligible:true,disqualified:true,disqR:'r2',r1pass:true, r1,surr,spots:mySpots,finalStars:0,r4s:null,r5s:null,r3pass:false};
+  if(!r1pass) return{eligible:true,disqualified:true,disqR:'r1',r1pass:false,r1,r2,spots:mySpots,finalStars:0,r4s:null,r5s:null,r3pass:false};
+  if(!r2.r2pass) return{eligible:true,disqualified:true,disqR:'r2',r1pass:true,r1,r2,spots:mySpots,finalStars:0,r4s:null,r5s:null,r3pass:false};
 
   // Candidates: stalls that pass R1 AND R2
   const cands = s.map((_,j)=>{
     if(s[j].status!=='empty') return null;
     const jr1 = r1Eval(j, s);
     if(!jr1.r1pass) return null;
-    if(maxSurround(j,s)>=2&&canAvoidSurr) return null;
+    const jr2 = r2Eval(j, s);
+    if(!jr2.r2pass) return null;
     return j;
   }).filter(v=>v!==null);
 
@@ -980,7 +1028,7 @@ function bd(i, s, door) {
   // finalStars is 0 if R3 fails — prevents R3-failing stalls from being highlighted
   const finalStars = !r3pass ? 0 : avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
 
-  return{eligible:true,disqualified:false,r1pass:true,r1,surr,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
+  return{eligible:true,disqualified:false,r1pass:true,r1,r2,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
 }
 
 const SPEED_MAX=2000, SPEED_MIN=5000;
@@ -1169,7 +1217,7 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   const broke = b.disqualified||(b.eligible&&!b.r3pass);
   document.getElementById('score-title').textContent = broke ? 'Rule broken! ❌' : points>=90?'Perfect! 🎉':points>=70?'Very good 👍':points>=50?'Acceptable 😐':'Could be better 😬';
   const r1val = b.r1 ? b.r1.r1pass : null; // null when ineligible
-  const r2val = !hasOcc  ? null : !(b.disqualified&&b.disqR==='r2')&&b.surr<2;
+  const r2val = !hasOcc ? null : (b.r2 ? b.r2.r2pass : null);
   const r3val = b.eligible&&!b.disqualified ? b.r3pass : false;
   const r4val = b.eligible&&!b.disqualified&&b.r4s!=null ? b.r4s : null;
   const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? b.r5s : null;
@@ -1234,12 +1282,25 @@ function renderDebug(){
   const r1_ac   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Ac'?`<span class="pill ${b.r1.alone?'pn':'pp'}">Ac</span>`:`<span class="pill ${b.r1.alone?'pn':'pf'}">NotAc</span>`));
   const r1_sd   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Sd'?`<span class="pill ${b.r1.alone?'pn':'pw'}">Sd</span>`:`<span class="pill pn">NotSd</span>`));
   const r1_dec  =bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pn">alone</span>`:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`)));
-  const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
+  function r2pill(b, sr){
+    if(!b.eligible||!b.r2) return na;
+    const r=b.r2;
+    if(sr==='sr1') return r.myAfter.full>r.before.full?`<span class="pill pf">+${r.myAfter.full-r.before.full}</span>`:`<span class="pill pp">✓</span>`;
+    if(sr==='sr2') return r.myPS?`<span class="pill pf">sandwiched</span>`:`<span class="pill pp">✓</span>`;
+    if(sr==='sr3') return r.myAfter.partialMan>r.before.partialMan?`<span class="pill pf">+${r.myAfter.partialMan-r.before.partialMan}</span>`:`<span class="pill pp">✓</span>`;
+    if(sr==='sr4') return r.myAfter.partialWall>r.before.partialWall?`<span class="pill pf">+${r.myAfter.partialWall-r.before.partialWall}</span>`:`<span class="pill pp">✓</span>`;
+    return na;
+  }
+  const r2_sr1 = bds.map(b=>r2pill(b,'sr1'));
+  const r2_sr2 = bds.map(b=>r2pill(b,'sr2'));
+  const r2_sr3 = bds.map(b=>r2pill(b,'sr3'));
+  const r2_sr4 = bds.map(b=>r2pill(b,'sr4'));
+  const r2_dec = bds.map(b=>!b.eligible?na:!b.r2?na:(b.r2.r2pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail (${b.r2.failAt})</span>`));
   const r3c=bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
   const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
   const r5c=bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
-  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r #1 — alone?',r1_alone)}${row('r #1 — perfect?',r1_perf)}${row('r #1 — acceptable?',r1_ac)}${row('r #1 — sandwich?',r1_sd)}${row('r #1 — decision',r1_dec)}${row('r #2 surround',r2c)}${row('r #3 next spots',r3c)}${row('r #4 blend in',r4c)}${row('r #5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
+  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r #1 — alone?',r1_alone)}${row('r #1 — perfect?',r1_perf)}${row('r #1 — acceptable?',r1_ac)}${row('r #1 — sandwich?',r1_sd)}${row('r #1 — decision',r1_dec)}${row('r #2 — NPC full',r2_sr1)}${row('r #2 — you sandwiched?',r2_sr2)}${row('r #2 — NPC partial man',r2_sr3)}${row('r #2 — NPC partial wall',r2_sr4)}${row('r #2 — decision',r2_dec)}${row('r #3 next guy',r3c)}${row('r #4 blend in',r4c)}${row('r #5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
 }
 
 // ── DEBUG RULES TABLE (extended) ──────────────────────
@@ -1267,8 +1328,20 @@ function drRenderTable(stalls, doorIndex) {
   const r1_ac2   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Ac'?`<span class="pill ${b.r1.alone?'pn':'pp'}">Ac</span>`:`<span class="pill ${b.r1.alone?'pn':'pf'}">NotAc</span>`));
   const r1_sd2   =bds.map(b=>!b.eligible?na:(b.r1.myClass==='Sd'?`<span class="pill ${b.r1.alone?'pn':'pw'}">Sd</span>`:`<span class="pill pn">NotSd</span>`));
   const r1_dec2  =bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pn">alone</span>`:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`)));
-  const r2c  = bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
-  const surrc= bds.map((b,i)=>!b.eligible?na:`${b.surr??0}`);
+  function r2pill2(b, sr){
+    if(!b.eligible||!b.r2) return na;
+    const r=b.r2;
+    if(sr==='sr1') return r.myAfter.full>r.before.full?`<span class="pill pf">+${r.myAfter.full-r.before.full} NPC</span>`:`<span class="pill pp">✓</span>`;
+    if(sr==='sr2') return r.myPS?`<span class="pill pf">yes</span>`:`<span class="pill pp">no</span>`;
+    if(sr==='sr3') return r.myAfter.partialMan>r.before.partialMan?`<span class="pill pf">+${r.myAfter.partialMan-r.before.partialMan}</span>`:`<span class="pill pp">✓</span>`;
+    if(sr==='sr4') return r.myAfter.partialWall>r.before.partialWall?`<span class="pill pf">+${r.myAfter.partialWall-r.before.partialWall}</span>`:`<span class="pill pp">✓</span>`;
+    return na;
+  }
+  const r2_sr1b = bds.map(b=>r2pill2(b,'sr1'));
+  const r2_sr2b = bds.map(b=>r2pill2(b,'sr2'));
+  const r2_sr3b = bds.map(b=>r2pill2(b,'sr3'));
+  const r2_sr4b = bds.map(b=>r2pill2(b,'sr4'));
+  const r2_decb = bds.map(b=>!b.eligible?na:!b.r2?na:(b.r2.r2pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail (${b.r2.failAt})</span>`));
   const r3c  = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
   const r41c = bds.map(b=>!b.eligible||b.disqualified||b.r41s==null?na:`${b.r41s}★`);
   const r42c = bds.map(b=>!b.eligible||b.disqualified||b.r42s==null?na:`${b.r42s}★`);
@@ -1286,8 +1359,11 @@ function drRenderTable(stalls, doorIndex) {
     r1_ac:    'Ac = Acceptable — exactly one neighbor is occupied. Only valid when no Perfect spots exist. NotAc = both neighbors occupied or stall is Perfect.',
     r1_sd:    'Sd = Sandwich — both neighbors are occupied. Only valid when no Perfect or Acceptable spots exist.',
     r1_dec:   'Final R#1 verdict for this stall. Pass = stall matches the best available tier. Fail = a better tier exists elsewhere.',
-    r2:       'R2 — Don\'t trap anyone. Hard rule. If picking this stall would fully surround an occupied stall on both sides, and an alternative exists, it\'s a fail.',
-    surr:     'How many sides of an adjacent occupied stall your pick would fill. 0 = not adjacent to any occupied stall. 1 = occupying one neighbour slot. 2 = trapping them on both sides (R2 fail).',
+    r2_sr1:   'SR1 — Does your pick cause any NPC to become fully sandwiched (occupied on both sides)? Shows increase vs before. If avoidable and you caused it → Fail.',
+    r2_sr2:   'SR2 — Do you end up sandwiched by NPCs on both sides? Evaluated among picks that survived SR1. If avoidable → Fail.',
+    r2_sr3:   'SR3 — Does your pick increase partially man-sandwiched NPCs (one NPC neighbor)? Evaluated among SR1+SR2 survivors.',
+    r2_sr4:   'SR4 — Does your pick increase partially wall-sandwiched NPCs (NPC next to wall on one side)? Evaluated among SR1+SR2+SR3 survivors.',
+    r2_dec:   'Final R#2 verdict. Cascades through SR1→SR2→SR3→SR4. Fails at the first tier where your pick was worse than an available alternative.',
     r3:       'R3 — Remember the next guy. Shows valid spots left for the next person after your pick / best available across all candidates. If your pick leaves fewer than max−1 valid spots, it\'s a fail.',
     r4:       'R4 — Blend in. Average of R4.1 (proximity to others) and R4.2 (position relative to door). 1★ = you stuck out, 5★ = nobody noticed you.',
     r41:      'R4.1 — Not too far from others. Compares your max distance to any occupied stall against all valid candidates. Being the one who went the furthest away looks weird. 5★ = you stayed as close as the best option.',
@@ -1308,8 +1384,11 @@ function drRenderTable(stalls, doorIndex) {
       ${row('r #1 — acceptable?', r1_ac2,    TIPS.r1_ac)}
       ${row('r #1 — sandwich?',   r1_sd2,    TIPS.r1_sd)}
       ${row('r #1 — decision',    r1_dec2,   TIPS.r1_dec)}
-      ${row('r #2 — surround',      r2c,  TIPS.r2)}
-      ${row('↳ surround sides',   surrc,TIPS.surr)}
+      ${row('r #2 — NPC full sand.',  r2_sr1b, TIPS.r2_sr1)}
+      ${row('r #2 — you sandwiched?', r2_sr2b, TIPS.r2_sr2)}
+      ${row('r #2 — NPC part. man',   r2_sr3b, TIPS.r2_sr3)}
+      ${row('r #2 — NPC part. wall',  r2_sr4b, TIPS.r2_sr4)}
+      ${row('r #2 — decision',        r2_decb, TIPS.r2_dec)}
       ${row('r #3 — next guy',    r3c,  TIPS.r3)}
       ${row('r #4 blend in ★',      r4c,  TIPS.r4)}
       ${row('↳ r4.1 not too far', r41c, TIPS.r41)}
@@ -1621,7 +1700,7 @@ function drReveal(i, stalls, door){
   const banner = document.getElementById('dr-result-banner');
   banner.classList.remove('pass','fail');
   if(broke){
-    banner.textContent = b.disqR==='r1' ? '✗ Rule broken — R #1 buffer violated' : b.disqR==='r2' ? '✗ Rule broken — R #2 surround violated' : '✗ Rule broken — R #3 leaves no valid spots';
+    banner.textContent = b.disqR==='r1' ? '✗ Rule broken — R #1 buffer violated' : b.disqR==='r2' ? `✗ Rule broken — R #2 (${b.r2?.failAt||'sandwich'})` : '✗ Rule broken — R #3 leaves no valid spots';
     banner.classList.add('show','fail');
   } else {
     const pts = calcPoints(b, drGoTime?performance.now()-drGoTime:null);
