@@ -89,14 +89,13 @@
     .rule-tag { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 3px; }
     .tag-hard   { background: var(--red-bg); color: var(--red); }
     .tag-scored { background: var(--amber-bg); color: var(--amber-text); }
-    .tag-wrap   { position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .tag-wrap   { display: flex; flex-direction: row-reverse; align-items: center; gap: 8px; flex-shrink: 0; }
     .tag-tip    {
-      position: absolute; right: 0; top: 100%; margin-top: 6px; z-index: 100;
       background: #6A0DAD; color: #fff;
-      font-size: 11px; font-weight: 500; line-height: 1.5;
-      padding: 5px 10px; border-radius: 20px;
-      white-space: normal; max-width: 200px; pointer-events: none;
-      opacity: 0; transition: opacity 0.3s;
+      font-size: 11px; font-weight: 500; line-height: 1.4;
+      padding: 4px 10px; border-radius: 20px;
+      white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity 0.35s;
     }
     .tag-tip.visible   { opacity: 1; }
     .tag-wrap:hover .tag-tip { opacity: 1; }
@@ -565,7 +564,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.5';
+const GAME_VERSION = '0.3.6';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -593,11 +592,11 @@ let drTimerFrame = null;
 
 // ── RULES ─────────────────────────────────────────────
 const RULES = [
-  { name:'R1 — Leave a buffer',     desc:'Whenever possible, leave an empty "buffer" between you and others.',                type:'hard',   tag:'✓ / ✗', tagTip:'Get this wrong and your run is over.' },
-  { name:'R2 — Don\'t trap anyone', desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',             type:'hard',   tag:'✓ / ✗' },
-  { name:'R3 — Think ahead',        desc:'Don\'t pick a spot that forces whoever arrives after you to break Rule #1.',         type:'hard',   tag:'✓ / ✗' },
-  { name:'R4 — Blend in',           desc:'Don\'t be the guy who clearly walked past everyone to hide something. Not too far, not too close.', type:'scored', tag:'★★★★★', tagTip:'This isn\'t just pass/fail — it\'s how well you pass. Stars go toward your score.' },
-  { name:'R5 — Don\'t over-walk',   desc:'Minimise walking distance while staying aware of the entrance.',                    type:'scored', tag:'★★★★★' },
+  { name:'Leave a buffer',    desc:'Whenever possible, leave an empty "buffer" between you and others.',                type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
+  { name:"Don't trap anyone", desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',             type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
+  { name:'Think ahead',       desc:'Don\'t pick a spot that forces whoever arrives after you to break Rule #1.',         type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
+  { name:'Blend in',          desc:'Not too far from others, not too close to the door. Don\'t look like you\'re hiding something.', type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
+  { name:"Don't over-walk",   desc:'Minimise walking distance while staying aware of the entrance.',                    type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
 ];
 
 // ── NAVIGATION ────────────────────────────────────────
@@ -704,16 +703,16 @@ function showRulesScreen(levelIdx, isFirst) {
   document.getElementById('rules-cta').textContent = levelIdx === 0 ? `Let's go →` : `Next level →`;
   document.getElementById('rules-list').innerHTML = RULES.slice(0, rulesCount).map((r, i) => {
     const isNew = i === newRuleIdx;
-    // Show tagTip on R1 only on the very first screen (levelIdx===0),
-    // and on R4 only when it's the newly introduced rule
-    const showTip = r.tagTip && ((i===0 && levelIdx===0) || (i===3 && isNew));
+    // Show tagTip on hard rules (R1-R3) always; on scored rules (R4-R5) always
+    // Hard rules all share the same tip, scored rules share theirs
+    const showTip = !!r.tagTip;
     // Give each tip a unique id so JS can auto-show then fade it
     const tipId = showTip ? `tag-tip-${i}` : '';
     const tagHtml = showTip
       ? `<div class="tag-wrap"><div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div><div class="tag-tip" id="${tipId}">${r.tagTip}</div></div>`
       : `<div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div>`;
     return `<div class="rule-row${isNew?' new-rule':''}">
-      <div class="rule-num">R${i+1}</div>
+      <div class="rule-num">#${i+1}</div>
       <div class="rule-body">
         <div class="rule-name">${r.name}${isNew?'<span class="new-pill">NEW</span>':''}</div>
         <div class="rule-desc">${r.desc}</div>
@@ -1127,11 +1126,13 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   function starRow(v){ return Array.from({length:5},(_,i)=>`<span style="color:${i<v?'var(--amber)':'var(--border2)'};font-size:14px">★</span>`).join(''); }
   document.getElementById('score-rules-div').innerHTML = ruleData.slice(0,count).map(([num,lbl,type,val])=>{
     let valHtml; if(val===null) valHtml=`<span style="color:var(--text3);font-size:11px;font-style:italic">n/a</span>`; else if(type==='hard') valHtml=val?`<span class="tick">✓ Pass</span>`:`<span class="cross">✗ Fail</span>`; else valHtml=starRow(val);
-    return `<div class="score-rule-row"><span class="score-rule-label"><b>R${num}</b> — ${lbl}</span><span class="score-rule-val">${valHtml}</span></div>`;
+    return `<div class="score-rule-row"><span class="score-rule-label"><b>R #${num}</b> — ${lbl}</span><span class="score-rule-val">${valHtml}</span></div>`;
   }).join('');
   document.getElementById('score-speed').textContent = reactionTime!=null?(reactionTime/1000).toFixed(2)+'s':'—';
   document.getElementById('score-points').textContent = points;
-  document.getElementById('score-stars').innerHTML = Array.from({length:5},(_,i)=>`<span class="sstar${i<b.finalStars?' lit':''}">★</span>`).join('');
+  // Stars reflect actual total points (including speed): 90+ = 5★, 70+ = 4★, 50+ = 3★, 30+ = 2★, else 1★
+  const displayStars = points>=90?5:points>=70?4:points>=50?3:points>=30?2:1;
+  document.getElementById('score-stars').innerHTML = Array.from({length:5},(_,i)=>`<span class="sstar${i<displayStars?' lit':''}">★</span>`).join('');
   document.getElementById('score-feedback').textContent = '';
   document.getElementById('score-popup').classList.add('show');
   sessionScore += points;
@@ -1172,7 +1173,7 @@ function renderDebug(){
   const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
   const r5c=bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
-  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r1 buffer',r1c)}${row('r2 surround',r2c)}${row('r3 next spots',r3c)}${row('r4 blend in',r4c)}${row('r5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
+  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r #1 buffer',r1c)}${row('r #2 surround',r2c)}${row('r #3 next spots',r3c)}${row('r #4 blend in',r4c)}${row('r #5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
 }
 
 // ── DEBUG RULES TABLE (extended) ──────────────────────
@@ -1229,17 +1230,17 @@ function drRenderTable(stalls, doorIndex) {
     <thead><tr><th class="rl" style="width:160px"></th>${hc}</tr></thead>
     <tbody>
       ${row('status',              sc,   TIPS.status)}
-      ${row('r1 — buffer',        r1c,  TIPS.r1)}
+      ${row('r #1 — buffer',        r1c,  TIPS.r1)}
       ${row('↳ adj to occ?',      adjc, TIPS.adj)}
-      ${row('r2 — surround',      r2c,  TIPS.r2)}
+      ${row('r #2 — surround',      r2c,  TIPS.r2)}
       ${row('↳ surround sides',   surrc,TIPS.surr)}
-      ${row('r3 — next spots',    r3c,  TIPS.r3)}
-      ${row('r4 combined ★',      r4c,  TIPS.r4)}
+      ${row('r #3 — next spots',    r3c,  TIPS.r3)}
+      ${row('r #4 blend in ★',      r4c,  TIPS.r4)}
       ${row('↳ r4.1 not too far', r41c, TIPS.r41)}
       ${row('↳ r4.2 bell curve',  r42c, TIPS.r42)}
       ${row('↳ dist nearest occ', dnc,  TIPS.dnear)}
       ${row('↳ dist farthest occ',dfc,  TIPS.dfar)}
-      ${row('r5 — walk ★',        r5c,  TIPS.r5)}
+      ${row('r #5 — walk ★',        r5c,  TIPS.r5)}
       ${row('↳ walk from door',   wdc,  TIPS.walk)}
       ${row('pts (excl speed)',    ptc,  TIPS.pts)}
     </tbody>`;
@@ -1535,11 +1536,11 @@ function drReveal(i, stalls, door){
   const banner = document.getElementById('dr-result-banner');
   banner.classList.remove('pass','fail');
   if(broke){
-    banner.textContent = b.disqR==='r1' ? '✗ Rule broken — R1 buffer violated' : b.disqR==='r2' ? '✗ Rule broken — R2 surround violated' : '✗ Rule broken — R3 leaves no valid spots';
+    banner.textContent = b.disqR==='r1' ? '✗ Rule broken — R #1 buffer violated' : b.disqR==='r2' ? '✗ Rule broken — R #2 surround violated' : '✗ Rule broken — R #3 leaves no valid spots';
     banner.classList.add('show','fail');
   } else {
     const pts = calcPoints(b, drGoTime?performance.now()-drGoTime:null);
-    banner.textContent = `✓ Valid pick — R4: ${b.r4s}★  R5: ${b.r5s}★  Score: ${pts}+spd pts`;
+    banner.textContent = `✓ Valid pick — R #4: ${b.r4s}★  R #5: ${b.r5s}★  Score: ${pts}+spd pts`;
     banner.classList.add('show','pass');
   }
   document.getElementById('dr-hint').textContent = 'Click Apply to try a new configuration';

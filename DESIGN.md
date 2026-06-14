@@ -358,6 +358,15 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.6
+- **Tooltip repositioned** — purple pill now sits inline to the left of the badge in the same row, auto-sized, single line, never clips off-screen
+- **Tooltips on all 5 rules** — hard rules (R1-R3) all show "Hard rule — get this wrong and your run is over"; scored rules (R4-R5) show "Scored rule — not just pass/fail, stars affect your score"
+- **Rule names cleaned** — "R1 — Leave a buffer" → "Leave a buffer" everywhere on the rules screen (circle badge already shows the number)
+- **Circle badges** now show "#1" not "R1" 
+- **R1 → R #1** in score popup and debug table labels throughout
+- **Stars now reflect total points** (including speed) — 90+ pts = 5★, 70+ = 4★, 50+ = 3★, 30+ = 2★. Previously stars only reflected R4+R5 average, ignoring speed entirely
+- Bumped to v0.3.6
+
 ### v0.3.5
 - Rules screen tooltips redesigned: no ⓘ icon — purple pill appears automatically on load, fades after 3s, reappears on hover
 - R1 tooltip ("Get this wrong and your run is over") shown only on L1 intro screen
