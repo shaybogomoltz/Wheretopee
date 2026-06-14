@@ -358,6 +358,13 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.4
+- **R3 logic fix** — `nextSpots()` now counts truly non-adjacent empty stalls after a pick, not all stalls when R1 becomes inapplicable. This fixes the bug where picking the centre stall in `[X _ _ _ _ _ X]` was incorrectly scoring higher than the off-centre picks
+- **R3 pass threshold** tightened to exact match (`>= mxSpots`, not `>= mxSpots-1`) — a pick that leaves zero clean spots always fails R3 now
+- **Tooltip** no longer requires focus state to dismiss — hover-only, vanishes immediately on mouse leave
+- **New debug mode: Play from Level** — jump into play mode at any level with score pre-loaded as if you'd played perfectly (100 pts/level) up to that point
+- Bumped to v0.3.4
+
 ### v0.3.3
 - Renamed R4 "Stay inconspicuous" → **"Blend in"** everywhere (rules screen, score popup, debug table, tooltips)
 - R4 description rewritten to plain language

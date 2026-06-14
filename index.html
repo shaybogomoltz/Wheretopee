@@ -198,8 +198,7 @@
     .tip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; }
     .tip-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: var(--bg3); color: var(--text3); font-size: 9px; font-weight: 700; cursor: default; flex-shrink: 0; border: 0.5px solid var(--border2); line-height: 1; }
     .tip-box { display: none; position: fixed; z-index: 9999; max-width: 220px; background: var(--text); color: var(--bg); font-size: 11px; line-height: 1.55; padding: 7px 10px; border-radius: var(--radius); pointer-events: none; white-space: normal; box-shadow: none; }
-    .tip-icon:hover + .tip-box,
-    .tip-icon:focus + .tip-box { display: block; }
+    .tip-icon:hover + .tip-box { display: block; }
 
     /* ── DEBUG RULES SCREEN ── */
     #debug-rules-screen { display: none; padding: 1rem; }
@@ -333,8 +332,23 @@
         <div class="chooser-card-title">🔬 Debug Rules</div>
         <div class="chooser-card-desc">Build a custom scenario from scratch. Set stall count, occupancy, entrance, and timing. Inspect all rule variables in real time — no fail states.</div>
       </button>
+      <button class="chooser-card" onclick="showPlayFromLevel()">
+        <div class="chooser-card-title">🚀 Play from Level</div>
+        <div class="chooser-card-desc">Jump straight into play mode at any level. Score is pre-loaded as if you played perfectly up to that point.</div>
+      </button>
     </div>
     <button class="chooser-back" onclick="goLanding()">← back to start</button>
+  </div>
+</div>
+
+<!-- PLAY FROM LEVEL PICKER -->
+<div id="play-from-level-screen" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:2rem;">
+  <div style="width:100%;max-width:400px">
+    <div class="chooser-eyebrow">Play from Level</div>
+    <div class="chooser-heading" style="margin-bottom:6px">Pick a level</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:1.5rem">Score pre-loaded as if you played perfectly up to that level.</div>
+    <div id="pfl-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.5rem"></div>
+    <button class="chooser-back" onclick="showDebugChooser()">← back</button>
   </div>
 </div>
 
@@ -543,7 +557,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.3';
+const GAME_VERSION = '0.3.4';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -579,8 +593,45 @@ const RULES = [
 ];
 
 // ── NAVIGATION ────────────────────────────────────────
+function showPlayFromLevel() {
+  hideAllScreens();
+  const screen = document.getElementById('play-from-level-screen');
+  screen.style.display = 'flex';
+  // Perfect score = 100 pts per level
+  const PERFECT_PER_LEVEL = 100;
+  const grid = document.getElementById('pfl-grid');
+  const totalLevels = BASE_LEVELS.length;
+  grid.innerHTML = Array.from({length: totalLevels}, (_,i) => {
+    const cumScore = i * PERFECT_PER_LEVEL;
+    return `<button onclick="launchPlayFromLevel(${i})" style="
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      padding:10px 6px;border-radius:var(--radius);
+      border:0.5px solid var(--border2);background:var(--bg2);
+      cursor:pointer;font-family:inherit;
+    " onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">
+      <span style="font-size:13px;font-weight:600;color:var(--text)">L${i+1}</span>
+      <span style="font-size:10px;color:var(--text3)">${cumScore.toLocaleString()}pts</span>
+    </button>`;
+  }).join('');
+}
+
+function launchPlayFromLevel(levelIdx) {
+  isDebugMode = false; isDebugRulesMode = false;
+  currentLevel = levelIdx;
+  // Pre-load score as if player got perfect (100pts) on every previous level
+  sessionScore = levelIdx * 100;
+  hideAllScreens();
+  document.getElementById('game-screen').style.display = 'block';
+  document.getElementById('game-header').style.display = 'grid';
+  document.getElementById('session-score-val').textContent = sessionScore.toLocaleString();
+  document.getElementById('level-indicator').innerHTML = `Level <b>${levelIdx+1}</b>`;
+  // Skip rules screen — go straight into the level
+  renderLevel();
+}
+
 function hideAllScreens() {
   document.getElementById('landing-screen').style.display = 'none';
+  document.getElementById('play-from-level-screen').style.display = 'none';
   document.getElementById('debug-chooser-screen').classList.remove('show');
   document.getElementById('rules-screen').classList.remove('show');
   document.getElementById('timeout-screen').classList.remove('show');
@@ -748,15 +799,16 @@ function isAdjOcc(i,s){ return (i>0&&s[i-1].status==='occupied')||(i<s.length-1&
 function minDistToOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
 function maxDistToAnyOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 0; return Math.max(...o.map(j=>Math.abs(i-j))); }
 function nextSpots(pick,s){
+  // Count non-adjacent empty stalls after pick — captures R3's true spirit:
+  // does the next person have anywhere with a buffer?
   const sAfter=s.map((x,j)=>j===pick?{status:'occupied'}:x);
-  const canAvoidAfter=anyNonAdj(sAfter);
-  let c=0;
+  let nonAdj=0;
   for(let i=0;i<sAfter.length;i++){
     if(sAfter[i].status!=='empty') continue;
     const adj=(i>0&&sAfter[i-1].status==='occupied')||(i<sAfter.length-1&&sAfter[i+1].status==='occupied');
-    if(!canAvoidAfter||!adj) c++;
+    if(!adj) nonAdj++;
   }
-  return c;
+  return nonAdj;
 }
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
 function maxSurround(pick,s){
@@ -850,7 +902,7 @@ function bd(i, s, door) {
   }).filter(v=>v!==null);
 
   const mxSpots = cands.length ? Math.max(...cands.map(j=>nextSpots(j,s))) : 0;
-  const r3pass = mySpots >= mxSpots-1;
+  const r3pass = mySpots >= mxSpots; // must leave as many clean spots as the best pick
   const r4s = r4Score(i, s, door, cands);
   const r5s = r5Score(i, s, door, cands);
 
