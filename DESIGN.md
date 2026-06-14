@@ -358,6 +358,13 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.5
+- Rules screen tooltips redesigned: no ⓘ icon — purple pill appears automatically on load, fades after 3s, reappears on hover
+- R1 tooltip ("Get this wrong and your run is over") shown only on L1 intro screen
+- R4 tooltip ("This isn't just pass/fail — stars go toward your score") shown only when R4 is first introduced
+- Score popup ⓘ tips removed — too cluttered; debug table keeps its tooltips
+- Bumped to v0.3.5
+
 ### v0.3.4
 - **R3 logic fix** — `nextSpots()` now counts truly non-adjacent empty stalls after a pick, not all stalls when R1 becomes inapplicable. This fixes the bug where picking the centre stall in `[X _ _ _ _ _ X]` was incorrectly scoring higher than the off-centre picks
 - **R3 pass threshold** tightened to exact match (`>= mxSpots`, not `>= mxSpots-1`) — a pick that leaves zero clean spots always fails R3 now

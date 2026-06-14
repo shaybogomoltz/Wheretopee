@@ -89,9 +89,17 @@
     .rule-tag { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 3px; }
     .tag-hard   { background: var(--red-bg); color: var(--red); }
     .tag-scored { background: var(--amber-bg); color: var(--amber-text); }
-    .tag-wrap   { position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-    .tag-tip    { display: none; position: absolute; right: 0; top: 100%; margin-top: 5px; z-index: 100; background: var(--text); color: var(--bg); font-size: 11px; font-weight: 400; line-height: 1.5; padding: 6px 9px; border-radius: var(--radius); white-space: nowrap; max-width: 220px; white-space: normal; pointer-events: none; }
-    .tag-wrap:hover .tag-tip { display: block; }
+    .tag-wrap   { position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .tag-tip    {
+      position: absolute; right: 0; top: 100%; margin-top: 6px; z-index: 100;
+      background: #6A0DAD; color: #fff;
+      font-size: 11px; font-weight: 500; line-height: 1.5;
+      padding: 5px 10px; border-radius: 20px;
+      white-space: normal; max-width: 200px; pointer-events: none;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .tag-tip.visible   { opacity: 1; }
+    .tag-wrap:hover .tag-tip { opacity: 1; }
     .new-pill { display: inline-block; background: var(--blue); color: #fff; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
     .rules-cta { width: 100%; padding: 13px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 15px; font-weight: 500; cursor: pointer; }
     .rules-cta:hover { opacity: 0.85; }
@@ -557,7 +565,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.4';
+const GAME_VERSION = '0.3.5';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -699,8 +707,10 @@ function showRulesScreen(levelIdx, isFirst) {
     // Show tagTip on R1 only on the very first screen (levelIdx===0),
     // and on R4 only when it's the newly introduced rule
     const showTip = r.tagTip && ((i===0 && levelIdx===0) || (i===3 && isNew));
+    // Give each tip a unique id so JS can auto-show then fade it
+    const tipId = showTip ? `tag-tip-${i}` : '';
     const tagHtml = showTip
-      ? `<div class="tag-wrap"><div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag} ⓘ</div><div class="tag-tip">${r.tagTip}</div></div>`
+      ? `<div class="tag-wrap"><div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div><div class="tag-tip" id="${tipId}">${r.tagTip}</div></div>`
       : `<div class="rule-tag ${r.type==='hard'?'tag-hard':'tag-scored'}">${r.tag}</div>`;
     return `<div class="rule-row${isNew?' new-rule':''}">
       <div class="rule-num">R${i+1}</div>
@@ -713,6 +723,11 @@ function showRulesScreen(levelIdx, isFirst) {
   }).join('');
   document.getElementById('rules-screen').classList.add('show');
   document.getElementById('game-screen').style.display = 'none';
+  // Auto-show any tag-tip pills, then fade after 3s
+  document.querySelectorAll('.tag-tip').forEach(el => {
+    el.classList.add('visible');
+    setTimeout(() => el.classList.remove('visible'), 3000);
+  });
 }
 function startLevelFromRules() {
   document.getElementById('rules-screen').classList.remove('show');
@@ -1110,19 +1125,9 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? b.r5s : null;
   const ruleData = [[1,'Leave a buffer','hard',r1val],[2,"Don't trap anyone",'hard',r2val],[3,'Think ahead','hard',r3val],[4,'Blend in','scored',r4val],[5,"Don't over-walk",'scored',r5val]];
   function starRow(v){ return Array.from({length:5},(_,i)=>`<span style="color:${i<v?'var(--amber)':'var(--border2)'};font-size:14px">★</span>`).join(''); }
-  // Score popup tips: shown only for R1 on first time, R4 always (it's scored not binary)
-  const SCORE_TIPS = {
-    1: 'Hard rule — breaking it ends your run.',
-    4: 'Scored rule — this affects how many points you earn, not just pass/fail.',
-    5: 'Scored rule — this affects how many points you earn, not just pass/fail.',
-  };
   document.getElementById('score-rules-div').innerHTML = ruleData.slice(0,count).map(([num,lbl,type,val])=>{
     let valHtml; if(val===null) valHtml=`<span style="color:var(--text3);font-size:11px;font-style:italic">n/a</span>`; else if(type==='hard') valHtml=val?`<span class="tick">✓ Pass</span>`:`<span class="cross">✗ Fail</span>`; else valHtml=starRow(val);
-    const tip = SCORE_TIPS[num];
-    const labelHtml = tip
-      ? `<span class="tip-wrap"><b>R${num}</b> — ${lbl}<span class="tip-icon" tabindex="0">i</span><span class="tip-box">${tip}</span></span>`
-      : `<b>R${num}</b> — ${lbl}`;
-    return `<div class="score-rule-row"><span class="score-rule-label">${labelHtml}</span><span class="score-rule-val">${valHtml}</span></div>`;
+    return `<div class="score-rule-row"><span class="score-rule-label"><b>R${num}</b> — ${lbl}</span><span class="score-rule-val">${valHtml}</span></div>`;
   }).join('');
   document.getElementById('score-speed').textContent = reactionTime!=null?(reactionTime/1000).toFixed(2)+'s':'—';
   document.getElementById('score-points').textContent = points;
