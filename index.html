@@ -89,12 +89,13 @@
     .rule-tag { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 3px; }
     .tag-hard   { background: var(--red-bg); color: var(--red); }
     .tag-scored { background: var(--amber-bg); color: var(--amber-text); }
-    .tag-wrap   { display: flex; flex-direction: row-reverse; align-items: center; gap: 8px; flex-shrink: 0; }
+    .tag-wrap   { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; max-width: 120px; }
     .tag-tip    {
       background: #6A0DAD; color: #fff;
-      font-size: 11px; font-weight: 500; line-height: 1.4;
-      padding: 4px 10px; border-radius: 20px;
-      white-space: nowrap; pointer-events: none;
+      font-size: 10px; font-weight: 500; line-height: 1.4;
+      padding: 3px 8px; border-radius: 20px;
+      white-space: normal; text-align: right;
+      pointer-events: none;
       opacity: 0; transition: opacity 0.35s;
     }
     .tag-tip.visible   { opacity: 1; }
@@ -564,7 +565,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.10';
+const GAME_VERSION = '0.3.12';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -594,7 +595,7 @@ let drTimerFrame = null;
 const RULES = [
   { name:'Leave a buffer',    desc:'Whenever possible, leave an empty "buffer" between you and others.',                type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
   { name:"Don't trap anyone", desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',             type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
-  { name:'Think ahead',       desc:'Don\'t pick a spot that forces whoever arrives after you to break Rule #1.',         type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
+  { name:'Remember the next guy',       desc:'Your pick affects everyone who comes after you. Don\'t leave them with no clean options.',         type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
   { name:'Blend in',          desc:'Not too far from others, not too close to the door. Don\'t look like you\'re hiding something.', type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
   { name:"Don't over-walk",   desc:'Minimise walking distance while staying aware of the entrance.',                    type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
 ];
@@ -1158,7 +1159,7 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   const r3val = b.eligible&&!b.disqualified ? b.r3pass : false;
   const r4val = b.eligible&&!b.disqualified&&b.r4s!=null ? b.r4s : null;
   const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? b.r5s : null;
-  const ruleData = [[1,'Leave a buffer','hard',r1val],[2,"Don't trap anyone",'hard',r2val],[3,'Think ahead','hard',r3val],[4,'Blend in','scored',r4val],[5,"Don't over-walk",'scored',r5val]];
+  const ruleData = [[1,'Leave a buffer','hard',r1val],[2,"Don't trap anyone",'hard',r2val],[3,'Remember the next guy','hard',r3val],[4,'Blend in','scored',r4val],[5,"Don't over-walk",'scored',r5val]];
   function starRow(v){ return Array.from({length:5},(_,i)=>`<span style="color:${i<v?'var(--amber)':'var(--border2)'};font-size:14px">★</span>`).join(''); }
   document.getElementById('score-rules-div').innerHTML = ruleData.slice(0,count).map(([num,lbl,type,val])=>{
     let valHtml; if(val===null) valHtml=`<span style="color:var(--text3);font-size:11px;font-style:italic">n/a</span>`; else if(type==='hard') valHtml=val?`<span class="tick">✓ Pass</span>`:`<span class="cross">✗ Fail</span>`; else valHtml=starRow(val);
@@ -1273,7 +1274,7 @@ function drRenderTable(stalls, doorIndex) {
     r1_dec:   'Final R#1 verdict for this stall. Pass = stall matches the best available tier. Fail = a better tier exists elsewhere.',
     r2:       'R2 — Don\'t trap anyone. Hard rule. If picking this stall would fully surround an occupied stall on both sides, and an alternative exists, it\'s a fail.',
     surr:     'How many sides of an adjacent occupied stall your pick would fill. 0 = not adjacent to any occupied stall. 1 = occupying one neighbour slot. 2 = trapping them on both sides (R2 fail).',
-    r3:       'R3 — Think ahead. Shows valid spots left for the next person after your pick / best available across all candidates. If your pick leaves fewer than max−1 valid spots, it\'s a fail.',
+    r3:       'R3 — Remember the next guy. Shows valid spots left for the next person after your pick / best available across all candidates. If your pick leaves fewer than max−1 valid spots, it\'s a fail.',
     r4:       'R4 — Blend in. Average of R4.1 (proximity to others) and R4.2 (position relative to door). 1★ = you stuck out, 5★ = nobody noticed you.',
     r41:      'R4.1 — Not too far from others. Compares your max distance to any occupied stall against all valid candidates. Being the one who went the furthest away looks weird. 5★ = you stayed as close as the best option.',
     r42:      'R4.2 — Bell curve from door. Very close to the entrance (1★), sweet zone mid-room (5★), all the way at the back (1★). Modelled as a proportional distance from the door stall.',
@@ -1295,7 +1296,7 @@ function drRenderTable(stalls, doorIndex) {
       ${row('r #1 — decision',    r1_dec2,   TIPS.r1_dec)}
       ${row('r #2 — surround',      r2c,  TIPS.r2)}
       ${row('↳ surround sides',   surrc,TIPS.surr)}
-      ${row('r #3 — next spots',    r3c,  TIPS.r3)}
+      ${row('r #3 — next guy',    r3c,  TIPS.r3)}
       ${row('r #4 blend in ★',      r4c,  TIPS.r4)}
       ${row('↳ r4.1 not too far', r41c, TIPS.r41)}
       ${row('↳ r4.2 bell curve',  r42c, TIPS.r42)}
