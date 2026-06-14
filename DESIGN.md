@@ -358,6 +358,17 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.8
+- **R#1 completely rewritten** using tier-based logic from design spec (Rules.xlsx)
+  - `isAlone()` — true when no NPCs present, all stalls pass automatically
+  - `r1Classify()` — P (Perfect), Ac (Acceptable), Sd (Sandwich) per stall
+  - `r1Neighbor()` — looks through broken stalls to find real neighbors; walls treated as empty
+  - Priority order: must pick P if any exists; else must pick Ac; else Sd is forced, all pass
+- **Debug table** (both Debug Levels and Debug Rules) now shows 5 R#1 rows matching the spreadsheet: alone?, perfect?, acceptable?, sandwich?, decision
+- **`bd()` candidate filter** updated — candidates now determined by `r1Eval()` per stall, not old adjacency check
+- **Level validator** added — warns in console if any base level has zero selectable stalls
+- Bumped to v0.3.8
+
 ### v0.3.7
 - **Debug table highlight fix** — `bests()` and `cc()` now require R3 to pass before a stall can be highlighted green. Previously stall #4 in `[X _ _ _ _ _ X]` was shown as best in the table even though clicking it correctly failed R3
 - `finalStars` set to 0 whenever R3 fails — prevents R3-failing stalls from ever appearing as top candidates

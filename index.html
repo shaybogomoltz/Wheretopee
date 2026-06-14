@@ -564,7 +564,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.7';
+const GAME_VERSION = '0.3.8';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -810,6 +810,39 @@ const COL = {
 
 // ── SCORING HELPERS ───────────────────────────────────
 function isAdjOcc(i,s){ return (i>0&&s[i-1].status==='occupied')||(i<s.length-1&&s[i+1].status==='occupied'); }
+
+// ── R1 NEW LOGIC (from design spec) ──────────────────
+// Walk through broken stalls to find the first real neighbor (occupied/empty)
+// Walls count as empty (return null = wall = treated as empty)
+function r1Neighbor(j, s, dir){
+  let k = j + dir;
+  while(k>=0 && k<s.length){ if(s[k].status!=='broken') return s[k].status; k+=dir; }
+  return null; // wall — counts as empty
+}
+// Is the bathroom empty of NPCs? (broken stalls don't count as company)
+function r1Alone(s){ return !s.some(x=>x.status==='occupied'); }
+// Classify a stall: P=Perfect, Ac=Acceptable, Sd=Sandwich
+function r1Classify(j, s){
+  if(s[j].status!=='empty') return null;
+  const L = r1Neighbor(j, s, -1); // null=wall, treated as empty
+  const R = r1Neighbor(j, s, +1);
+  const occ = (L==='occupied'?1:0)+(R==='occupied'?1:0);
+  if(occ===0) return 'P';
+  if(occ===1) return 'Ac';
+  return 'Sd';
+}
+// Full R1 result for stall i
+function r1Eval(i, s){
+  if(s[i].status!=='empty') return {eligible:false};
+  const myClass = r1Classify(i, s);
+  if(r1Alone(s)) return {eligible:true, alone:true, myClass, r1pass:true};
+  const anyP  = s.some((_,j)=>s[j].status==='empty'&&r1Classify(j,s)==='P');
+  const anyAc = s.some((_,j)=>s[j].status==='empty'&&r1Classify(j,s)==='Ac');
+  const anySd = s.some((_,j)=>s[j].status==='empty'&&r1Classify(j,s)==='Sd');
+  const tier  = anyP?'P':anyAc?'Ac':anySd?'Sd':'?';
+  const r1pass = myClass===tier;
+  return {eligible:true, alone:false, myClass, anyP, anyAc, anySd, tier, r1pass};
+}
 function minDistToOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
 function maxDistToAnyOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 0; return Math.max(...o.map(j=>Math.abs(i-j))); }
 function nextSpots(pick,s){
@@ -896,21 +929,22 @@ function bd(i, s, door) {
   if(s[i].status==='occupied') return{eligible:false};
   if(s[i].status==='broken')   return{eligible:false};
   const hasOcc = s.some(v=>v.status==='occupied');
-  const canAvoid = anyNonAdj(s);
-  const adj = isAdjOcc(i,s);
-  const r1app = hasOcc&&canAvoid;
-  const r1pass = !r1app||!adj;
+  // ── R1: new tier-based logic ──
+  const r1 = r1Eval(i, s);
+  const r1pass = r1.r1pass;
   const surr = maxSurround(i,s);
   const canAvoidSurr = anyAvoidSurround(s);
   const r2disq = surr>=2&&canAvoidSurr;
   const mySpots = nextSpots(i,s);
 
-  if(!r1pass) return{eligible:true,disqualified:true,disqR:'r1',r1pass:false,r1app,surr,spots:mySpots,finalStars:1,r4s:null,r5s:null,r3pass:false};
-  if(r2disq)  return{eligible:true,disqualified:true,disqR:'r2',r1pass:true, r1app,surr,spots:mySpots,finalStars:1,r4s:null,r5s:null,r3pass:false};
+  if(!r1pass) return{eligible:true,disqualified:true,disqR:'r1',r1pass:false,r1,surr,spots:mySpots,finalStars:0,r4s:null,r5s:null,r3pass:false};
+  if(r2disq)  return{eligible:true,disqualified:true,disqR:'r2',r1pass:true, r1,surr,spots:mySpots,finalStars:0,r4s:null,r5s:null,r3pass:false};
 
+  // Candidates: stalls that pass R1 AND R2
   const cands = s.map((_,j)=>{
     if(s[j].status!=='empty') return null;
-    if(hasOcc&&canAvoid&&isAdjOcc(j,s)) return null;
+    const jr1 = r1Eval(j, s);
+    if(!jr1.r1pass) return null;
     if(maxSurround(j,s)>=2&&canAvoidSurr) return null;
     return j;
   }).filter(v=>v!==null);
@@ -931,7 +965,7 @@ function bd(i, s, door) {
   // finalStars is 0 if R3 fails — prevents R3-failing stalls from being highlighted
   const finalStars = !r3pass ? 0 : avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
 
-  return{eligible:true,disqualified:false,r1pass:true,r1app,surr,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
+  return{eligible:true,disqualified:false,r1pass:true,r1,surr,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
 }
 
 const SPEED_MAX=2000, SPEED_MIN=5000;
@@ -1119,7 +1153,7 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   const count = rulesShown ?? RULES.length;
   const broke = b.disqualified||(b.eligible&&!b.r3pass);
   document.getElementById('score-title').textContent = broke ? 'Rule broken! ❌' : points>=90?'Perfect! 🎉':points>=70?'Very good 👍':points>=50?'Acceptable 😐':'Could be better 😬';
-  const r1val = !b.r1app ? null : b.r1pass;
+  const r1val = b.r1 ? b.r1.r1pass : null; // null when ineligible
   const r2val = !hasOcc  ? null : !(b.disqualified&&b.disqR==='r2')&&b.surr<2;
   const r3val = b.eligible&&!b.disqualified ? b.r3pass : false;
   const r4val = b.eligible&&!b.disqualified&&b.r4s!=null ? b.r4s : null;
@@ -1169,13 +1203,28 @@ function renderDebug(){
   function row(lbl,cells){ return`<tr><td class="rl">${lbl}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`; }
   const hasOcc=stalls.some(s=>s.status==='occupied');
   const sc=stalls.map(s=>s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:s.recent?`<span class="pill pw">recent</span>`:`<span class="pill pp">empty</span>`);
-  const r1c=bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">✓</span>`:`<span class="pill pf">adj ✗</span>`);
+  const na_pill=`<span style="color:var(--text3)">n/a</span>`;
+  function r1pill(b){
+    if(!b.eligible) return na;
+    const r=b.r1;
+    const aloneY = r.alone?`<span class="pill pp">Y</span>`:`<span class="pill pn">N</span>`;
+    const perfP  = !r.alone?(r.myClass==='P'?`<span class="pill pp">P</span>`:`<span class="pill pf">NotP</span>`):na_pill;
+    const acP    = !r.alone?(r.myClass==='Ac'?`<span class="pill pp">Ac</span>`:`<span class="pill pf">NotAc</span>`):na_pill;
+    const sdP    = !r.alone?(r.myClass==='Sd'?`<span class="pill pw">Sd</span>`:`<span class="pill pn">NotSd</span>`):na_pill;
+    const dec    = r.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`;
+    return {aloneY,perfP,acP,sdP,dec};
+  }
+  const r1_alone=bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pp">Y</span>`:`<span class="pill pn">N</span>`));
+  const r1_perf =bds.map(b=>!b.eligible?na:b.r1.alone?na_pill:(b.r1.myClass==='P'?`<span class="pill pp">P</span>`:`<span class="pill pf">NotP</span>`));
+  const r1_ac   =bds.map(b=>!b.eligible?na:b.r1.alone?na_pill:(b.r1.myClass==='Ac'?`<span class="pill pp">Ac</span>`:`<span class="pill pf">NotAc</span>`));
+  const r1_sd   =bds.map(b=>!b.eligible?na:b.r1.alone?na_pill:(b.r1.myClass==='Sd'?`<span class="pill pw">Sd</span>`:`<span class="pill pn">NotSd</span>`));
+  const r1_dec  =bds.map(b=>!b.eligible?na:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`));
   const r2c=bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
   const r3c=bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
   const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
   const r5c=bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
-  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r #1 buffer',r1c)}${row('r #2 surround',r2c)}${row('r #3 next spots',r3c)}${row('r #4 blend in',r4c)}${row('r #5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
+  document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r #1 — alone?',r1_alone)}${row('r #1 — perfect?',r1_perf)}${row('r #1 — acceptable?',r1_ac)}${row('r #1 — sandwich?',r1_sd)}${row('r #1 — decision',r1_dec)}${row('r #2 surround',r2c)}${row('r #3 next spots',r3c)}${row('r #4 blend in',r4c)}${row('r #5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
 }
 
 // ── DEBUG RULES TABLE (extended) ──────────────────────
@@ -1197,8 +1246,12 @@ function drRenderTable(stalls, doorIndex) {
   const hasOcc = stalls.some(s=>s.status==='occupied');
 
   const sc   = stalls.map(s => s.status==='occupied'?`<span class="pill pn">occ</span>`:s.status==='broken'?`<span class="pill pn">brk</span>`:`<span class="pill pp">empty</span>`);
-  const r1c  = bds.map(b=>!b.eligible?na:!b.r1app?`<span class="pill pn">n/a</span>`:b.r1pass?`<span class="pill pp">✓</span>`:`<span class="pill pf">adj ✗</span>`);
-  const adjc = bds.map((b,i)=>!b.eligible?na: isAdjOcc(i,stalls)?`<span class="pill pf">yes</span>`:`<span class="pill pp">no</span>`);
+  const na_p = `<span style="color:var(--text3)">n/a</span>`;
+  const r1_alone2=bds.map(b=>!b.eligible?na:(b.r1.alone?`<span class="pill pp">Y</span>`:`<span class="pill pn">N</span>`));
+  const r1_perf2 =bds.map(b=>!b.eligible?na:b.r1.alone?na_p:(b.r1.myClass==='P'?`<span class="pill pp">P</span>`:`<span class="pill pf">NotP</span>`));
+  const r1_ac2   =bds.map(b=>!b.eligible?na:b.r1.alone?na_p:(b.r1.myClass==='Ac'?`<span class="pill pp">Ac</span>`:`<span class="pill pf">NotAc</span>`));
+  const r1_sd2   =bds.map(b=>!b.eligible?na:b.r1.alone?na_p:(b.r1.myClass==='Sd'?`<span class="pill pw">Sd</span>`:`<span class="pill pn">NotSd</span>`));
+  const r1_dec2  =bds.map(b=>!b.eligible?na:(b.r1.r1pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail</span>`));
   const r2c  = bds.map(b=>!b.eligible?na:!hasOcc?`<span class="pill pn">n/a</span>`:(b.disqualified&&b.disqR==='r2')?`<span class="pill pf">surr ✗</span>`:`<span class="pill pp">✓</span>`);
   const surrc= bds.map((b,i)=>!b.eligible?na:`${b.surr??0}`);
   const r3c  = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
@@ -1213,8 +1266,11 @@ function drRenderTable(stalls, doorIndex) {
 
   const TIPS = {
     status:   'Whether the stall is empty, occupied by an NPC, or broken. Only empty stalls are eligible picks.',
-    r1:       'R1 — Leave a buffer. Hard rule. If a non-adjacent empty stall exists, you must not pick one adjacent to an occupied stall. n/a = no occupied stalls, or no non-adjacent option exists.',
-    adj:      'Is this stall directly next to an occupied one? Even index gap of 1 counts as adjacent. Feeds into R1.',
+    r1_alone: 'Y = no NPCs in the bathroom at all. When alone, every stall passes R#1 automatically.',
+    r1_perf:  'P = Perfect — neither neighbor (looking through broken stalls) is occupied. Best possible pick. NotP = at least one neighbor is occupied.',
+    r1_ac:    'Ac = Acceptable — exactly one neighbor is occupied. Only valid when no Perfect spots exist. NotAc = both neighbors occupied or stall is Perfect.',
+    r1_sd:    'Sd = Sandwich — both neighbors are occupied. Only valid when no Perfect or Acceptable spots exist.',
+    r1_dec:   'Final R#1 verdict for this stall. Pass = stall matches the best available tier. Fail = a better tier exists elsewhere.',
     r2:       'R2 — Don\'t trap anyone. Hard rule. If picking this stall would fully surround an occupied stall on both sides, and an alternative exists, it\'s a fail.',
     surr:     'How many sides of an adjacent occupied stall your pick would fill. 0 = not adjacent to any occupied stall. 1 = occupying one neighbour slot. 2 = trapping them on both sides (R2 fail).',
     r3:       'R3 — Think ahead. Shows valid spots left for the next person after your pick / best available across all candidates. If your pick leaves fewer than max−1 valid spots, it\'s a fail.',
@@ -1232,8 +1288,11 @@ function drRenderTable(stalls, doorIndex) {
     <thead><tr><th class="rl" style="width:160px"></th>${hc}</tr></thead>
     <tbody>
       ${row('status',              sc,   TIPS.status)}
-      ${row('r #1 — buffer',        r1c,  TIPS.r1)}
-      ${row('↳ adj to occ?',      adjc, TIPS.adj)}
+      ${row('r #1 — alone?',       r1_alone2, TIPS.r1_alone)}
+      ${row('r #1 — perfect?',    r1_perf2,  TIPS.r1_perf)}
+      ${row('r #1 — acceptable?', r1_ac2,    TIPS.r1_ac)}
+      ${row('r #1 — sandwich?',   r1_sd2,    TIPS.r1_sd)}
+      ${row('r #1 — decision',    r1_dec2,   TIPS.r1_dec)}
       ${row('r #2 — surround',      r2c,  TIPS.r2)}
       ${row('↳ surround sides',   surrc,TIPS.surr)}
       ${row('r #3 — next spots',    r3c,  TIPS.r3)}
@@ -1284,6 +1343,15 @@ const BASE_LEVELS=[
 ];
 
 let LEVELS = BASE_LEVELS.map(lv=>({...lv}));
+
+// ── LEVEL VALIDATOR ───────────────────────────────────
+// Warn at startup if any base level has zero selectable empty stalls
+(function validateLevels(){
+  BASE_LEVELS.forEach((lv, idx) => {
+    const empty = lv.stalls.filter(s => s.status === 'empty').length;
+    if(empty === 0) console.warn(`Level ${idx+1} has NO selectable stalls — fix BASE_LEVELS!`);
+  });
+})();
 const ORIGINAL_STALLS = BASE_LEVELS.map(lv=>lv.stalls.map(s=>({...s})));
 
 const NPC_SCRIPTS=[{urinal:4},{urinal:2},{urinal:5},{urinal:1},{urinal:6}];
