@@ -89,13 +89,13 @@
     .rule-tag { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 3px; }
     .tag-hard   { background: var(--red-bg); color: var(--red); }
     .tag-scored { background: var(--amber-bg); color: var(--amber-text); }
-    .tag-wrap   { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; max-width: 120px; }
+    .tag-wrap   { display: inline-flex; align-items: center; flex-shrink: 0; position: relative; }
     .tag-tip    {
+      position: fixed; z-index: 9999;
       background: #6A0DAD; color: #fff;
-      font-size: 10px; font-weight: 500; line-height: 1.4;
-      padding: 3px 8px; border-radius: 20px;
-      white-space: normal; text-align: right;
-      pointer-events: none;
+      font-size: 11px; font-weight: 500; line-height: 1.5;
+      padding: 6px 11px; border-radius: 10px;
+      white-space: nowrap; pointer-events: none;
       opacity: 0; transition: opacity 0.35s;
     }
     .tag-tip.visible   { opacity: 1; }
@@ -148,7 +148,7 @@
     .timeout-score span { color: var(--amber); font-weight: 700; }
 
     /* ── SCORE POPUP ── */
-    .score-popup { border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none; }
+    .score-popup { border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none; cursor: default; }
     .score-popup.show { display: block; }
     .score-title { font-size: 18px; font-weight: 600; margin-bottom: 1rem; }
     .score-rules { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
@@ -565,7 +565,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.12';
+const GAME_VERSION = '0.3.14';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -595,7 +595,7 @@ let drTimerFrame = null;
 const RULES = [
   { name:'Leave a buffer',    desc:'Whenever possible, leave an empty "buffer" between you and others.',                type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
   { name:"Don't trap anyone", desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',             type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
-  { name:'Remember the next guy',       desc:'Your pick affects everyone who comes after you. Don\'t leave them with no clean options.',         type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
+  { name:'Remember the next guy',       desc:'Your choice affects everyone who comes after you. Don\'t make the next guy break Rule #1.',         type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
   { name:'Blend in',          desc:'Not too far from others, not too close to the door. Don\'t look like you\'re hiding something.', type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
   { name:"Don't over-walk",   desc:'Minimise walking distance while staying aware of the entrance.',                    type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
 ];
@@ -723,10 +723,24 @@ function showRulesScreen(levelIdx, isFirst) {
   }).join('');
   document.getElementById('rules-screen').classList.add('show');
   document.getElementById('game-screen').style.display = 'none';
-  // Auto-show any tag-tip pills, then fade after 3s
-  document.querySelectorAll('.tag-tip').forEach(el => {
-    el.classList.add('visible');
-    setTimeout(() => el.classList.remove('visible'), 3000);
+  // Position each tag-tip relative to its badge, then auto-show and fade
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.tag-tip').forEach(el => {
+      const wrap = el.closest('.tag-wrap');
+      if(!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      // Place below the badge, right-aligned to it
+      let top  = rect.bottom + 6;
+      let left = rect.right - 160; // approx tip width
+      // Clamp to viewport
+      const vw = window.innerWidth;
+      if(left < 8) left = 8;
+      if(left + 160 > vw - 8) left = vw - 168;
+      el.style.top  = top  + 'px';
+      el.style.left = left + 'px';
+      el.classList.add('visible');
+      setTimeout(() => el.classList.remove('visible'), 3000);
+    });
   });
 }
 function startLevelFromRules() {
@@ -1047,7 +1061,7 @@ function buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
     o+=`<rect x="${cx-2}" y="${uy}" width="4" height="${PH}" rx="1" fill="${dark?'#6a6560':'#c0b8b0'}"/>`;
     // determine onclick target — game or debug rules
     const onclickFn = isDebugRulesMode ? `drClickUrinal(${i})` : `clickUrinal(${i})`;
-    o+=`<g onclick="${clickable?onclickFn:''}" style="cursor:${clickable?'pointer':'default'}" opacity="${op}">`;
+    o+=`<g onclick="${clickable?onclickFn:''}" opacity="${op}">`;
     o+=`<rect x="${ux+3}" y="${by}" width="${UW-6}" height="${UH}" rx="8" fill="${bc}" opacity="0.3"/>`;
     o+=`<rect x="${ux+4}" y="${by+1}" width="${UW-8}" height="${UH-2}" rx="7" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
     o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-16)/2}" ry="${UH*0.28}" fill="${dark?'#1a1918':'#e8e4dc'}" stroke="${bc}" stroke-width="0.8" opacity="0.7"/>`;
@@ -1059,7 +1073,7 @@ function buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
     else if(passMap!==null&&isPicked){ o+=`<text x="${cx}" y="${by+UH/2+6}" text-anchor="middle" font-size="16" fill="${passMap[i]?'#3B6D11':'#A32D2D'}" font-weight="700" font-family="sans-serif">${passMap[i]?'✓':'✗'}</text>`; }
     else if(s.warm){ o+=`<circle cx="${cx-6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/><circle cx="${cx+6}" cy="${by+UH*0.55}" r="2.5" fill="#E8C040" opacity="0.7"/><circle cx="${cx}" cy="${by+UH*0.42}" r="2" fill="#E8C040" opacity="0.5"/>`; }
     o+=`</g>`;
-    o+=`<text x="${cx}" y="${by+UH+13}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif">${i+1}</text>`;
+    o+=`<text x="${cx}" y="${by+UH+13}" text-anchor="middle" font-size="11" fill="${COL.numberText()}" font-family="sans-serif" pointer-events="none">${i+1}</text>`;
   }
   if(animDots){ for(const d of animDots) o+=drawDot(d.cx,d.cy,d.color,d.r,d.hatFn); }
   return o;
