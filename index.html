@@ -565,7 +565,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.17';
+const GAME_VERSION = '0.3.18';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -861,17 +861,36 @@ function r1Eval(i, s){
 }
 function minDistToOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 999; return Math.min(...o.map(j=>Math.abs(i-j))); }
 function maxDistToAnyOcc(i,s){ const o=s.map((x,j)=>x.status==='occupied'?j:null).filter(x=>x!==null); if(!o.length)return 0; return Math.max(...o.map(j=>Math.abs(i-j))); }
-function nextSpots(pick,s){
-  // Count non-adjacent empty stalls after pick — captures R3's true spirit:
-  // does the next person have anywhere with a buffer?
-  const sAfter=s.map((x,j)=>j===pick?{status:'occupied'}:x);
-  let nonAdj=0;
-  for(let i=0;i<sAfter.length;i++){
-    if(sAfter[i].status!=='empty') continue;
-    const adj=(i>0&&sAfter[i-1].status==='occupied')||(i<sAfter.length-1&&sAfter[i+1].status==='occupied');
-    if(!adj) nonAdj++;
+// ── R3 NEW LOGIC ─────────────────────────────────────
+// R3 simulates future arrivals following R1 optimally.
+// How many people can arrive before R1 becomes unavoidable? Capped at 2.
+const R3_CAP = 2;
+function r3NonAdj(s){
+  // Non-adjacent empty stalls (looking through broken, same as R1)
+  return s.map((x,i)=>{
+    if(x.status!=='empty') return null;
+    const L = r1Neighbor(i,s,-1); // reuse R1's broken-transparent neighbor
+    const R = r1Neighbor(i,s,+1);
+    return (L==='occupied'||R==='occupied') ? null : i;
+  }).filter(j=>j!==null);
+}
+function r3FutureCapacity(s, depth){
+  if(depth<=0) return 0;
+  const spots = r3NonAdj(s);
+  if(spots.length===0) return 0; // next person must break R1
+  let best = 0;
+  for(const pick of spots){
+    const next = s.map((x,j)=>j===pick?{status:'occupied'}:x);
+    const deeper = 1 + r3FutureCapacity(next, depth-1);
+    best = Math.max(best, deeper);
+    if(best >= R3_CAP) return R3_CAP; // cap reached
   }
-  return nonAdj;
+  return Math.min(best, R3_CAP);
+}
+// Legacy name kept so other call sites don't need changing
+function nextSpots(pick, s){
+  const sAfter = s.map((x,j)=>j===pick?{status:'occupied'}:x);
+  return r3FutureCapacity(sAfter, R3_CAP);
 }
 function anyNonAdj(s){ return s.some((x,i)=>x.status==='empty'&&!isAdjOcc(i,s)); }
 // ── R2 NEW LOGIC ─────────────────────────────────────
@@ -1014,7 +1033,9 @@ function bd(i, s, door) {
   }).filter(v=>v!==null);
 
   const mxSpots = cands.length ? Math.max(...cands.map(j=>nextSpots(j,s))) : 0;
-  const r3pass = mySpots >= mxSpots; // must leave as many clean spots as the best pick
+  const mnSpots = cands.length ? Math.min(...cands.map(j=>nextSpots(j,s))) : 0;
+  const r3na   = mxSpots === mnSpots; // all picks leave same future capacity → N/A
+  const r3pass = r3na || mySpots >= mxSpots;
   const r4s = r4Score(i, s, door, cands);
   const r5s = r5Score(i, s, door, cands);
 
@@ -1029,7 +1050,7 @@ function bd(i, s, door) {
   // finalStars is 0 if R3 fails — prevents R3-failing stalls from being highlighted
   const finalStars = !r3pass ? 0 : avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
 
-  return{eligible:true,disqualified:false,r1pass:true,r1,r2,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
+  return{eligible:true,disqualified:false,r1pass:true,r1,r2,spots:mySpots,mxSpots,r3na,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
 }
 
 const SPEED_MAX=2000, SPEED_MIN=5000;
@@ -1219,7 +1240,7 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   document.getElementById('score-title').textContent = broke ? 'Rule broken! ❌' : points>=90?'Perfect! 🎉':points>=70?'Very good 👍':points>=50?'Acceptable 😐':'Could be better 😬';
   const r1val = b.r1 ? b.r1.r1pass : null; // null when ineligible
   const r2val = !hasOcc ? null : (b.r2 ? b.r2.r2pass : null);
-  const r3val = b.eligible&&!b.disqualified ? b.r3pass : false;
+  const r3val = b.eligible&&!b.disqualified ? (b.r3na ? null : b.r3pass) : false;
   const r4val = b.eligible&&!b.disqualified&&b.r4s!=null ? b.r4s : null;
   const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? b.r5s : null;
   const ruleData = [[1,'Leave a buffer','hard',r1val],[2,"Don't trap anyone",'hard',r2val],[3,'Remember the next guy','hard',r3val],[4,'Blend in','scored',r4val],[5,"Don't over-walk",'scored',r5val]];
@@ -1297,7 +1318,11 @@ function renderDebug(){
   const r2_sr3 = bds.map(b=>r2pill(b,'sr3'));
   const r2_sr4 = bds.map(b=>r2pill(b,'sr4'));
   const r2_dec = bds.map(b=>!b.eligible?na:!b.r2?na:(b.r2.r2pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail (${b.r2.failAt})</span>`));
-  const r3c=bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
+  const r3c=bds.map(b=>{
+    if(!b.eligible||b.disqualified) return na;
+    if(b.r3na) return `<span class="pill pn">N/A</span>`;
+    return `<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`;
+  });
   const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
   const r5c=bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
@@ -1343,7 +1368,11 @@ function drRenderTable(stalls, doorIndex) {
   const r2_sr3b = bds.map(b=>r2pill2(b,'sr3'));
   const r2_sr4b = bds.map(b=>r2pill2(b,'sr4'));
   const r2_decb = bds.map(b=>!b.eligible?na:!b.r2?na:(b.r2.r2pass?`<span class="pill pp">Pass</span>`:`<span class="pill pf">Fail (${b.r2.failAt})</span>`));
-  const r3c  = bds.map(b=>!b.eligible?na:b.disqualified?na:`<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`);
+  const r3c  = bds.map(b=>{
+    if(!b.eligible||b.disqualified) return na;
+    if(b.r3na) return `<span class="pill pn">N/A</span>`;
+    return `<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`;
+  });
   const r41c = bds.map(b=>!b.eligible||b.disqualified||b.r41s==null?na:`${b.r41s}★`);
   const r42c = bds.map(b=>!b.eligible||b.disqualified||b.r42s==null?na:`${b.r42s}★`);
   const r4c  = bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
@@ -1365,7 +1394,7 @@ function drRenderTable(stalls, doorIndex) {
     r2_sr3:   'SR3 — Does your pick increase partially man-sandwiched NPCs (one NPC neighbor)? Evaluated among SR1+SR2 survivors.',
     r2_sr4:   'SR4 — Does your pick increase partially wall-sandwiched NPCs (NPC next to wall on one side)? Evaluated among SR1+SR2+SR3 survivors.',
     r2_dec:   'Final R#2 verdict. Cascades through SR1→SR2→SR3→SR4. Fails at the first tier where your pick was worse than an available alternative.',
-    r3:       'R3 — Remember the next guy. Shows valid spots left for the next person after your pick / best available across all candidates. If your pick leaves fewer than max−1 valid spots, it\'s a fail.',
+    r3:       'R3 — Remember the next guy. Simulates future arrivals following R1 optimally. Shows how many people can arrive before R1 breaks (capped at 2) / best possible across all candidates. N/A = all picks leave the same capacity.',
     r4:       'R4 — Blend in. Average of R4.1 (proximity to others) and R4.2 (position relative to door). 1★ = you stuck out, 5★ = nobody noticed you.',
     r41:      'R4.1 — Not too far from others. Compares your max distance to any occupied stall against all valid candidates. Being the one who went the furthest away looks weird. 5★ = you stayed as close as the best option.',
     r42:      'R4.2 — Bell curve from door. Very close to the entrance (1★), sweet zone mid-room (5★), all the way at the back (1★). Modelled as a proportional distance from the door stall.',

@@ -1,3 +1,14 @@
+### v0.3.18
+- **R#3 completely rewritten** — now simulates future arrivals following R1 optimally
+  - `r3FutureCapacity(s, depth)` — recursive simulation: how many people can arrive before R1 breaks, capped at 2
+  - Broken stalls transparent (reuses R1's `r1Neighbor`)
+  - N/A when all valid picks leave the same future capacity
+  - `00000`: ends (1,3,5) pass with capacity 2, middle (2,4) fail with capacity 1
+  - Large empty rooms and tight rooms → naturally N/A
+- Debug tables show capacity/max with N/A pill when rule doesn't differentiate
+- Score popup shows N/A for R3 when applicable
+- Bumped to v0.3.18
+
 ### v0.3.15
 - **R#2 completely rewritten** using 4-tier cascading logic
   - SR1 — does your pick cause any NPC to become fully sandwiched? (avoidable = fail)
