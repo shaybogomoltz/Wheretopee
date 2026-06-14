@@ -595,7 +595,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.23';
+const GAME_VERSION = '0.3.27';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -626,7 +626,7 @@ const RULES = [
   { name:'Leave a buffer',    desc:'Whenever possible, leave an empty "buffer" between you and others.',                type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
   { name:"Don't trap anyone", desc:'Whenever possible, don\'t squeeze someone between two occupied stalls.',             type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
   { name:'Remember the next guy',       desc:'Your choice affects everyone who comes after you. Don\'t make the next guy break Rule #1.',         type:'hard',   tag:'✓ / ✗', tagTip:'Hard rule — get this wrong and your run is over.' },
-  { name:'Blend in',          desc:'Not too far from others, not too close to the door. Don\'t look like you\'re hiding something.', type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
+  { name:'Blend in',          desc:'Stay within the group. The further you drift from where others are sitting, the more you stand out.', type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
   { name:"Don't over-walk",   desc:'Minimise walking distance while staying aware of the entrance.',                    type:'scored', tag:'★★★★★', tagTip:"Scored rule — it's not just pass/fail. How well you pick affects your star rating." },
 ];
 
@@ -1009,53 +1009,39 @@ function r2Eval(pick, s){
 }
 function walkDist(i,door){ return Math.abs(i-door); }
 
-function r41Score(i, s, cands) {
-  const hasOcc = s.some(x=>x.status==='occupied');
-  if(!hasOcc) return 5;
-  const myMax = maxDistToAnyOcc(i, s);
-  const candMaxes = cands.map(j=>maxDistToAnyOcc(j,s));
-  const best = Math.min(...candMaxes);
-  const worst = Math.max(...candMaxes);
-  if(worst===best) return 5;
-  const score = 1 + 4*(worst-myMax)/(worst-best);
-  return Math.round(Math.max(1,Math.min(5,score)));
-}
-
-function r42Score(i, s, door) {
-  const n = s.length;
-  const p = Math.abs(i-door)/(n-1||1);
-  if(p<0.10) return 1;
-  if(p<0.20) return 2;
-  if(p<0.25) return 3;
-  if(p<=0.65) return 5;
-  if(p<=0.80) return 3;
-  if(p<=0.90) return 2;
+// ── R4 NEW LOGIC ─────────────────────────────────────
+// R4: Blend in — purely about position relative to NPC group footprint
+// Nothing to do with the door (that's R5's job)
+function r4FootprintScore(i, s) {
+  const occs = s.map((x,j) => x.status==='occupied' ? j : null).filter(j=>j!==null);
+  if(occs.length === 0) return null; // N/A — empty room
+  const gL = Math.min(...occs);
+  const gR = Math.max(...occs);
+  if(i >= gL && i <= gR) return 5; // inside footprint
+  const overhang = i < gL ? gL - i : i - gR;
+  if(overhang === 1) return 4;
+  if(overhang === 2) return 3;
+  if(overhang === 3) return 2;
   return 1;
 }
-
 function r4Score(i, s, door, cands) {
-  const hasOcc = s.some(x=>x.status==='occupied');
-  const s41 = r41Score(i, s, cands);
-  const s42 = r42Score(i, s, door);
-  if(!hasOcc) return s42;
-  return Math.round((s41+s42)/2);
+  return r4FootprintScore(i, s); // door param kept for signature compatibility
 }
+// Keep old names as stubs so bd() debug fields don't crash
+function r41Score(i, s, cands) { return r4FootprintScore(i, s) ?? 5; }
+function r42Score(i, s, door)  { return null; } // no longer used
 
+// ── R5: Don't over-walk ──────────────────────────────
+// Score purely by walk distance from door relative to valid candidates.
+// Closest valid pick = 5★, furthest = 1★, linear scale.
+// N/A (returns 5) when all candidates are equidistant from door.
 function r5Score(i, s, door, cands) {
-  const myDist = minDistToOcc(i,s);
-  if(myDist===999){
-    const dists = cands.map(j=>walkDist(j,door));
-    const best=Math.min(...dists), worst=Math.max(...dists);
-    if(best===worst) return 5;
-    const myWalk = walkDist(i,door);
-    return Math.round(1+4*(worst-myWalk)/(worst-best));
-  }
-  const candDists = cands.map(j=>minDistToOcc(j,s));
-  const best=Math.min(...candDists), worst=Math.max(...candDists);
-  if(best===worst) return 5;
-  const targetDist = Math.ceil(worst*0.6);
-  const score = myDist>=targetDist ? 5 : Math.round(1+4*(myDist-best)/(targetDist-best||1));
-  return Math.max(1,Math.min(5,score));
+  const myWalk   = walkDist(i, door);
+  const candWalks = cands.map(j => walkDist(j, door));
+  const best  = Math.min(...candWalks);
+  const worst = Math.max(...candWalks);
+  if(best === worst) return 5; // all equidistant → N/A, no penalty
+  return Math.round(1 + 4 * (worst - myWalk) / (worst - best));
 }
 
 function gW(){ return{r3:+document.getElementById('w-r3').value,r4:+document.getElementById('w-r4').value,r5:+document.getElementById('w-r5').value}; }
@@ -1087,32 +1073,55 @@ function bd(i, s, door) {
   const mnSpots = cands.length ? Math.min(...cands.map(j=>nextSpots(j,s))) : 0;
   const r3na   = mxSpots === mnSpots; // all picks leave same future capacity → N/A
   const r3pass = r3na || mySpots >= mxSpots;
-  const r4s = r4Score(i, s, door, cands);
-  const r5s = r5Score(i, s, door, cands);
+  const r4raw = r4FootprintScore(i, s);
+  const candR4s = cands.map(j => r4FootprintScore(j, s) ?? 0);
+  const r4max = cands.length ? Math.max(...candR4s) : 0;
+  const r4min = cands.length ? Math.min(...candR4s) : 0;
+  const r4na  = r4raw === null || r4max === r4min; // N/A when empty or all equal
+  const r4s   = r4raw ?? null;
+  const r5s   = r5Score(i, s, door, cands);
+  const r5Walks = cands.map(j=>walkDist(j,door));
+  const r5na  = cands.length>0 && Math.min(...r5Walks)===Math.max(...r5Walks);
 
   // Extra breakdown vars for debug
   const distToNearestOcc = minDistToOcc(i,s);
-  const distToFarthestOcc = maxDistToAnyOcc(i,s);
-  const r41s = r41Score(i, s, cands);
-  const r42s = r42Score(i, s, door);
   const walkD = walkDist(i, door);
+  // Group footprint for debug display
+  const occs4 = s.map((x,j)=>x.status==='occupied'?j:null).filter(j=>j!==null);
+  const r4gL  = occs4.length ? Math.min(...occs4) : null;
+  const r4gR  = occs4.length ? Math.max(...occs4) : null;
+  const r4overhang = (r4gL!==null && (i<r4gL||i>r4gR)) ? (i<r4gL?r4gL-i:i-r4gR) : 0;
 
-  const avg = (r4s+r5s)/2;
-  // finalStars is 0 if R3 fails — prevents R3-failing stalls from being highlighted
+  const avg = (r4s!=null&&r5s!=null) ? (r4s+r5s)/2 : (r4s??r5s??3);
   const finalStars = !r3pass ? 0 : avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
 
-  return{eligible:true,disqualified:false,r1pass:true,r1,r2,spots:mySpots,mxSpots,r3na,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
+  return{eligible:true,disqualified:false,r1pass:true,r1,r2,spots:mySpots,mxSpots,r3na,r3pass,r4s,r4na,r4max,r4overhang,r4gL,r4gR,r5s,r5na,distToNearestOcc,walkD,finalStars,cands};
 }
 
 const SPEED_MAX=2000, SPEED_MIN=5000;
 function calcPoints(b, reactionMs) {
   if(!b.eligible||b.disqualified||!b.r3pass) return 0;
-  const r4pts = Math.round((b.r4s/5)*30);
-  const r5pts = Math.round((b.r5s/5)*30);
   const t = reactionMs ?? SPEED_MIN;
   const speedRaw = Math.max(0, Math.min(1, (SPEED_MIN-t)/(SPEED_MIN-SPEED_MAX)));
-  const speedPts = Math.round(speedRaw*40);
-  return r4pts + r5pts + speedPts;
+
+  const r4valid = b.r4s != null && !b.r4na;
+  const r5valid = b.r5s != null && !b.r5na;
+
+  // Scoring:
+  // Both scored:  R4=30, R5=30, Speed=40
+  // One N/A:      scored R=40,  Speed=60
+  // Both N/A:     Speed=100
+  if(r4valid && r5valid) {
+    return Math.round((b.r4s/5)*30) + Math.round((b.r5s/5)*30) + Math.round(speedRaw*40);
+  }
+  if(r4valid && !r5valid) {
+    return Math.round((b.r4s/5)*40) + Math.round(speedRaw*60);
+  }
+  if(!r4valid && r5valid) {
+    return Math.round((b.r5s/5)*40) + Math.round(speedRaw*60);
+  }
+  // Both N/A
+  return Math.round(speedRaw*100);
 }
 
 function isPass(i,s,door){ if(s[i].status!=='empty') return false; const b=bd(i,s,door); return b.eligible&&!b.disqualified&&b.r3pass; }
@@ -1208,10 +1217,16 @@ function drDrawRoom(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
 }
 
 // ── TIMER BAR (main game) ─────────────────────────────
-const TIMER_DURATION = 5000;
+// Timer duration scales with level: 5s (L1-19), 4s (L20-29), 3s (L30+)
+function getTimerDuration() {
+  if(currentLevel >= 29) return 3000;
+  if(currentLevel >= 19) return 4000;
+  return 5000;
+}
 let timerStart = null;
 let timerExpired = false;
 function startTimerBar() {
+  const TIMER_DURATION = getTimerDuration();
   timerStart = performance.now(); timerExpired = false;
   const bar = document.getElementById('timer-bar');
   bar.style.width = '100%'; bar.style.background = 'hsl(120,80%,42%)';
@@ -1292,8 +1307,8 @@ function showScorePopup(pick, stalls, door, rulesShown) {
   const r1val = b.r1 ? b.r1.r1pass : null; // null when ineligible
   const r2val = !hasOcc ? null : (b.r2 ? b.r2.r2pass : null);
   const r3val = b.eligible&&!b.disqualified ? (b.r3na ? null : b.r3pass) : false;
-  const r4val = b.eligible&&!b.disqualified&&b.r4s!=null ? b.r4s : null;
-  const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? b.r5s : null;
+  const r4val = b.eligible&&!b.disqualified&&!b.r4na&&b.r4s!=null ? b.r4s : null;
+  const r5val = b.eligible&&!b.disqualified&&b.r5s!=null ? (b.r5na?null:b.r5s) : null;
   const ruleData = [[1,'Leave a buffer','hard',r1val],[2,"Don't trap anyone",'hard',r2val],[3,'Remember the next guy','hard',r3val],[4,'Blend in','scored',r4val],[5,"Don't over-walk",'scored',r5val]];
   function starRow(v){ return Array.from({length:5},(_,i)=>`<span style="color:${i<v?'var(--amber)':'var(--border2)'};font-size:14px">★</span>`).join(''); }
   document.getElementById('score-rules-div').innerHTML = ruleData.slice(0,count).map(([num,lbl,type,val])=>{
@@ -1374,8 +1389,17 @@ function renderDebug(){
     if(b.r3na) return `<span class="pill pn">N/A</span>`;
     return `<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`;
   });
-  const r4c=bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
-  const r5c=bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
+  const r4c=bds.map(b=>{
+    if(!b.eligible||b.disqualified) return na;
+    if(b.r4na) return `<span class="pill pn">N/A</span>`;
+    const inside = b.r4gL!==null && !b.r4overhang;
+    return `<span class="pill ${b.r4s>=4?'pp':b.r4s>=3?'pw':'pf'}">${b.r4s}★${inside?' (in)':` (+${b.r4overhang})`}</span>`;
+  });
+  const r5c=bds.map(b=>{
+    if(!b.eligible||b.disqualified||b.r5s==null) return na;
+    if(b.r5na) return `<span class="pill pn">N/A</span>`;
+    return `<b>${b.r5s}★</b>`;
+  });
   const ptc=bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}+spd</b>`);
   document.getElementById('debug-table').innerHTML=`<thead><tr><th class="rl"></th>${hc}</tr></thead><tbody>${row('status',sc)}${row('r #1 — alone?',r1_alone)}${row('r #1 — perfect?',r1_perf)}${row('r #1 — acceptable?',r1_ac)}${row('r #1 — sandwich?',r1_sd)}${row('r #1 — decision',r1_dec)}${row('r #2 — NPC full',r2_sr1)}${row('r #2 — you sandwiched?',r2_sr2)}${row('r #2 — NPC partial man',r2_sr3)}${row('r #2 — NPC partial wall',r2_sr4)}${row('r #2 — decision',r2_dec)}${row('r #3 next guy',r3c)}${row('r #4 blend in',r4c)}${row('r #5 walk',r5c)}${row('pts (no spd)',ptc)}</tbody>`;
 }
@@ -1424,12 +1448,19 @@ function drRenderTable(stalls, doorIndex) {
     if(b.r3na) return `<span class="pill pn">N/A</span>`;
     return `<span class="pill ${b.r3pass?'pp':'pf'}">${b.spots??'?'}/${b.mxSpots??'?'}</span>`;
   });
-  const r41c = bds.map(b=>!b.eligible||b.disqualified||b.r41s==null?na:`${b.r41s}★`);
-  const r42c = bds.map(b=>!b.eligible||b.disqualified||b.r42s==null?na:`${b.r42s}★`);
-  const r4c  = bds.map(b=>!b.eligible||b.disqualified||b.r4s==null?na:`<b>${b.r4s}★</b>`);
+  const r4inside = bds.map(b=>!b.eligible||b.disqualified?na:b.r4na?`<span class="pill pn">N/A</span>`:(b.r4overhang===0?`<span class="pill pp">inside</span>`:`<span class="pill pf">+${b.r4overhang}</span>`));
+  const r4c  = bds.map(b=>{
+    if(!b.eligible||b.disqualified) return na;
+    if(b.r4na) return `<span class="pill pn">N/A</span>`;
+    return `<span class="pill ${b.r4s>=4?'pp':b.r4s>=3?'pw':'pf'}">${b.r4s}★</span>`;
+  });
   const dnc  = bds.map(b=>!b.eligible?na:b.distToNearestOcc===999?na:`${b.distToNearestOcc}`);
   const dfc  = bds.map(b=>!b.eligible?na:b.distToFarthestOcc===0&&!hasOcc?na:`${b.distToFarthestOcc}`);
-  const r5c  = bds.map(b=>!b.eligible||b.disqualified||b.r5s==null?na:`<b>${b.r5s}★</b>`);
+  const r5c  = bds.map(b=>{
+    if(!b.eligible||b.disqualified||b.r5s==null) return na;
+    if(b.r5na) return `<span class="pill pn">N/A</span>`;
+    return `<b>${b.r5s}★</b>`;
+  });
   const wdc  = bds.map((b,i)=>!b.eligible?na:`${Math.abs(i-doorIndex)}`);
   const ptc  = bds.map(b=>!b.eligible?na:`<b>${calcPoints(b,null)}</b>+spd`);
 
@@ -1446,12 +1477,10 @@ function drRenderTable(stalls, doorIndex) {
     r2_sr4:   'SR4 — Does your pick increase partially wall-sandwiched NPCs (NPC next to wall on one side)? Evaluated among SR1+SR2+SR3 survivors.',
     r2_dec:   'Final R#2 verdict. Cascades through SR1→SR2→SR3→SR4. Fails at the first tier where your pick was worse than an available alternative.',
     r3:       'R3 — Remember the next guy. Simulates future arrivals following R1 optimally. Shows how many people can arrive before R1 breaks (capped at 2) / best possible across all candidates. N/A = all picks leave the same capacity.',
-    r4:       'R4 — Blend in. Average of R4.1 (proximity to others) and R4.2 (position relative to door). 1★ = you stuck out, 5★ = nobody noticed you.',
-    r41:      'R4.1 — Not too far from others. Compares your max distance to any occupied stall against all valid candidates. Being the one who went the furthest away looks weird. 5★ = you stayed as close as the best option.',
-    r42:      'R4.2 — Bell curve from door. Very close to the entrance (1★), sweet zone mid-room (5★), all the way at the back (1★). Modelled as a proportional distance from the door stall.',
-    dnear:    'Steps to the nearest occupied stall. Lower = you\'re closer to someone. Used in R4.1 and R5 scoring.',
-    dfar:     'Steps to the farthest occupied stall. Higher = you\'re more spread from the group. Used in R4.1 — being the outlier looks odd.',
-    r5:       'R5 — Don\'t over-walk. If no stalls are occupied, rewards picking closer to the door. If stalls are occupied, rewards picking at ~60% of the max possible distance from the nearest occupant — far enough for privacy, not so far it\'s odd.',
+    r4:       'R4 — Blend in. Based purely on your position relative to the NPC group footprint (leftmost to rightmost NPC). Inside = 5★. Each stall outside the edge costs 1★. N/A when room is empty or all picks score equally.',
+    r4inside: 'Whether your pick is inside the group footprint (between leftmost and rightmost NPC). Inside = 5★. +1 = one stall outside edge (4★), +2 = two stalls outside (3★), etc.',
+    dnear:    'Steps to the nearest occupied stall. Used in R5 scoring.',
+    r5:       'R5 — Don\'t over-walk. Scored by walk distance from the door relative to all valid picks. Closest valid pick = 5★, furthest = 1★. N/A when all picks are equidistant from the door.',
     walk:     'Number of stalls between the door and this stall. 0 = door stall itself. Used in R5 when the bathroom is empty.',
     pts:      'Estimated points from R4 + R5 combined (max 60). Speed bonus (max 40) is excluded here since no timer runs in Debug Rules mode.',
   };
@@ -1472,10 +1501,8 @@ function drRenderTable(stalls, doorIndex) {
       ${row('r #2 — decision',        r2_decb, TIPS.r2_dec)}
       ${row('r #3 — next guy',    r3c,  TIPS.r3)}
       ${row('r #4 blend in ★',      r4c,  TIPS.r4)}
-      ${row('↳ r4.1 not too far', r41c, TIPS.r41)}
-      ${row('↳ r4.2 bell curve',  r42c, TIPS.r42)}
-      ${row('↳ dist nearest occ', dnc,  TIPS.dnear)}
-      ${row('↳ dist farthest occ',dfc,  TIPS.dfar)}
+      ${row('↳ footprint position', r4inside, TIPS.r4inside)}
+      ${row('↳ dist nearest occ',  dnc,     TIPS.dnear)}
       ${row('r #5 — walk ★',        r5c,  TIPS.r5)}
       ${row('↳ walk from door',   wdc,  TIPS.walk)}
       ${row('pts (excl speed)',    ptc,  TIPS.pts)}
@@ -1509,12 +1536,12 @@ const BASE_LEVELS=[
   {stalls:occ(e(8),1,6),         doorIndex:0},   // L7  8 stalls (even), #2 #7 occ
   {stalls:occ(e(10),2,7),        doorIndex:5},   // L8  10 stalls (even), #3 #8 occ, centre door
   {stalls:brk(occ(e(7),1,5),3),  doorIndex:0},   // L9  7 stalls, #2 #6 occ + #4 broken
-  {stalls:occ(e(6),0,3),         doorIndex:5},   // L10 6 stalls (even), #1 #4 occ, door right
-  {stalls:occ(e(8),3,6),         doorIndex:0},   // L11 8 stalls (even), #4 #7 occ
-  {stalls:occ(e(9),1,4,7),       doorIndex:8},   // L12 9 stalls, #2 #5 #8 occ, door right
-  {stalls:occ(e(10),2,5,8),      doorIndex:0},   // L13 10 stalls (even), #3 #6 #9 occ
-  {stalls:brk(occ(e(10),1,8),4), doorIndex:5},   // L14 10 stalls (even), #2 #9 occ + #5 broken
-  {stalls:occ(e(8),0,4,7),       doorIndex:4},   // L15 8 stalls (even), #1 #5 #8 occ, centre door
+  {stalls:occ(e(8),0,3,6),        doorIndex:4},   // L10 8 stalls, 3 NPCs: #1 #4 #7 occ, centre door
+  {stalls:occ(e(10),1,5,8),       doorIndex:0},   // L11 10 stalls, 3 NPCs: #2 #6 #9 occ, door left
+  {stalls:occ(e(9),0,3,6,8),      doorIndex:4},   // L12 9 stalls, 4 NPCs: #1 #4 #7 #9 occ, centre door
+  {stalls:occ(e(10),1,4,6,9),     doorIndex:0},   // L13 10 stalls, 4 NPCs: #2 #5 #7 #10 occ, door left
+  {stalls:brk(occ(e(10),0,3,6,9),5), doorIndex:9}, // L14 10 stalls, 4 NPCs + broken #6, door right
+  {stalls:occ(e(10),0,2,5,7,9),   doorIndex:4},   // L15 10 stalls, 5 NPCs: #1 #3 #6 #8 #10 occ, centre door
 ];
 
 let LEVELS = BASE_LEVELS.map(lv=>({...lv}));
@@ -1617,7 +1644,7 @@ function renderLevel(){
 
 function nextLevel(){
   currentLevel++;
-  if(!isDebugMode && currentLevel===9 && !npcIntroShown){ npcIntroShown=true; showNpcIntro(()=>renderLevel()); }
+  if(!isDebugMode && currentLevel===5 && !npcIntroShown){ npcIntroShown=true; showNpcIntro(()=>renderLevel()); }
   else { renderLevel(); }
 }
 function retryLevel(){ renderLevel(); }
