@@ -358,6 +358,11 @@ Controlled by the `GAME_VERSION` constant at the top of the script block in `ind
 
 ## Changelog
 
+### v0.3.7
+- **Debug table highlight fix** — `bests()` and `cc()` now require R3 to pass before a stall can be highlighted green. Previously stall #4 in `[X _ _ _ _ _ X]` was shown as best in the table even though clicking it correctly failed R3
+- `finalStars` set to 0 whenever R3 fails — prevents R3-failing stalls from ever appearing as top candidates
+- Both debug tables (Debug Levels and Debug Rules) affected
+
 ### v0.3.6
 - **Tooltip repositioned** — purple pill now sits inline to the left of the badge in the same row, auto-sized, single line, never clips off-screen
 - **Tooltips on all 5 rules** — hard rules (R1-R3) all show "Hard rule — get this wrong and your run is over"; scored rules (R4-R5) show "Scored rule — not just pass/fail, stars affect your score"

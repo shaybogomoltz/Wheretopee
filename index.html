@@ -564,7 +564,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.6';
+const GAME_VERSION = '0.3.7';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -928,7 +928,8 @@ function bd(i, s, door) {
   const walkD = walkDist(i, door);
 
   const avg = (r4s+r5s)/2;
-  const finalStars = avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
+  // finalStars is 0 if R3 fails — prevents R3-failing stalls from being highlighted
+  const finalStars = !r3pass ? 0 : avg>=4.5?5:avg>=3.5?4:avg>=2.5?3:avg>=1.5?2:1;
 
   return{eligible:true,disqualified:false,r1pass:true,r1app,surr,spots:mySpots,mxSpots,r3pass,r4s,r5s,r41s,r42s,distToNearestOcc,distToFarthestOcc,walkD,finalStars,cands};
 }
@@ -947,7 +948,8 @@ function calcPoints(b, reactionMs) {
 function isPass(i,s,door){ if(s[i].status!=='empty') return false; const b=bd(i,s,door); return b.eligible&&!b.disqualified&&b.r3pass; }
 
 function bests(s,door){
-  const scores=s.map((_,i)=>{ if(s[i].status!=='empty')return{i,stars:0}; const b=bd(i,s,door); return{i,stars:b.eligible&&!b.disqualified?b.finalStars:0}; });
+  // Only consider stalls that pass R1, R2, and R3 — R3 failures must not be highlighted
+  const scores=s.map((_,i)=>{ if(s[i].status!=='empty')return{i,stars:0}; const b=bd(i,s,door); return{i,stars:(b.eligible&&!b.disqualified&&b.r3pass)?b.finalStars:0}; });
   const mx=Math.max(...scores.map(x=>x.stars)); if(mx===0)return[];
   return scores.filter(x=>x.stars===mx).map(x=>x.i);
 }
@@ -1161,7 +1163,7 @@ function renderDebug(){
   const stalls=lv.stalls, doorIndex=lv.doorIndex;
   const bds=stalls.map((_,i)=>bd(i,stalls,doorIndex));
   const best=bests(stalls,doorIndex);
-  function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified)return'cd'; if(best.includes(i))return'cb'; return''; }
+  function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified||!bds[i].r3pass)return'cd'; if(best.includes(i))return'cb'; return''; }
   const na=`<span style="color:var(--text3)">—</span>`;
   const hc=stalls.map((_,i)=>`<th>#${i+1}</th>`).join('');
   function row(lbl,cells){ return`<tr><td class="rl">${lbl}</td>${cells.map((c,i)=>`<td class="${cc(i)}">${c}</td>`).join('')}</tr>`; }
@@ -1180,7 +1182,7 @@ function renderDebug(){
 function drRenderTable(stalls, doorIndex) {
   const bds = stalls.map((_,i) => bd(i, stalls, doorIndex));
   const best = bests(stalls, doorIndex);
-  function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified)return'cd'; if(best.includes(i))return'cb'; return''; }
+  function cc(i){ if(!bds[i].eligible)return'ci'; if(bds[i].disqualified||!bds[i].r3pass)return'cd'; if(best.includes(i))return'cb'; return''; }
   const na = `<span style="color:var(--text3)">—</span>`;
   const hc = stalls.map((_,i) => `<th>#${i+1}</th>`).join('');
 
