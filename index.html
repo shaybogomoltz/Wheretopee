@@ -133,7 +133,7 @@
     .timer-bar { height: 100%; border-radius: 5px; width: 0%; transition: background 0.3s; }
 
     .room-wrap { position: relative; }
-    #room-svg { width: 100%; display: block; cursor: none; }
+    #room-svg { width: 100%; display: block; cursor: none; user-select: none; }
     #countdown-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     #countdown-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
     #countdown-text.go { color: #3B6D11; font-size: 56px; }
@@ -234,7 +234,7 @@
     .dr-apply-btn { width: 100%; padding: 12px; border-radius: var(--radius); background: var(--text); color: var(--bg); border: none; font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 1rem; }
     .dr-apply-btn:hover { opacity: 0.85; }
     .dr-game-wrap { position: relative; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
-    .dr-game-wrap svg { width: 100%; display: block; cursor: none; }
+    .dr-game-wrap svg { width: 100%; display: block; cursor: none; user-select: none; }
     .dr-cd-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     .dr-cd-text { font-size: 80px; font-weight: 700; color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
     .dr-cd-text.go { color: #3B6D11; font-size: 56px; }
@@ -565,7 +565,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.15';
+const GAME_VERSION = '0.3.17';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -704,8 +704,8 @@ function showRulesScreen(levelIdx, isFirst) {
   document.getElementById('rules-cta').textContent = levelIdx === 0 ? `Let's go →` : `Next level →`;
   document.getElementById('rules-list').innerHTML = RULES.slice(0, rulesCount).map((r, i) => {
     const isNew = i === newRuleIdx;
-    // Show tagTip on hard rules (R1-R3) always; on scored rules (R4-R5) always
-    // Hard rules all share the same tip, scored rules share theirs
+    // Show tagTip on ALL rules (hover always works)
+    // But auto-show only when this rule is being introduced for the first time (isNew)
     const showTip = !!r.tagTip;
     // Give each tip a unique id so JS can auto-show then fade it
     const tipId = showTip ? `tag-tip-${i}` : '';
@@ -723,9 +723,10 @@ function showRulesScreen(levelIdx, isFirst) {
   }).join('');
   document.getElementById('rules-screen').classList.add('show');
   document.getElementById('game-screen').style.display = 'none';
-  // Position each tag-tip relative to its badge, then auto-show and fade
+  // Position and auto-show ONLY the tip for the newly introduced rule
   requestAnimationFrame(() => {
-    document.querySelectorAll('.tag-tip').forEach(el => {
+    const newTipEl = newRuleIdx !== null ? document.getElementById(`tag-tip-${newRuleIdx}`) : null;
+    [newTipEl].filter(Boolean).forEach(el => {
       const wrap = el.closest('.tag-wrap');
       if(!wrap) return;
       const rect = wrap.getBoundingClientRect();
@@ -1109,7 +1110,7 @@ function buildRoomSVG(stalls,door,hov,selIdx,passMap,animDots,doorOpenPct){
     o+=`<rect x="${cx-2}" y="${uy}" width="4" height="${PH}" rx="1" fill="${dark?'#6a6560':'#c0b8b0'}"/>`;
     // determine onclick target — game or debug rules
     const onclickFn = isDebugRulesMode ? `drClickUrinal(${i})` : `clickUrinal(${i})`;
-    o+=`<g onclick="${clickable?onclickFn:''}" opacity="${op}">`;
+    o+=`<g onclick="${clickable?onclickFn:''}" style="cursor:${clickable?'pointer':'none'}" opacity="${op}">`;
     o+=`<rect x="${ux+3}" y="${by}" width="${UW-6}" height="${UH}" rx="8" fill="${bc}" opacity="0.3"/>`;
     o+=`<rect x="${ux+4}" y="${by+1}" width="${UW-8}" height="${UH-2}" rx="7" fill="${bg}" stroke="${bc}" stroke-width="${bw}"/>`;
     o+=`<ellipse cx="${cx}" cy="${by+UH*0.52}" rx="${(UW-16)/2}" ry="${UH*0.28}" fill="${dark?'#1a1918':'#e8e4dc'}" stroke="${bc}" stroke-width="0.8" opacity="0.7"/>`;
