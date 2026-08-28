@@ -1,3 +1,31 @@
+### v0.3.28
+- **Lose screen** now shows a "Give feedback" link + QR code to the playtest feedback form, under the score
+- Auto-return-to-landing delay increased from 3.5s to 6s so there's time to notice the feedback prompt (the feedback link opens in a new tab regardless, so it doesn't get interrupted by the auto-return)
+- Bumped to v0.3.28
+
+### v0.3.24
+- **R#5 rewritten** — now purely about walk distance from the door
+  - Old logic used distance to nearest NPC (overlap with R4) — removed entirely
+  - New: closest valid pick to door = 5★, furthest = 1★, linear scale
+  - N/A when all valid candidates are equidistant from the door
+  - `r5na` flag added to `bd()` return and shown in debug tables
+  - Score popup shows N/A for R5 when applicable
+- R4 and R5 now cleanly separated: R4 = position relative to group, R5 = walk distance from door
+- Bumped to v0.3.24
+
+### v0.3.24
+- **R#4 completely rewritten** — now purely about position relative to NPC group footprint
+  - Group footprint = leftmost NPC to rightmost NPC
+  - Inside footprint = 5★ (you blend in naturally)
+  - 1 stall outside edge = 4★, 2 = 3★, 3 = 2★, 4+ = 1★
+  - Empty room → N/A (no peers to blend in with)
+  - All picks score equally → N/A
+  - Door/entrance completely removed from R4 (moved to R5 only)
+- R4 description updated: "Stay within the group. The further you drift from where others are sitting, the more you stand out."
+- Debug table updated: shows inside/+N footprint position and score
+- Old R4.1 (max distance) and R4.2 (bell curve from door) removed
+- Bumped to v0.3.24
+
 ### v0.3.18
 - **R#3 completely rewritten** — now simulates future arrivals following R1 optimally
   - `r3FutureCapacity(s, depth)` — recursive simulation: how many people can arrive before R1 breaks, capped at 2

@@ -146,6 +146,12 @@
     .timeout-sub   { font-size: 15px; color: var(--text2); margin-bottom: 2rem; line-height: 1.5; }
     .timeout-score { font-size: 18px; font-weight: 500; margin-bottom: 2rem; }
     .timeout-score span { color: var(--amber); font-weight: 700; }
+    .feedback-cta { margin-top: 0.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 280px; }
+    .feedback-cta-text { font-size: 13px; color: var(--text2); line-height: 1.4; }
+    .feedback-cta-link { display: inline-block; padding: 10px 20px; border-radius: var(--radius); background: var(--amber-bg); color: var(--amber-text); font-weight: 600; font-size: 14px; text-decoration: none; border: 1px solid var(--amber); }
+    .feedback-cta-link:hover { opacity: 0.85; }
+    .feedback-cta-qr { border-radius: 6px; }
+    .feedback-cta-qr-label { font-size: 11px; color: var(--text3); }
 
     /* ── SCORE POPUP ── */
     .score-popup { border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--bg2); padding: 1.25rem; margin-top: 1rem; display: none; cursor: default; }
@@ -456,6 +462,12 @@
   <div class="timeout-sub" id="timeout-sub">You took too long. Back to the start.</div>
   <div class="timeout-score">Total score: <span id="timeout-score-val">0</span> pts</div>
   <button class="landing-btn landing-btn-play" onclick="goLanding()">Back to start</button>
+  <div class="feedback-cta">
+    <div class="feedback-cta-text">Got 60 seconds? Tell us what you thought — every answer helps.</div>
+    <a class="feedback-cta-link" href="https://forms.gle/WAqVRT3LkAewLCZW7" target="_blank" rel="noopener">Give feedback →</a>
+    <img class="feedback-cta-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https%3A%2F%2Fforms.gle%2FWAqVRT3LkAewLCZW7" alt="QR code to feedback form" width="110" height="110" loading="lazy">
+    <div class="feedback-cta-qr-label">or scan</div>
+  </div>
 </div>
 
 <!-- L10 NPC INTRO SCREEN -->
@@ -595,7 +607,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.27';
+const GAME_VERSION = '0.3.28';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;
@@ -831,7 +843,7 @@ function gameOver(reason) {
   document.getElementById('timeout-score-val').textContent = sessionScore.toLocaleString();
   document.getElementById('timeout-screen').classList.add('show');
   sessionScore = 0; currentLevel = 0;
-  setTimeout(()=>{ if(document.getElementById('timeout-screen').classList.contains('show')) goLanding(); }, 3500);
+  setTimeout(()=>{ if(document.getElementById('timeout-screen').classList.contains('show')) goLanding(); }, 6000);
 }
 
 // ── HATS ─────────────────────────────────────────────
