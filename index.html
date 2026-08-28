@@ -108,6 +108,26 @@
     #game-screen { display: none; }
     #app { max-width: 640px; margin: 0 auto; padding: 1rem; }
 
+    /* ── DESKTOP LAYOUT ──
+       Below ~700px this is a plain top-anchored block, which is correct for
+       phones (the column IS the viewport). Above that, viewport width no
+       longer means "phone", so re-center everything as a framed card instead
+       of leaving it pinned to the top-left of a huge window. Width-based,
+       not device-sniffed: a narrow desktop window still gets the phone
+       layout, a wide tablet gets the desktop one. */
+    @media (min-width: 700px) {
+      body { display: flex; align-items: center; justify-content: center; }
+      #app {
+        max-width: 720px;
+        width: 100%;
+        background: var(--bg2);
+        border: 0.5px solid var(--border2);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+        padding: 1.5rem;
+      }
+    }
+
     /* debug topbar */
     .debug-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
     .debug-nav { display: flex; gap: 5px; flex-wrap: wrap; }
@@ -607,7 +627,7 @@
 
 <script>
 // ── VERSION ───────────────────────────────────────────
-const GAME_VERSION = '0.3.28';
+const GAME_VERSION = '0.3.29';
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('landing-version').textContent = 'v' + GAME_VERSION;
   document.getElementById('corner-version').textContent = 'v' + GAME_VERSION;

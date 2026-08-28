@@ -1,3 +1,9 @@
+### v0.3.29
+- **Desktop layout fix**: above ~700px viewport width, the game is now vertically + horizontally centered in a framed card (subtle border + shadow) instead of being pinned to the top-left of the window with dead space on all sides
+- Width-based via a CSS media query, not device/user-agent sniffing — a narrow desktop window still gets the plain mobile-style layout, a wide tablet gets the desktop one
+- Mobile (<700px) is untouched — same exact layout as before
+- Bumped to v0.3.29
+
 ### v0.3.28
 - **Lose screen** now shows a "Give feedback" link + QR code to the playtest feedback form, under the score
 - Auto-return-to-landing delay increased from 3.5s to 6s so there's time to notice the feedback prompt (the feedback link opens in a new tab regardless, so it doesn't get interrupted by the auto-return)
