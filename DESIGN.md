@@ -1,3 +1,10 @@
+### v0.3.30
+- **Fixes v0.3.29's desktop card, which was silently broken** — it used a percentage width on a flex item whose parent had no fixed size, so the browser fell back to fit-content and the "bigger" card never actually grew. Result: centered, but still tiny on a large monitor
+- Switched to viewport-relative sizing (`min(90vw, 1100px)`) with an explicit `max-width` override, which actually resolves
+- Card now scales up to 1100px wide on large screens, with an ambient radial-gradient vignette behind it instead of flat black/white, so the surrounding space reads as intentional rather than empty
+- Mobile (<700px) untouched
+- Bumped to v0.3.30
+
 ### v0.3.29
 - **Desktop layout fix**: above ~700px viewport width, the game is now vertically + horizontally centered in a framed card (subtle border + shadow) instead of being pinned to the top-left of the window with dead space on all sides
 - Width-based via a CSS media query, not device/user-agent sniffing — a narrow desktop window still gets the plain mobile-style layout, a wide tablet gets the desktop one
